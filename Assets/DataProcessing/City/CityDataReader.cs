@@ -25,7 +25,7 @@ public class CityDataReader : IDataReader
 
     bool isAtData = false;
 
-    public CityDataReader() : this(1024, 100) { }
+    public CityDataReader() : this(50, 100) { }
 
 
     public CityDataReader(int _bufferSize, int _maxConvertionSizeOfData)
@@ -148,7 +148,7 @@ public class CityDataReader : IDataReader
             if (streamReader.EndOfStream)
             {
                 endOfStream = true;
-                return totalRead;
+                //return totalRead;
             }
 
             //take a char from the buffer put it inside input buffer

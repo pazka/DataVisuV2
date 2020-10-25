@@ -20,6 +20,4 @@ public static class Logger
 
         throw new System.Exception(line);
     }
-
-
 }

@@ -8,6 +8,6 @@ public  abstract class DataManager : IDataManager
     public abstract void Clean();
     public abstract IData GetNextData();
     public abstract IEnumerable<IData> GetAllData();
-    public abstract dynamic GetDataBounds();
+    public abstract object GetDataBounds();
     public abstract IDataReader GetDataReader();
 }

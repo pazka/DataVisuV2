@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CityDataManager : DataManager
+public class DensityDataManager : DataManager
 {
-    private CityDataReader cityDataReader;
+    private DensityDataReader densityDataReader;
 
     /*
      * |---------- |
@@ -21,9 +21,9 @@ public class CityDataManager : DataManager
     private IEnumerable<IData> allData;
     private Vector3[] allVectoredData;
 
-    public CityDataManager()
+    public DensityDataManager()
     {
-        this.cityDataReader = (CityDataReader)FactoryDataReader.GetInstance(FactoryDataReader.AvailableDataReaderTypes.CITY);
+        this.densityDataReader = (DensityDataReader)FactoryDataReader.GetInstance(FactoryDataReader.AvailableDataReaderTypes.DENSITY);
         this.bounds[0, 0] = float.PositiveInfinity;
         this.bounds[0, 1] = float.NegativeInfinity;
         this.bounds[1, 0] = float.PositiveInfinity;
@@ -34,7 +34,7 @@ public class CityDataManager : DataManager
     public override void Init(int screenBoundX, int screenBoundY)
     {
         screenBounds = new int[2] { screenBoundX, screenBoundY};
-        cityDataReader.Init();
+        densityDataReader.Init();
     } 
 
     public override void Clean()
@@ -47,32 +47,32 @@ public class CityDataManager : DataManager
         allData = null;
         allVectoredData = null;
 
-        cityDataReader.Clean();
+        densityDataReader.Clean();
     }
 
-    private CityData RegisterData(CityData cityData)
+    private DensityData RegisterData(DensityData densityData)
     {
-        if (cityData.RawX < bounds[0,0])
-            bounds[0,0] = cityData.RawX;
+        if (densityData.RawX < bounds[0,0])
+            bounds[0,0] = densityData.RawX;
 
-        if (cityData.RawX > bounds[0,1])
-            bounds[0,1] = cityData.RawX;
+        if (densityData.RawX > bounds[0,1])
+            bounds[0,1] = densityData.RawX;
 
-        if (cityData.RawY < bounds[1,0])
-            bounds[1,0] = cityData.RawY;
+        if (densityData.RawY < bounds[1,0])
+            bounds[1,0] = densityData.RawY;
 
-        if (cityData.RawY > bounds[1,1])
-            bounds[1,1] = cityData.RawY;
+        if (densityData.RawY > bounds[1,1])
+            bounds[1,1] = densityData.RawY;
 
-        return cityData;
+        return densityData;
     }
 
     public override IData GetNextData()
     {
-        cityDataReader.GoToNextData();
-        if (!cityDataReader.EndOfStream)
+        densityDataReader.GoToNextData();
+        if (!densityDataReader.EndOfStream)
         {
-            return RegisterData((CityData)cityDataReader.GetData());
+            return RegisterData((DensityData)densityDataReader.GetData());
         }
 
         return null;
@@ -85,16 +85,16 @@ public class CityDataManager : DataManager
             return allData;
         }
 
-        List<CityData> cityData = new List<CityData>();
-        CityData tmpData;
+        List<DensityData> densityData = new List<DensityData>();
+        DensityData tmpData;
 
         //get raw data first
-        while (!cityDataReader.EndOfStream)
+        while (!densityDataReader.EndOfStream)
         {
-            tmpData = (CityData)GetNextData();
-            if (!cityDataReader.EndOfStream)
+            tmpData = (DensityData)GetNextData();
+            if (!densityDataReader.EndOfStream)
             {
-                cityData.Add(tmpData);
+                densityData.Add(tmpData);
             }
         }
 
@@ -105,20 +105,20 @@ public class CityDataManager : DataManager
         
         float dataBoundsXYRatio =  (bounds[0, 1] - bounds[0, 0]) / ((bounds[1, 1] - bounds[1, 0]))   ;
 
-        for (int i = 0; i < cityData.Count; i++)
+        for (int i = 0; i < densityData.Count; i++)
         {
             //voluntary inversion
-            float widthAsRatioOfOriginalTotalWidth = ((cityData[i].RawY - bounds[1, 0]) / (bounds[1, 1] - bounds[1, 0]));
-            cityData[i].SetX(widthAsRatioOfOriginalTotalWidth  * screenBounds[0]);
+            float widthAsRatioOfOriginalTotalWidth = ((densityData[i].RawY - bounds[1, 0]) / (bounds[1, 1] - bounds[1, 0]));
+            densityData[i].SetX(widthAsRatioOfOriginalTotalWidth  * screenBounds[0]);
 
             // Y is set as the % of total orginal height * the current width * the old % totalwith by totalheight 
-            float heightAsRatioOfOriginalTotalHeight = ((cityData[i].RawX - bounds[0, 0]) / (bounds[0, 1] - bounds[0, 0]));
+            float heightAsRatioOfOriginalTotalHeight = ((densityData[i].RawX - bounds[0, 0]) / (bounds[0, 1] - bounds[0, 0]));
             float newMaxYHeight = dataBoundsXYRatio * screenBounds[1];
-            cityData[i].SetY( heightAsRatioOfOriginalTotalHeight  * newMaxYHeight);
+            densityData[i].SetY( heightAsRatioOfOriginalTotalHeight  * newMaxYHeight);
         }
 
-        allData = cityData;
-        return cityData;
+        allData = densityData;
+        return densityData;
     }
 
     public Vector3[] GetAllVectoredData()
@@ -128,12 +128,12 @@ public class CityDataManager : DataManager
             return allVectoredData;
         }
 
-        CityData[] cityData = ((List<CityData>)GetAllData()).ToArray();
+        DensityData[] densityData = ((List<DensityData>)GetAllData()).ToArray();
 
-        allVectoredData = new Vector3[cityData.Length];  
-        for (int i = 0; i < cityData.Length; i++)
+        allVectoredData = new Vector3[densityData.Length];  
+        for (int i = 0; i < densityData.Length; i++)
         {
-            allVectoredData[i] = new Vector3(cityData[i].X, cityData[i].Y,1);
+            allVectoredData[i] = new Vector3(densityData[i].X, densityData[i].Y,1);
         }
 
         return allVectoredData;
@@ -147,6 +147,6 @@ public class CityDataManager : DataManager
     //return X : max,min; Y: max,min
     public override IDataReader GetDataReader()
     {
-        return cityDataReader;
+        return densityDataReader;
     }
 }

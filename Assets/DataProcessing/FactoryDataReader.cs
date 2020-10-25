@@ -6,7 +6,7 @@ public static class FactoryDataReader
 {
     public enum AvailableDataReaderTypes
     {
-        CITY,LUMINOSITY
+        CITY,LUMINOSITY,DENSITY
     };
 
     private static Dictionary<AvailableDataReaderTypes, IDataReader> instances = new Dictionary<AvailableDataReaderTypes, IDataReader>();
@@ -18,6 +18,11 @@ public static class FactoryDataReader
             case AvailableDataReaderTypes.CITY:
                 if (!instances.ContainsKey(dataReaderType))
                     instances.Add(dataReaderType, new CityDataReader());
+
+                return instances[dataReaderType];
+            case AvailableDataReaderTypes.DENSITY:
+                if (!instances.ContainsKey(dataReaderType))
+                    instances.Add(dataReaderType, new DensityDataReader());
 
                 return instances[dataReaderType];
 
