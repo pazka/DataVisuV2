@@ -13,7 +13,7 @@ public class CityDataManager : DataManager
      * | MinY|MaxY |
      * |-----------|
      */
-    private float[,] bounds = new float[2,2];
+    private float[,] dataBounds = new float[2,2];
     int[] screenBounds = new int[2];
 
 
@@ -24,10 +24,10 @@ public class CityDataManager : DataManager
     public CityDataManager()
     {
         this.cityDataReader = (CityDataReader)FactoryDataReader.GetInstance(FactoryDataReader.AvailableDataReaderTypes.CITY);
-        this.bounds[0, 0] = float.PositiveInfinity;
-        this.bounds[0, 1] = float.NegativeInfinity;
-        this.bounds[1, 0] = float.PositiveInfinity;
-        this.bounds[1, 1] = float.NegativeInfinity;
+        this.dataBounds[0, 0] = float.PositiveInfinity;
+        this.dataBounds[0, 1] = float.NegativeInfinity;
+        this.dataBounds[1, 0] = float.PositiveInfinity;
+        this.dataBounds[1, 1] = float.NegativeInfinity;
 
     }
 
@@ -39,10 +39,10 @@ public class CityDataManager : DataManager
 
     public override void Clean()
     {
-        this.bounds[0, 0] = float.PositiveInfinity;
-        this.bounds[0, 1] = float.NegativeInfinity;
-        this.bounds[1, 0] = float.PositiveInfinity;
-        this.bounds[1, 1] = float.NegativeInfinity;
+        this.dataBounds[0, 0] = float.PositiveInfinity;
+        this.dataBounds[0, 1] = float.NegativeInfinity;
+        this.dataBounds[1, 0] = float.PositiveInfinity;
+        this.dataBounds[1, 1] = float.NegativeInfinity;
         this.screenBounds = new int[2];
         allData = null;
         allVectoredData = null;
@@ -50,20 +50,22 @@ public class CityDataManager : DataManager
         cityDataReader.Clean();
     }
 
+    //Obligatory step that all data has to go through either if gotten from a batch or
+    // gotten one by one
     private CityData RegisterData(CityData cityData)
     {
-        if (cityData.RawX < bounds[0,0])
-            bounds[0,0] = cityData.RawX;
+        if (cityData.RawX < dataBounds[0,0])
+            dataBounds[0,0] = cityData.RawX;
 
-        if (cityData.RawX > bounds[0,1])
-            bounds[0,1] = cityData.RawX;
+        if (cityData.RawX > dataBounds[0,1])
+            dataBounds[0,1] = cityData.RawX;
 
-        if (cityData.RawY < bounds[1,0])
-            bounds[1,0] = cityData.RawY;
+        if (cityData.RawY < dataBounds[1,0])
+            dataBounds[1,0] = cityData.RawY;
 
-        if (cityData.RawY > bounds[1,1])
-            bounds[1,1] = cityData.RawY;
-
+        if (cityData.RawY > dataBounds[1,1])
+            dataBounds[1,1] = cityData.RawY;
+         
         return cityData;
     }
 
@@ -80,6 +82,7 @@ public class CityDataManager : DataManager
 
     public override IEnumerable<IData> GetAllData()
     {
+        //using the cache
         if(allData != null)
         {
             return allData;
@@ -103,21 +106,21 @@ public class CityDataManager : DataManager
         //prepare ratio for getting coords in bounds
         //OPTIONAL make scalling modulable gien screen size
         
-        float dataBoundsXYRatio =  (bounds[0, 1] - bounds[0, 0]) / ((bounds[1, 1] - bounds[1, 0]))   ;
+        float dataBoundsXYRatio =  (dataBounds[0, 1] - dataBounds[0, 0]) / ((dataBounds[1, 1] - dataBounds[1, 0]))   ;
 
         for (int i = 0; i < cityData.Count; i++)
         {
             //voluntary inversion
-            float widthAsRatioOfOriginalTotalWidth = ((cityData[i].RawY - bounds[1, 0]) / (bounds[1, 1] - bounds[1, 0]));
+            float widthAsRatioOfOriginalTotalWidth = ((cityData[i].RawY - dataBounds[1, 0]) / (dataBounds[1, 1] - dataBounds[1, 0]));
             cityData[i].SetX(widthAsRatioOfOriginalTotalWidth  * screenBounds[0]);
 
             // Y is set as the % of total orginal height * the current width * the old % totalwith by totalheight 
-            float heightAsRatioOfOriginalTotalHeight = ((cityData[i].RawX - bounds[0, 0]) / (bounds[0, 1] - bounds[0, 0]));
+            float heightAsRatioOfOriginalTotalHeight = ((cityData[i].RawX - dataBounds[0, 0]) / (dataBounds[0, 1] - dataBounds[0, 0]));
             float newMaxYHeight = dataBoundsXYRatio * screenBounds[1];
             cityData[i].SetY( heightAsRatioOfOriginalTotalHeight  * newMaxYHeight);
         }
 
-        allData = cityData;
+        this.allData = cityData;
         return cityData;
     }
 
@@ -128,10 +131,10 @@ public class CityDataManager : DataManager
             return allVectoredData;
         }
 
-        CityData[] cityData = ((List<CityData>)GetAllData()).ToArray();
+        List<CityData> cityData = (List<CityData>)GetAllData();
 
-        allVectoredData = new Vector3[cityData.Length];  
-        for (int i = 0; i < cityData.Length; i++)
+        allVectoredData = new Vector3[cityData.Count];  
+        for (int i = 0; i < cityData.Count; i++)
         {
             allVectoredData[i] = new Vector3(cityData[i].X, cityData[i].Y,1);
         }
@@ -141,7 +144,7 @@ public class CityDataManager : DataManager
 
     public override object GetDataBounds()
     {
-        return bounds;
+        return dataBounds;
     }
 
     //return X : max,min; Y: max,min

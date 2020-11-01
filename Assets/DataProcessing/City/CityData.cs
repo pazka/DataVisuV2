@@ -8,17 +8,18 @@ public class CityData : Data
     public float X { get; private set; }
     public float Y { get; private set; }
 
-    public CityData(float x, float y) : base(x, y) {
+    public CityData(float x, float y) : base(x, y)
+    {
         X = x;
         Y = y;
     }
 
-    public void SetX(int x)
+    override public void SetX(float x)
     {
         X = x;
     }
 
-    public void SetY(int y)
+    override public void SetY(float y)
     {
         Y = y;
     }
@@ -28,4 +29,3 @@ public class CityData : Data
         return new Vector3(RawX, RawY);
     }
 }
-
