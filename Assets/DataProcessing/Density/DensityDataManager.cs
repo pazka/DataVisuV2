@@ -15,11 +15,13 @@ public class DensityDataManager : DataManager
      */
     private float[,] bounds = new float[2,2];
     int[] screenBounds = new int[2];
+    float densitySquareSize = 0;
 
 
     //tmps Big Vars
     private IEnumerable<IData> allData;
-    private Vector3[] allVectoredData;
+
+    public float DensitySquareSize { get => densitySquareSize; set => densitySquareSize = value; }
 
     public DensityDataManager()
     {
@@ -44,14 +46,17 @@ public class DensityDataManager : DataManager
         this.bounds[1, 0] = float.PositiveInfinity;
         this.bounds[1, 1] = float.NegativeInfinity;
         this.screenBounds = new int[2];
+        this.densitySquareSize = 0;
         allData = null;
-        allVectoredData = null;
 
         densityDataReader.Clean();
     }
 
     private DensityData RegisterData(DensityData densityData)
     {
+        if(this.densitySquareSize == 0)
+            this.densitySquareSize = densityData.H;
+
         if (densityData.RawX < bounds[0,0])
             bounds[0,0] = densityData.RawX;
 
@@ -88,7 +93,7 @@ public class DensityDataManager : DataManager
         List<DensityData> densityData = new List<DensityData>();
         DensityData tmpData;
 
-        //get raw data first
+        //get all raw data first
         while (!densityDataReader.EndOfStream)
         {
             tmpData = (DensityData)GetNextData();
@@ -121,28 +126,11 @@ public class DensityDataManager : DataManager
         return densityData;
     }
 
-    public Vector3[] GetAllVectoredData()
-    {
-        if(allVectoredData != null)
-        {
-            return allVectoredData;
-        }
-
-        DensityData[] densityData = ((List<DensityData>)GetAllData()).ToArray();
-
-        allVectoredData = new Vector3[densityData.Length];  
-        for (int i = 0; i < densityData.Length; i++)
-        {
-            allVectoredData[i] = new Vector3(densityData[i].X, densityData[i].Y,1);
-        }
-
-        return allVectoredData;
-    }
-
     public override object GetDataBounds()
     {
         return bounds;
     }
+    
 
     //return X : max,min; Y: max,min
     public override IDataReader GetDataReader()
