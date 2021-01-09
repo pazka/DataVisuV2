@@ -18,6 +18,7 @@ public class DensityData : Data
     public float Men { get; set; }
     public float Men_coll { get; set; }
     public float Men_prop { get; set; }
+    public string Raw { get; set; }
 
     //X == 0 left side
     //Y == 0 is top
@@ -34,23 +35,45 @@ public class DensityData : Data
         float men_basr  ,
         float men       ,
         float men_coll  ,
-        float men_prop  ) : base(x, y)
+        float men_prop  ,
+        string raw      
+        ) : base(x, y)
     {
-        X = x;
-        Y = y;
-        W = w;
-        H = h;
-        Area = area;
-        Pop = pop;
-        Rev = rev;
-        M25ans = m25ans;
-        P65ans = p65ans;
-        Men_basr = men_basr;
-        Men = men;
-        Men_coll = men_coll;
-        Men_prop = men_prop;
+        X           = x;
+        Y           = y;
+        W           = w;
+        H           = h;
+        Area        = area;
+        Pop         = pop;
+        Rev         = rev;
+        M25ans      = m25ans;
+        P65ans      = p65ans;
+        Men_basr    = men_basr;
+        Men         = men;
+        Men_coll    = men_coll;
+        Men_prop    = men_prop;
+        Raw         = raw;
     }
 
+    public DensityData(DensityData densityData) : this(
+        densityData.X       ,
+        densityData.Y       ,
+        densityData.W       ,
+        densityData.H       ,
+        densityData.Area    ,
+        densityData.Pop     ,
+        densityData.Rev     ,
+        densityData.M25ans  ,
+        densityData.P65ans  ,
+        densityData.Men_basr,
+        densityData.Men     ,
+        densityData.Men_coll,
+        densityData.Men_prop,
+        densityData.Raw
+        )
+    {
+
+    }
 
     public override void SetX(float x) 
     {
@@ -63,6 +86,15 @@ public class DensityData : Data
         base.SetY(Y);
         this.Y = y;
     }
+    public void SetH(float h)
+    {
+        this.H = h;
+    }
+    public void SetW(float w)
+    {
+        this.W = w;
+    }
+
 
     public override Vector3 GetPosition()
     {

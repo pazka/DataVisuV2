@@ -2,7 +2,8 @@ fs = require('fs');
 
 let newData = [];
 
-JSON.parse(fs.readFileSync('density.json')).forEach((d)=>{
+JSON.parse(fs.readFileSync('orig_density.json')).forEach((d)=>{
+
     newData.push({
         "x1" : d.geometry.coordinates[0][0][0],
         "y1" : d.geometry.coordinates[0][0][1],
@@ -20,7 +21,8 @@ JSON.parse(fs.readFileSync('density.json')).forEach((d)=>{
         "men_basr" : d.properties.men_basr,
         "men" : d.properties.men,
         "men_coll" : d.properties.men_coll,
-        "men_prop" : d.properties.men_prop
+        "men_prop" : d.properties.men_prop,
+        "raw" : JSON.stringify(d).replace("\"","\\\"")
     })
 })
 

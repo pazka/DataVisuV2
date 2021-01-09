@@ -30,6 +30,7 @@ public class DensityDataReader : IDataReader
         public float men;
         public float men_coll;
         public float men_prop;
+        public string raw;
     }
 
     public DensityDataReader()
@@ -62,8 +63,8 @@ public class DensityDataReader : IDataReader
         return new DensityData(
             json.x1,
             json.y1,
-            json.x2 - json.x1,
-            json.y4 - json.y1,
+            Math.Abs(json.x3 - json.x1),
+            Math.Abs(json.y3 - json.y1),
             json.area,
             json.pop,
             json.rev,
@@ -72,7 +73,8 @@ public class DensityDataReader : IDataReader
             json.men_basr,
             json.men,
             json.men_coll,
-            json.men_prop);
+            json.men_prop,
+            json.raw);
     }
 
     public void GoToNextData()

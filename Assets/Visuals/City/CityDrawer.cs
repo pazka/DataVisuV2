@@ -23,7 +23,7 @@ public class CityDrawer : MonoBehaviour
         _lineRenderer = gameObject.AddComponent<LineRenderer>();
 
         _cityDataManager = (CityDataManager)FactoryDataManager.GetInstance(FactoryDataManager.AvailableDataManagerTypes.CITY);
-        _cityDataManager.Init(1920, 1080);
+        _cityDataManager.Init(Screen.width, Screen.height);
 
         //Prepare Linerenderer
         _lineRenderer.sortingOrder = 1;

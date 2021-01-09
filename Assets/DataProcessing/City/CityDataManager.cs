@@ -1,20 +1,14 @@
-﻿using System.Collections;
+﻿using Assets.Bounds;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CityDataManager : DataManager
 {
     private CityDataReader cityDataReader;
-
-    /*
-     * |---------- |
-     * | MinX|MaxX |
-     * |-----|-----|
-     * | MinY|MaxY |
-     * |-----------|
-     */
-    private float[,] dataBounds = new float[2,2];
+    
     int[] screenBounds = new int[2];
+    GeographicBounds geoBounds;
 
 
     //tmps Big Vars
@@ -24,11 +18,7 @@ public class CityDataManager : DataManager
     public CityDataManager()
     {
         this.cityDataReader = (CityDataReader)FactoryDataReader.GetInstance(FactoryDataReader.AvailableDataReaderTypes.CITY);
-        this.dataBounds[0, 0] = float.PositiveInfinity;
-        this.dataBounds[0, 1] = float.NegativeInfinity;
-        this.dataBounds[1, 0] = float.PositiveInfinity;
-        this.dataBounds[1, 1] = float.NegativeInfinity;
-
+        this.geoBounds = (GeographicBounds)BoundsFactory.GetInstance(BoundsFactory.AvailableBoundsTypes.GEOGRAPHIC);
     }
 
     public override void Init(int screenBoundX, int screenBoundY)
@@ -39,10 +29,6 @@ public class CityDataManager : DataManager
 
     public override void Clean()
     {
-        this.dataBounds[0, 0] = float.PositiveInfinity;
-        this.dataBounds[0, 1] = float.NegativeInfinity;
-        this.dataBounds[1, 0] = float.PositiveInfinity;
-        this.dataBounds[1, 1] = float.NegativeInfinity;
         this.screenBounds = new int[2];
         allData = null;
         allVectoredData = null;
@@ -54,18 +40,8 @@ public class CityDataManager : DataManager
     // gotten one by one
     private CityData RegisterData(CityData cityData)
     {
-        if (cityData.RawX < dataBounds[0,0])
-            dataBounds[0,0] = cityData.RawX;
+        this.geoBounds.RegisterNewBounds(new float[] { cityData.RawX, cityData.RawY });
 
-        if (cityData.RawX > dataBounds[0,1])
-            dataBounds[0,1] = cityData.RawX;
-
-        if (cityData.RawY < dataBounds[1,0])
-            dataBounds[1,0] = cityData.RawY;
-
-        if (cityData.RawY > dataBounds[1,1])
-            dataBounds[1,1] = cityData.RawY;
-         
         return cityData;
     }
 
@@ -105,17 +81,19 @@ public class CityDataManager : DataManager
 
         //prepare ratio for getting coords in bounds
         //OPTIONAL make scalling modulable gien screen size
-        
-        float dataBoundsXYRatio =  (dataBounds[0, 1] - dataBounds[0, 0]) / ((dataBounds[1, 1] - dataBounds[1, 0]))   ;
+
+        float[,] geoBounds = (float[,])this.geoBounds.GetCurrentBounds();
+
+        float dataBoundsXYRatio =  (geoBounds[0, 1] - geoBounds[0, 0]) / ((geoBounds[1, 1] - geoBounds[1, 0]))   ;
 
         for (int i = 0; i < cityData.Count; i++)
         {
             //voluntary inversion
-            float widthAsRatioOfOriginalTotalWidth = ((cityData[i].RawY - dataBounds[1, 0]) / (dataBounds[1, 1] - dataBounds[1, 0]));
+            float widthAsRatioOfOriginalTotalWidth = ((cityData[i].RawY - geoBounds[1, 0]) / (geoBounds[1, 1] - geoBounds[1, 0]));
             cityData[i].SetX(widthAsRatioOfOriginalTotalWidth  * screenBounds[0]);
 
             // Y is set as the % of total orginal height * the current width * the old % totalwith by totalheight 
-            float heightAsRatioOfOriginalTotalHeight = ((cityData[i].RawX - dataBounds[0, 0]) / (dataBounds[0, 1] - dataBounds[0, 0]));
+            float heightAsRatioOfOriginalTotalHeight = ((cityData[i].RawX - geoBounds[0, 0]) / (geoBounds[0, 1] - geoBounds[0, 0]));
             float newMaxYHeight = dataBoundsXYRatio * screenBounds[1];
             cityData[i].SetY( heightAsRatioOfOriginalTotalHeight  * newMaxYHeight);
         }
@@ -141,15 +119,16 @@ public class CityDataManager : DataManager
 
         return allVectoredData;
     }
-
-    public override object GetDataBounds()
-    {
-        return dataBounds;
-    }
+ 
 
     //return X : max,min; Y: max,min
     public override IDataReader GetDataReader()
     {
         return cityDataReader;
+    }
+
+    public override IData[] getDataBounds()
+    {
+        throw new System.NotImplementedException();
     }
 }
