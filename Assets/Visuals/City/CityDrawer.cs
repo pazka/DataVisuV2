@@ -36,11 +36,15 @@ public class CityDrawer : MonoBehaviour
         _lineRenderer.endWidth = 1f;
 
         //link LineRenderer to Data
+        //TODO : Bake when unity is less shitty
+        //_lineRenderer.BakeMesh(_cityBoundsMesh, true);
+    }
+
+    public void FillWithData()
+    {
         cityData = _cityDataManager.GetAllVectoredData();
         _lineRenderer.positionCount = cityData.Length;
         _lineRenderer.SetPositions(cityData);
-        //TODO : Bake when unity is less shitty
-        //_lineRenderer.BakeMesh(_cityBoundsMesh, true);
     }
 
     void Update()

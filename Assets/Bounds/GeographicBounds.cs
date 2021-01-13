@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Assets.Bounds
 {
-    class GeographicBounds : IBounds
+    class GeographicBounds : GenericBound
     {
         /**
          * |---------- |
@@ -16,6 +16,7 @@ namespace Assets.Bounds
          * |-----------|
          */
         private float[,] bounds = new float[2,2];
+        private bool canRegisterNewBounds = false;
 
         public GeographicBounds()
         {
@@ -25,12 +26,12 @@ namespace Assets.Bounds
             this.bounds[1, 1] = float.NegativeInfinity;
         }
 
-        public object GetCurrentBounds()
+        override public object GetCurrentBounds()
         {
             return bounds;
         }
 
-        public void RegisterNewBounds(object data)
+        override public void RegisterNewBounds(object data)
         {
             float[] proposedBound = (float[])data;
 
@@ -39,6 +40,9 @@ namespace Assets.Bounds
 
         public void RegisterNewBounds(float[] proposedBound)
         {
+            if (canRegisterNewBounds)
+                return;
+
             if (proposedBound[0] < this.bounds[0, 0])
             {
                 this.bounds[0, 0] = proposedBound[0];
@@ -58,6 +62,11 @@ namespace Assets.Bounds
             {
                 this.bounds[1, 1] = proposedBound[1];
             }
+        }
+
+        public void StopRegisteringNewBounds()
+        {
+            canRegisterNewBounds = true;
         }
     }
 }

@@ -126,7 +126,7 @@ public class DensityDataManager : DataManager
 
         List<DensityData> densityData = new List<DensityData>();
         DensityData tmpData;
-
+        
         //get all raw data first
         while (!densityDataReader.EndOfStream)
         {

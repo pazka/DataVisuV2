@@ -66,7 +66,7 @@ public class CityDataManager : DataManager
 
         List<CityData> cityData = new List<CityData>();
         CityData tmpData;
-
+        
         //get raw data first
         while (!cityDataReader.EndOfStream)
         {

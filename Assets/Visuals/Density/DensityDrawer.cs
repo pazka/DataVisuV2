@@ -10,7 +10,7 @@ public class DensityDrawer : MonoBehaviour
     // and animates it.
     CityDataManager _cityDataManager;
     DensityDataManager _densityDataManager;
-    List<DensityData> _densityData;
+    List<DensityData> _densityData = new List<DensityData>();
     DensityData[] _dataBounds;
 
 
@@ -30,8 +30,6 @@ public class DensityDrawer : MonoBehaviour
         _densityDataManager.Init(Screen.width, Screen.height);
         //_densityDataManager.Init(1920, 1080, (float[,])FactoryDataManager.GetInstance(FactoryDataManager.AvailableDataManagerTypes.CITY).GetGeoBounds());
 
-        _densityData = (List<DensityData>)_densityDataManager.GetAllData();
-               
         for(Int16 i = 0; i < scaleGradientDetail; i++)
         {
             Texture2D square = new Texture2D(1, 1);
@@ -42,6 +40,12 @@ public class DensityDrawer : MonoBehaviour
             colorScales[i] = new GUIStyle();
             colorScales[i].normal.background = square;
         }
+
+    }
+
+    public void FillWithData()
+    {
+        _densityData = (List<DensityData>)_densityDataManager.GetAllData();
 
         _dataBounds = (DensityData[])_densityDataManager.getDataBounds();
     }
@@ -56,7 +60,14 @@ public class DensityDrawer : MonoBehaviour
         int i;
         for (i = 0;  i < colorScales.Length; i++)
         {
-            GUI.Label(new Rect(i * _densityData[0].H, 5, _densityData[0].H, _densityData[0].H), "" + (i + 1), colorScales[i]);
+            GUI.Label(new Rect(
+                i * 20, 
+                5, 
+                20, 
+                20), 
+                "" + (i + 1), 
+                colorScales[i]
+                );
         }
 
         foreach(DensityData densityData in _densityData)
