@@ -62,7 +62,6 @@ public class DensityDataManager : DataManager
 
         this.geoBounds.RegisterNewBounds(new float[] { densityData.RawX, densityData.RawY });
 
-
         if (densityData.M25ans < this.dataBounds[0].M25ans)
             this.dataBounds[0].M25ans = densityData.M25ans;
         if (densityData.M25ans > this.dataBounds[1].M25ans)
@@ -117,6 +116,33 @@ public class DensityDataManager : DataManager
         return null;
     }
 
+    private float ConvertX(float rawX, float[,] geoBounds)
+    {
+        float delX = geoBounds[0, 1] - geoBounds[0, 0];
+        float delY = geoBounds[1, 1] - geoBounds[1, 0];
+
+        //prepare ratio for getting coords in bounds
+        float dataBoundsXYRatio = delX / delY;
+
+        float widthAsRatioOfOriginalTotalWidth = ((rawX - geoBounds[1, 0]) / delY);
+        return widthAsRatioOfOriginalTotalWidth * screenBounds[0];
+    }
+
+    private float ConvertY(float rawY, float[,] geoBounds)
+    {
+        float delX = geoBounds[0, 1] - geoBounds[0, 0];
+        float delY = geoBounds[1, 1] - geoBounds[1, 0];
+
+        //prepare ratio for getting coords in bounds
+        float dataBoundsXYRatio = delX / delY;
+
+        // Y is set as the % of total orginal height * the current width * the old % totalwith by totalheight 
+        float heightAsRatioOfOriginalTotalHeight = ((rawY - geoBounds[0, 0]) / delX);
+        float newMaxYHeight = dataBoundsXYRatio * screenBounds[1];
+
+        return screenBounds[1] - heightAsRatioOfOriginalTotalHeight * newMaxYHeight;
+    }
+
     public override IEnumerable<IData> GetAllData()
     {
         if(allData != null)
@@ -140,26 +166,21 @@ public class DensityDataManager : DataManager
         float[,] geoBounds = (float[,])this.geoBounds.GetCurrentBounds();
         //Transforming raw data by converting to screen next
 
-        //prepare ratio for getting coords in bounds
         //OPTIONAL make scalling modulable gien screen size
-        float delX = geoBounds[0, 1] - geoBounds[0, 0];
-        float delY = geoBounds[1, 1] - geoBounds[1, 0];
-        float dataBoundsXYRatio =  delX / delY   ;
-
         for (int i = 0; i < densityData.Count; i++)
         {
             //voluntary h/w geo inversion
-            float widthAsRatioOfOriginalTotalWidth = ((densityData[i].RawY - geoBounds[1, 0]) / delY);
-            densityData[i].SetX(widthAsRatioOfOriginalTotalWidth  * screenBounds[0]);
+            densityData[i].SetX1(ConvertX(densityData[i].RawY1, geoBounds));
+            densityData[i].SetY1(ConvertY(densityData[i].RawX1, geoBounds));
 
-            // Y is set as the % of total orginal height * the current width * the old % totalwith by totalheight 
-            float heightAsRatioOfOriginalTotalHeight = ((densityData[i].RawX - geoBounds[0, 0]) / delX);
-            float newMaxYHeight = dataBoundsXYRatio * screenBounds[1];
-            densityData[i].SetY(screenBounds[1] - heightAsRatioOfOriginalTotalHeight  * newMaxYHeight);
+            densityData[i].SetX2(ConvertX(densityData[i].RawY2, geoBounds));
+            densityData[i].SetY2(ConvertY(densityData[i].RawX2, geoBounds));
 
+            densityData[i].SetX3(ConvertX(densityData[i].RawY3, geoBounds));
+            densityData[i].SetY3(ConvertY(densityData[i].RawX3, geoBounds));
 
-            densityData[i].SetW(densityData[i].W * (screenBounds[0] / delX));
-            densityData[i].SetH(densityData[i].H * (screenBounds[0] / delY));
+            densityData[i].SetX4(ConvertX(densityData[i].RawY4, geoBounds));
+            densityData[i].SetY4(ConvertY(densityData[i].RawX4, geoBounds));
         }
 
         allData = densityData;

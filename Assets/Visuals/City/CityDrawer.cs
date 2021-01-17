@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+namespace Assets.Visuals { 
 public class CityDrawer : MonoBehaviour
 {
     // Creates a line renderer that follows a Sin() function
@@ -11,6 +12,7 @@ public class CityDrawer : MonoBehaviour
     CityDataManager _cityDataManager;
     LineRenderer _lineRenderer;
     Vector3[] cityData;
+   
 
     void Start()
     {
@@ -38,13 +40,31 @@ public class CityDrawer : MonoBehaviour
         //link LineRenderer to Data
         //TODO : Bake when unity is less shitty
         //_lineRenderer.BakeMesh(_cityBoundsMesh, true);
+
+        this.LoadAllVectoredData();
     }
 
     public void FillWithData()
     {
-        cityData = _cityDataManager.GetAllVectoredData();
         _lineRenderer.positionCount = cityData.Length;
         _lineRenderer.SetPositions(cityData);
+    }
+
+
+    public void LoadAllVectoredData()
+    {
+        if (this.cityData != null)
+        {
+            return;
+        }
+
+        List<CityData> cityData = (List<CityData>)_cityDataManager.GetAllData();
+
+        this.cityData = new Vector3[cityData.Count];
+        for (int i = 0; i < cityData.Count; i++)
+        {
+            this.cityData[i] = new Vector3(cityData[i].X, cityData[i].Y, 1);
+        }
     }
 
     void Update()
@@ -52,4 +72,5 @@ public class CityDrawer : MonoBehaviour
         //TODO : Bake when unity is less shitty
         //_lineRenderer.SetPositions(_cityBoundsMesh.vertices);
     }
+}
 }

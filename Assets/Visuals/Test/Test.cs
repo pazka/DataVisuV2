@@ -1,0 +1,114 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+using Random = UnityEngine.Random;
+
+namespace Assets.Visuals
+{
+    public class Test : MonoBehaviour
+    {
+        // How many meshes to draw.
+        public int population;
+        // Range to draw meshes within.
+        public float range;
+
+        public float quadWidth = 1f;
+        public float quadHeight = 1f;
+
+        // Material to use for drawing the meshes.
+        public Material material;
+
+        private Matrix4x4[] matrices;
+        private MaterialPropertyBlock block;
+
+        private Mesh mesh;
+
+        private void Setup()
+        {
+            Mesh mesh = CreateQuad(quadWidth,quadHeight);
+            this.mesh = mesh;
+
+            matrices = new Matrix4x4[population];
+            Vector4[] colors = new Vector4[population];
+
+            block = new MaterialPropertyBlock();
+
+            for (int i = 0; i < population; i++)
+            {
+                // Build matrix.
+                Vector3 position = new Vector3(Random.Range(0, range), Random.Range(0, range),0);
+                Quaternion rotation = Quaternion.Euler(Random.Range(-180, 180), Random.Range(-180, 180), 0);
+                Vector3 scale = Vector3.one;
+
+                matrices[i] = Matrix4x4.TRS(position, rotation, scale);
+                
+                colors[i] = Color.Lerp(Color.red, Color.blue, Random.value);
+            }
+
+            // Custom shader needed to read these!!
+            block.SetVectorArray("_Colors", colors);
+            material.enableInstancing = true;
+        }
+
+        private Mesh CreateQuad(float width = 1f, float height = 1f)
+        {
+            // Create a quad mesh.
+            var mesh = new Mesh();
+
+            float w = width * .5f;
+            float h = height * .5f;
+            var vertices = new Vector3[4] {
+            new Vector3(-w, -h, 0),
+            new Vector3(w, -h, 0),
+            new Vector3(-w, h, 0),
+            new Vector3(w, h, 0)
+        };
+
+            var tris = new int[6] {
+            // lower left tri.
+            0, 2, 1,
+            // lower right tri
+            2, 3, 1
+        };
+
+            var normals = new Vector3[4] {
+            -Vector3.forward,
+            -Vector3.forward,
+            -Vector3.forward,
+            -Vector3.forward,
+        };
+
+            var uv = new Vector2[4] {
+            new Vector2(0, 0),
+            new Vector2(1, 0),
+            new Vector2(0, 1),
+            new Vector2(1, 1),
+        };
+
+            mesh.vertices = vertices;
+            mesh.triangles = tris;
+            mesh.normals = normals;
+            mesh.uv = uv;
+
+            return mesh;
+        }
+
+        private void Start()
+        {
+            Setup();
+        }
+
+        private void Update()
+        {
+            DrawTest();
+        }
+
+        public void DrawTest()
+        {
+            // Draw a bunch of meshes each frame.
+            Graphics.DrawMeshInstanced(mesh, 0, material, matrices, population, block);
+        }
+    }
+}

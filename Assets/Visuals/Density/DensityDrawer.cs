@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+namespace Assets.Visuals
+{ 
 public class DensityDrawer : MonoBehaviour
 {
     // Creates a line renderer that follows a Sin() function
@@ -40,7 +42,6 @@ public class DensityDrawer : MonoBehaviour
             colorScales[i] = new GUIStyle();
             colorScales[i].normal.background = square;
         }
-
     }
 
     public void FillWithData()
@@ -80,4 +81,5 @@ public class DensityDrawer : MonoBehaviour
             GUILayout.EndArea();
         }
     }
+}
 }

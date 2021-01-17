@@ -13,7 +13,6 @@ public class CityDataManager : DataManager
 
     //tmps Big Vars
     private IEnumerable<IData> allData;
-    private Vector3[] allVectoredData;
 
     public CityDataManager()
     {
@@ -31,7 +30,6 @@ public class CityDataManager : DataManager
     {
         this.screenBounds = new int[2];
         allData = null;
-        allVectoredData = null;
 
         cityDataReader.Clean();
     }
@@ -77,6 +75,8 @@ public class CityDataManager : DataManager
             }
         }
 
+        this.geoBounds.StopRegisteringNewBounds();
+
         //Transforming raw data by converting to screen next
 
         //prepare ratio for getting coords in bounds
@@ -102,23 +102,6 @@ public class CityDataManager : DataManager
         return cityData;
     }
 
-    public Vector3[] GetAllVectoredData()
-    {
-        if(allVectoredData != null)
-        {
-            return allVectoredData;
-        }
-
-        List<CityData> cityData = (List<CityData>)GetAllData();
-
-        allVectoredData = new Vector3[cityData.Count];  
-        for (int i = 0; i < cityData.Count; i++)
-        {
-            allVectoredData[i] = new Vector3(cityData[i].X, cityData[i].Y,1);
-        }
-
-        return allVectoredData;
-    }
  
 
     //return X : max,min; Y: max,min
