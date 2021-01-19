@@ -14,9 +14,6 @@ namespace Assets.Visuals
         // Range to draw meshes within.
         public float range;
 
-        public float quadWidth = 1f;
-        public float quadHeight = 1f;
-
         // Material to use for drawing the meshes.
         public Material material;
 
@@ -27,7 +24,11 @@ namespace Assets.Visuals
 
         private void Setup()
         {
-            Mesh mesh = CreateQuad(quadWidth,quadHeight);
+            Mesh mesh = CreateQuad(
+                50,50,
+                100,50,
+                100,100,
+                50,100);
             this.mesh = mesh;
 
             matrices = new Matrix4x4[population];
@@ -38,8 +39,8 @@ namespace Assets.Visuals
             for (int i = 0; i < population; i++)
             {
                 // Build matrix.
-                Vector3 position = new Vector3(Random.Range(0, range), Random.Range(0, range),0);
-                Quaternion rotation = Quaternion.Euler(Random.Range(-180, 180), Random.Range(-180, 180), 0);
+                Vector3 position = new Vector3(0,0,0);
+                Quaternion rotation = Quaternion.Euler(0,0, 0);
                 Vector3 scale = Vector3.one;
 
                 matrices[i] = Matrix4x4.TRS(position, rotation, scale);
@@ -52,25 +53,28 @@ namespace Assets.Visuals
             material.enableInstancing = true;
         }
 
-        private Mesh CreateQuad(float width = 1f, float height = 1f)
+        private Mesh CreateQuad(
+            float x1, float y1, 
+            float x2, float y2,
+            float x3, float y3,
+            float x4, float y4 )
         {
             // Create a quad mesh.
             var mesh = new Mesh();
-
-            float w = width * .5f;
-            float h = height * .5f;
+            
             var vertices = new Vector3[4] {
-            new Vector3(-w, -h, 0),
-            new Vector3(w, -h, 0),
-            new Vector3(-w, h, 0),
-            new Vector3(w, h, 0)
+            new Vector3(x1, y1, 0),
+            new Vector3(x2, y2, 0),
+            new Vector3(x3, y3, 0),
+            new Vector3(x4, y4, 0)
         };
+            
 
             var tris = new int[6] {
             // lower left tri.
             0, 2, 1,
             // lower right tri
-            2, 3, 1
+            0, 3, 2
         };
 
             var normals = new Vector3[4] {
