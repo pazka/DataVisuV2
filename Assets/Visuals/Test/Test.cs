@@ -106,7 +106,6 @@ namespace Assets.Visuals
 
         private void Update()
         {
-            DrawTest();
         }
 
         public void DrawTest()

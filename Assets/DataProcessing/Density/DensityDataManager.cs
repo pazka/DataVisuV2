@@ -123,8 +123,8 @@ public class DensityDataManager : DataManager
 
         //prepare ratio for getting coords in bounds
         float dataBoundsXYRatio = delX / delY;
-
         float widthAsRatioOfOriginalTotalWidth = ((rawX - geoBounds[1, 0]) / delY);
+
         return widthAsRatioOfOriginalTotalWidth * screenBounds[0];
     }
 
@@ -140,7 +140,7 @@ public class DensityDataManager : DataManager
         float heightAsRatioOfOriginalTotalHeight = ((rawY - geoBounds[0, 0]) / delX);
         float newMaxYHeight = dataBoundsXYRatio * screenBounds[1];
 
-        return screenBounds[1] - heightAsRatioOfOriginalTotalHeight * newMaxYHeight;
+        return heightAsRatioOfOriginalTotalHeight * newMaxYHeight;
     }
 
     public override IEnumerable<IData> GetAllData()

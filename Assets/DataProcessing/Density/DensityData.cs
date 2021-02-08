@@ -110,7 +110,7 @@ public class DensityData : Data
 
     public override void SetY(float y)
     {
-        base.SetY(Y);
+        base.SetY(y);
         this.Y1 = y;
     }
 
@@ -121,7 +121,7 @@ public class DensityData : Data
 
     public void SetY1(float y)
     {
-        this.SetY(Y);
+        this.SetY(y);
     }
 
 

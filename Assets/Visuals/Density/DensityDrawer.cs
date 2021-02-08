@@ -1,85 +1,144 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Visuals
-{ 
-public class DensityDrawer : MonoBehaviour
 {
-    // Creates a line renderer that follows a Sin() function
-    // and animates it.
-    CityDataManager _cityDataManager;
-    DensityDataManager _densityDataManager;
-    List<DensityData> _densityData = new List<DensityData>();
-    DensityData[] _dataBounds;
-
-
-    //visual vars
-    int scaleGradientDetail = 5;
-    GUIStyle[] colorScales = new GUIStyle[5];
-    public Color[] gradientColors = {Color.blue, Color.magenta, Color.red, Color.green, Color.yellow};
-    public SpriteRenderer _SpriteRenderer;
-    public Transform spriteTransform;
-
-    void Start()
+    public class DensityDrawer : MonoBehaviour
     {
-        //Prepare entities        
-        _SpriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-        _densityDataManager = (DensityDataManager)FactoryDataManager.GetInstance(FactoryDataManager.AvailableDataManagerTypes.DENSITY);
+        // Creates a line renderer that follows a Sin() function
+        // and animates it.
+        CityDataManager _cityDataManager;
+        DensityDataManager _densityDataManager;
+        List<DensityData> _densityData = new List<DensityData>();
+        DensityData[] _dataBounds;
 
-        _densityDataManager.Init(Screen.width, Screen.height);
-        //_densityDataManager.Init(1920, 1080, (float[,])FactoryDataManager.GetInstance(FactoryDataManager.AvailableDataManagerTypes.CITY).GetGeoBounds());
 
-        for(Int16 i = 0; i < scaleGradientDetail; i++)
+        //visual vars
+        int scaleGradientDetail = 5;
+        GUIStyle[] colorScales = new GUIStyle[5];
+        public Color[] gradientColors = { Color.blue, Color.magenta, Color.red, Color.green, Color.yellow };
+
+
+        Material globalmaterialForMesh;
+        Mesh meshInstance;
+        Matrix4x4[] matricesOfDensity;
+
+        Vector4[] colors;
+        MaterialPropertyBlock colorBlockShader;
+
+        void Start()
         {
-            Texture2D square = new Texture2D(1, 1);
-            square.SetPixel(0, 0, gradientColors[i]);
-            square.wrapMode = TextureWrapMode.Repeat;
-            square.Apply();
+            //Prepare entities        
+            _densityDataManager = (DensityDataManager)FactoryDataManager.GetInstance(FactoryDataManager.AvailableDataManagerTypes.DENSITY);
 
-            colorScales[i] = new GUIStyle();
-            colorScales[i].normal.background = square;
+            _densityDataManager.Init(Screen.width, Screen.height);
+
+            colorBlockShader = new MaterialPropertyBlock();
+            globalmaterialForMesh = new Material(Shader.Find("Customs/InstancedColor"));
+
         }
-    }
 
-    public void FillWithData()
-    {
-        _densityData = (List<DensityData>)_densityDataManager.GetAllData();
-
-        _dataBounds = (DensityData[])_densityDataManager.getDataBounds();
-    }
-
-    void Update()
-    {
-
-    }
-
-    void OnGUI()
-    {
-        int i;
-        for (i = 0;  i < colorScales.Length; i++)
+        public void FillWithData()
         {
-            GUI.Label(new Rect(
-                i * 20, 
-                5, 
-                20, 
-                20), 
-                "" + (i + 1), 
-                colorScales[i]
+            //Getting our Data
+            _densityData = (List<DensityData>)_densityDataManager.GetAllData();
+            _dataBounds = (DensityData[])_densityDataManager.getDataBounds();
+
+            //Getting our visuals
+            DensityData firstDensityData = _densityData[0];
+            this.meshInstance = CreateQuad(
+                0,0,
+                firstDensityData.X1 - firstDensityData.X2, firstDensityData.Y1  - firstDensityData.Y2,
+                firstDensityData.X1 - firstDensityData.X3, firstDensityData.Y1  - firstDensityData.Y3,
+                firstDensityData.X1 - firstDensityData.X4, firstDensityData.Y1  - firstDensityData.Y4
                 );
+
+            this.matricesOfDensity = new Matrix4x4[_densityData.Count];
+            colors = new Vector4[_densityData.Count];
+
+            for (int i = 0; i < _densityData.Count; i++)
+            {
+                DensityData densityData = _densityData[i];
+
+                float tmpPop = densityData.Pop - _dataBounds[0].Pop;
+                int indexSlice = (int)Math.Floor(tmpPop / (((_dataBounds[1].Pop + 1f) - _dataBounds[0].Pop) / scaleGradientDetail));
+
+
+                Vector3 position = new Vector3(
+                    (_densityData[i].X1 + _densityData[i].X3) / 2,
+                    (_densityData[i].Y1 + _densityData[i].Y2) / 2, 0);
+                Quaternion rotation = Quaternion.Euler(0, 0, 0);
+                Vector3 scale = Vector3.one;
+
+                matricesOfDensity[i] = Matrix4x4.TRS(position, rotation, scale);
+                colors[i] = this.gradientColors[indexSlice];
+
+                // GUILayout.BeginArea(new Rect(densityData.X1, densityData.Y1, densityData.X1 - densityData.X3, densityData.Y3 - densityData.Y1), colorScales[indexSlice]);
+
+            }
+
+            //creation of custom shader
+            colorBlockShader.SetVectorArray("_Colors", colors);
+            globalmaterialForMesh.enableInstancing = true;
         }
 
-        foreach(DensityData densityData in _densityData)
-        {
-            i++;
-            float tmpPop = densityData.Pop - _dataBounds[0].Pop;
-            int indexSlice = (int) Math.Floor( tmpPop / (((_dataBounds[1].Pop + 1f) - _dataBounds[0].Pop) / scaleGradientDetail));
+        private Mesh CreateQuad(
+            float x1, float y1,
+            float x2, float y2,
+            float x3, float y3,
+            float x4, float y4){
 
-            GUILayout.BeginArea(new Rect(densityData.X, densityData.Y, densityData.W, densityData.H), colorScales[indexSlice]);
-            GUILayout.EndArea();
+            // Create a quad mesh.
+            var mesh = new Mesh();
+
+            var vertices = new Vector3[4] {
+                new Vector3(x4, y4, 0),
+                new Vector3(x3, y3, 0),
+                new Vector3(x2, y2, 0),
+                new Vector3(x1, y1, 0)
+            };
+
+            var tris = new int[6] {
+                // lower left tri.
+                0, 2, 1,
+                // lower right tri
+                0, 3, 2
+            };
+
+            var normals = new Vector3[4] {
+                -Vector3.forward,
+                -Vector3.forward,
+                -Vector3.forward,
+                -Vector3.forward,
+            };
+
+            var uv = new Vector2[4] {
+                new Vector2(0, 0),
+                new Vector2(1, 0),
+                new Vector2(0, 1),
+                new Vector2(1, 1),
+            };
+
+            mesh.vertices = vertices;
+            mesh.triangles = tris;
+            mesh.normals = normals;
+            mesh.uv = uv;
+
+            return mesh;
+        }
+
+        void Update()
+        {
+            if (_densityData.Count > 0)
+            {
+                Graphics.DrawMeshInstanced(meshInstance, 0, globalmaterialForMesh, matricesOfDensity, _densityData.Count, colorBlockShader);
+            }
+        }
+
+        void OnGUI()
+        {
+         
         }
     }
-}
 }
