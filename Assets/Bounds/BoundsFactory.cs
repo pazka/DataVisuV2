@@ -1,17 +1,12 @@
-﻿using Assets.Bounds;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace Assets.Bounds
+namespace Bounds
 {
     static class BoundsFactory
     {
         public enum AvailableBoundsTypes
         {
-            GEOGRAPHIC, TIME
+            GEOGRAPHIC,BATIMENT, TIME
         };
 
         private static Dictionary<AvailableBoundsTypes, IBounds> instances = new Dictionary<AvailableBoundsTypes, IBounds>();
@@ -29,6 +24,12 @@ namespace Assets.Bounds
                 case AvailableBoundsTypes.TIME:
                     if (!instances.ContainsKey(boundsType))
                         instances.Add(boundsType, new TimeBounds());
+
+                    return instances[boundsType];
+
+                case AvailableBoundsTypes.BATIMENT:
+                    if (!instances.ContainsKey(boundsType))
+                        instances.Add(boundsType, new GeographicBatBounds());
 
                     return instances[boundsType];
 

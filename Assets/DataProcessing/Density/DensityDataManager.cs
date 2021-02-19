@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Assets.Bounds;
+using Bounds;
 
 namespace DataProcessing.Density
 {

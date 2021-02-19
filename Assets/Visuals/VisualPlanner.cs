@@ -33,7 +33,7 @@ public class VisualPlanner : MonoBehaviour
         if (activateRilDrawer)
             rilDrawer.FillWithData();
 
-        if (activateDensityDrawer)
+        if (activateTest)
             test.DrawTest();
     }
 
