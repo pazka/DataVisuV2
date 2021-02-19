@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using DataProcessing.City;
+using DataProcessing.Density;
 using UnityEngine;
 
 namespace Assets.Visuals
@@ -17,7 +19,7 @@ namespace Assets.Visuals
         //visual vars
         int scaleGradientDetail = 5;
         GUIStyle[] colorScales = new GUIStyle[5];
-        public Color[] gradientColors = { Color.blue, Color.magenta, Color.red, Color.green, Color.yellow };
+        public Color[] gradientColors = { Color.red, Color.green, Color.blue, Color.yellow, Color.white };
 
 
         Material globalmaterialForMesh;
@@ -107,10 +109,10 @@ namespace Assets.Visuals
             };
 
             var normals = new Vector3[4] {
-                -Vector3.forward,
-                -Vector3.forward,
-                -Vector3.forward,
-                -Vector3.forward,
+                Vector3.forward,
+                Vector3.forward,
+                Vector3.forward,
+                Vector3.forward,
             };
 
             var uv = new Vector2[4] {

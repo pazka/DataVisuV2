@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using DataProcessing.City;
+using DataProcessing.Density;
+using DataProcessing.Ril;
 using UnityEngine;
 
 public static class FactoryDataManager 
 {
     public enum AvailableDataManagerTypes
     {
-        CITY, LUMINOSITY,DENSITY
+        CITY, RIL,DENSITY
     };
 
     private static Dictionary<AvailableDataManagerTypes, IDataManager> instances = new Dictionary<AvailableDataManagerTypes, IDataManager>();
@@ -24,6 +27,12 @@ public static class FactoryDataManager
             case AvailableDataManagerTypes.DENSITY:
                 if (!instances.ContainsKey(dataManagerType))
                     instances.Add(dataManagerType, new DensityDataManager());
+
+                return instances[dataManagerType];
+
+            case AvailableDataManagerTypes.RIL:
+                if (!instances.ContainsKey(dataManagerType))
+                    instances.Add(dataManagerType, new RilDataManager());
 
                 return instances[dataManagerType];
 

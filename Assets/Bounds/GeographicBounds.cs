@@ -16,7 +16,7 @@ namespace Assets.Bounds
          * |-----------|
          */
         private float[,] bounds = new float[2,2];
-        private bool canRegisterNewBounds = false;
+        private bool canRegisterNewBounds = true;
 
         public GeographicBounds()
         {
@@ -40,7 +40,7 @@ namespace Assets.Bounds
 
         public void RegisterNewBounds(float[] proposedBound)
         {
-            if (canRegisterNewBounds)
+            if (!canRegisterNewBounds)
                 return;
 
             if (proposedBound[0] < this.bounds[0, 0])
@@ -66,7 +66,7 @@ namespace Assets.Bounds
 
         public void StopRegisteringNewBounds()
         {
-            canRegisterNewBounds = true;
+            canRegisterNewBounds = false;
         }
     }
 }

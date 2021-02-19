@@ -11,7 +11,7 @@ namespace Assets.Bounds
     {
         public enum AvailableBoundsTypes
         {
-            GEOGRAPHIC, SCREEN
+            GEOGRAPHIC, TIME
         };
 
         private static Dictionary<AvailableBoundsTypes, IBounds> instances = new Dictionary<AvailableBoundsTypes, IBounds>();
@@ -23,6 +23,12 @@ namespace Assets.Bounds
                 case AvailableBoundsTypes.GEOGRAPHIC:
                     if (!instances.ContainsKey(boundsType))
                         instances.Add(boundsType, new GeographicBounds());
+
+                    return instances[boundsType];
+
+                case AvailableBoundsTypes.TIME:
+                    if (!instances.ContainsKey(boundsType))
+                        instances.Add(boundsType, new TimeBounds());
 
                     return instances[boundsType];
 

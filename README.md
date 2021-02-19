@@ -1,8 +1,7 @@
 ﻿# What are the file used for 
 
-|--|--|
-|foler|usage|
-|--|--|
+| folder | usage | 
+| --- | --- |
 | DataAsset/[city] | All raw data files, sorted by city|
 | DataProcessing/Generic | Framework to inherit from when adding a new data |
 | DataProcessing/[data-name] | Contains the 3 files needed to implement a new data |

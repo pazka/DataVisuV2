@@ -1,31 +1,31 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class CityData : Data
+namespace DataProcessing.City
 {
-    public float X { get; private set; }
-    public float Y { get; private set; }
-
-    public CityData(float x, float y) : base(x, y)
+    public class CityData : Data
     {
-        X = x;
-        Y = y;
-    }
+        public float X { get; private set; }
+        public float Y { get; private set; }
 
-    override public void SetX(float x)
-    {
-        X = x;
-    }
+        public CityData(float x, float y) : base(x, y)
+        {
+            X = x;
+            Y = y;
+        }
 
-    override public void SetY(float y)
-    {
-        Y = y;
-    }
+        override public void SetX(float x)
+        {
+            X = x;
+        }
 
-    public override Vector3 GetPosition()
-    {
-        return new Vector3(RawX, RawY);
+        override public void SetY(float y)
+        {
+            Y = y;
+        }
+
+        public override Vector3 GetPosition()
+        {
+            return new Vector3(RawX, RawY);
+        }
     }
 }
