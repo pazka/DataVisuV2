@@ -3,7 +3,7 @@ using DataProcessing.Ril;
 using Packages.Rider.Editor.UnitTesting;
 using UnityEngine;
 
-namespace Visuals.Ril
+namespace Visuals
 {
     public class RilDrawer : MonoBehaviour
     {
@@ -25,8 +25,7 @@ namespace Visuals.Ril
         public void FillWithData()
         {
             allData = (List<RilData>) _rilDataManager.GetAllData();
-            
-         }
+        }
         
         void Update()
         {

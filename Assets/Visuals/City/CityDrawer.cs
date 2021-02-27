@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DataProcessing.City;
 using UnityEngine;
 
-namespace Assets.Visuals { 
+namespace Visuals { 
 public class CityDrawer : MonoBehaviour
 {
     // Creates a line renderer that follows a Sin() function

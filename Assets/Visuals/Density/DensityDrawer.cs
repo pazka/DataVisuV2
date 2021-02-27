@@ -4,7 +4,7 @@ using DataProcessing.City;
 using DataProcessing.Density;
 using UnityEngine;
 
-namespace Assets.Visuals
+namespace Visuals
 {
     public class DensityDrawer : MonoBehaviour
     {
