@@ -38,6 +38,20 @@ namespace Visuals
 
             colorBlockShader = new MaterialPropertyBlock();
             globalmaterialForMesh = new Material(Shader.Find("Customs/InstancedColor"));
+            
+            
+            //prepare square to use for GUI
+            for(Int16 i = 0; i < scaleGradientDetail; i++)
+            {
+                Texture2D square = new Texture2D(1, 1);
+                square.SetPixel(0, 0, gradientColors[i]);
+                square.wrapMode = TextureWrapMode.Repeat;
+                square.Apply();
+
+                colorScales[i] = new GUIStyle();
+                colorScales[i].normal.background = square;
+            }
+
 
         }
 
@@ -74,10 +88,7 @@ namespace Visuals
                 Vector3 scale = Vector3.one;
 
                 matricesOfDensity[i] = Matrix4x4.TRS(position, rotation, scale);
-                colors[i] = this.gradientColors[indexSlice];
-
-                // GUILayout.BeginArea(new Rect(densityData.X1, densityData.Y1, densityData.X1 - densityData.X3, densityData.Y3 - densityData.Y1), colorScales[indexSlice]);
-
+                colors[i] = this.gradientColors[indexSlice]; 
             }
 
             //creation of custom shader
@@ -139,8 +150,13 @@ namespace Visuals
         }
 
         void OnGUI()
-        {
-         
+        { 
+            int i;
+            float legendWidth = 50;
+            for (i = 0;  i < colorScales.Length; i++)
+            {
+                GUI.Label(new Rect(i * legendWidth, 5, legendWidth, legendWidth), "" + (i + 1), colorScales[i]);
+            }
         }
     }
 }
