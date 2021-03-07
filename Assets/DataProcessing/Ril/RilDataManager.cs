@@ -11,6 +11,7 @@ namespace DataProcessing.Ril
         private RilDataReader rilDataReader;
 
         int[] screenBounds = new int[2];
+        int[] screenOffset = new int[2];
         GeographicBatBounds geoBounds;
         TimeBounds timeBounds;
 
@@ -31,6 +32,12 @@ namespace DataProcessing.Ril
         public override void Init(int screenBoundX, int screenBoundY)
         {
             screenBounds = new int[2] {screenBoundX, screenBoundY};
+            rilDataReader.Init();
+        }
+        public void Init(int screenBoundX, int screenBoundY, int screenOffsetX, int screenOffsetY)
+        {
+            screenBounds = new int[2] {screenBoundX, screenBoundY};
+            screenOffset = new int[2] {screenOffsetX, screenOffsetY};
             rilDataReader.Init();
         }
 
@@ -106,11 +113,11 @@ namespace DataProcessing.Ril
                     ((rilData[i].RawY - _geoBounds[1, 0]) / (_geoBounds[1, 1] - _geoBounds[1, 0]));
                 rilData[i].SetX(widthAsRatioOfOriginalTotalWidth * screenBounds[0]);
 
-                // Y is set as the % of total orginal height * the current width * the old % totalwith by totalheight 
+                // Y is set as the % of total original height * the current width * the old % totalwidth by totalheight 
                 float heightAsRatioOfOriginalTotalHeight =
                     ((rilData[i].RawX - _geoBounds[0, 0]) / (_geoBounds[0, 1] - _geoBounds[0, 0]));
                 float newMaxYHeight = dataBoundsXYRatio * screenBounds[1];
-                rilData[i].SetY(heightAsRatioOfOriginalTotalHeight * newMaxYHeight);
+                rilData[i].SetY(screenBounds[1] - heightAsRatioOfOriginalTotalHeight * screenBounds[1]);
 
                 //Convert Real time to time [0->1] relative to min and max of it's times 
                 float timeRange = _timeBounds[1] - _timeBounds[0];

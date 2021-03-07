@@ -31,7 +31,7 @@ namespace Visuals
 
         void Start()
         {
-            //Prepare entities        
+            //Prepare entities
             _densityDataManager = (DensityDataManager)FactoryDataManager.GetInstance(FactoryDataManager.AvailableDataManagerTypes.DENSITY);
 
             _densityDataManager.Init(Screen.width, Screen.height);
@@ -51,8 +51,6 @@ namespace Visuals
                 colorScales[i] = new GUIStyle();
                 colorScales[i].normal.background = square;
             }
-
-
         }
 
         public void FillWithData()

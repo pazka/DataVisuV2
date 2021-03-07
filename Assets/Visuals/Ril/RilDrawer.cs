@@ -25,32 +25,24 @@ namespace Visuals
         public void FillWithData()
         {
             allData = (List<RilData>) _rilDataManager.GetAllData();
+            
+            foreach (RilData currentRil in allData)
+            {
+                GameObject batVisual = 
+                    GameObject.Instantiate(batRessource) as GameObject;
+            
+                if (!batVisual)
+                    break;
+
+                Vector3 currentPosition = new Vector3(currentRil.X, currentRil.Y, 0);
+                batVisual.transform.position = currentPosition;
+                
+                allBatVisuals.Push(batVisual);
+            }
         }
         
         void Update()
         {
-            if (allData == null)
-                return;
-            
-            if (currentRilIndex >= allData.Count)
-            {
-                return;
-            }
-
-            RilData currentRil = allData[currentRilIndex];
-
-            Vector3 currentPosition = new Vector3(currentRil.X, currentRil.Y, 0);
-            
-            GameObject batVisual = 
-                GameObject.Instantiate(batRessource) as GameObject;
-            
-            if (!batVisual)
-                return;
-
-            batVisual.transform.position = currentPosition;
-            this.currentBatVisual = batVisual;
-
-            currentRilIndex++;
         }
     }
 }
