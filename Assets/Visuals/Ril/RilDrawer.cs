@@ -1,48 +1,52 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using DataProcessing.Ril;
-using Packages.Rider.Editor.UnitTesting;
 using UnityEngine;
 
-namespace Visuals
+namespace Visuals.Ril
 {
+    
     public class RilDrawer : MonoBehaviour
     {
-        RilDataManager _rilDataManager;
-        private int currentRilIndex = 0;
+        RilDataManager rilDataManager;
+        [SerializeField] private float timelapseDuration = 60;
         private List<RilData> allData;
-        private Stack<GameObject> allBatVisuals = new Stack<GameObject>();
+        private Stack<RilDataVisual> allBatDataVisuals = new Stack<RilDataVisual>();
         private GameObject currentBatVisual;
-
+        private RilEventHatcher rilEventHatcher = RilEventHatcher.Instance;
+        
         public GameObject batRessource;
         
         void Start()
         {
             //Prepare entities        
-            _rilDataManager = (RilDataManager)FactoryDataManager.GetInstance(FactoryDataManager.AvailableDataManagerTypes.RIL);
-            _rilDataManager.Init(Screen.width, Screen.height);
+            rilDataManager = (RilDataManager)FactoryDataManager.GetInstance(FactoryDataManager.AvailableDataManagerTypes.RIL);
+            rilDataManager.Init(Screen.width, Screen.height);
         }
 
         public void FillWithData()
         {
-            allData = (List<RilData>) _rilDataManager.GetAllData();
+            allData = (List<RilData>) rilDataManager.GetAllData();
+            allData = allData.OrderBy(rd => rd.T).Reverse().ToList();
             
-            foreach (RilData currentRil in allData)
+            foreach (RilData currentRilData in allData)
             {
-                GameObject batVisual = 
-                    GameObject.Instantiate(batRessource) as GameObject;
-            
+                GameObject batVisual = Instantiate(batRessource);
+                batVisual.SetActive(false);
+                
                 if (!batVisual)
                     break;
 
-                Vector3 currentPosition = new Vector3(currentRil.X, currentRil.Y, 0);
+                Vector3 currentPosition = new Vector3(currentRilData.X, currentRilData.Y, 0);
                 batVisual.transform.position = currentPosition;
                 
-                allBatVisuals.Push(batVisual);
+                allBatDataVisuals.Push(new RilDataVisual(currentRilData,batVisual));
             }
         }
         
         void Update()
         {
+            rilEventHatcher.HatchEvents(allBatDataVisuals, Time.realtimeSinceStartup / timelapseDuration);
         }
     }
 }
