@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using DataProcessing.Generic;
 using UnityEngine;
 
 namespace DataProcessing.Density

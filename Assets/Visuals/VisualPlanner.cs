@@ -7,6 +7,14 @@ namespace Visuals
 {
     public class VisualPlanner : MonoBehaviour
     {
+        [SerializeField]
+        public enum Layers
+        {
+            City = 3,
+            Ril = 4,
+            Density = 5
+        }
+        
         // Start is called before the first frame update
         [SerializeField]
         bool activateCityDrawer;

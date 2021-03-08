@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using Bounds;
+using DataProcessing.Generic;
 
 namespace DataProcessing.Density
 {
-    public class DensityDataManager : DataManager
+    public class DensityDataConverter : DataConverter
     {
         private DensityDataReader densityDataReader;
     
@@ -21,7 +22,7 @@ namespace DataProcessing.Density
 
         public float DensitySquareSize { get => densitySquareSize; set => densitySquareSize = value; }
 
-        public DensityDataManager()
+        public DensityDataConverter()
         {
             this.densityDataReader = (DensityDataReader)FactoryDataReader.GetInstance(FactoryDataReader.AvailableDataReaderTypes.DENSITY);
             this.geoBounds = (GeographicBounds)BoundsFactory.GetInstance(BoundsFactory.AvailableBoundsTypes.GEOGRAPHIC);
@@ -187,7 +188,7 @@ namespace DataProcessing.Density
             return densityData;
         }
 
-        public override IData[] getDataBounds()
+        public override IData[] GetDataBounds()
         {
             return this.dataBounds;
         }

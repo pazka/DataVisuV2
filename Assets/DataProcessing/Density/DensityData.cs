@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DataProcessing.Generic;
+using UnityEngine;
 
 namespace DataProcessing.Density
 {
@@ -152,11 +153,6 @@ namespace DataProcessing.Density
             this.Y4 = y;
         }
 
-
-        public override Vector3 GetPosition()
-        {
-            return new Vector3(RawX, RawY);
-        }
     }
 }
 

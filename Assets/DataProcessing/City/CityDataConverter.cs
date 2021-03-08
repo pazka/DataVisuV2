@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using Bounds;
+using DataProcessing.Generic;
 
 namespace DataProcessing.City
 {
-    public class CityDataManager : DataManager
+    public class CityDataConverter : DataConverter
     {
         private CityDataReader cityDataReader;
     
@@ -14,7 +15,7 @@ namespace DataProcessing.City
         //tmps Big Vars
         private IEnumerable<IData> allData;
 
-        public CityDataManager()
+        public CityDataConverter()
         {
             this.cityDataReader = (CityDataReader)FactoryDataReader.GetInstance(FactoryDataReader.AvailableDataReaderTypes.CITY);
             this.geoBounds = (GeographicBounds)BoundsFactory.GetInstance(BoundsFactory.AvailableBoundsTypes.GEOGRAPHIC);
@@ -110,7 +111,7 @@ namespace DataProcessing.City
             return cityDataReader;
         }
 
-        public override IData[] getDataBounds()
+        public override IData[] GetDataBounds()
         {
             throw new System.NotImplementedException();
         }

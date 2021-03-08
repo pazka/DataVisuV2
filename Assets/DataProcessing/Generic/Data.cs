@@ -2,34 +2,48 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IData
+namespace DataProcessing.Generic
 {
-}
-
-public abstract class Data : IData
-{
-    public float RawX { get; private set; }
-    public float RawY { get; private set; }
-    public float X { get; private set; }
-    public float Y { get; private set; }
-
-    public Data(float x, float y)
+    public interface IData
     {
-        this.RawX = x;
-        this.RawY = y;
-        this.X = x;
-        this.Y = y;
+        void SetX(float x);
+        void SetY(float y);
+        float[] GetPosition();
     }
 
-    public virtual void SetX(float x)
+    public abstract class Data : IData
     {
-        this.X = x;
-    }
+        public string Raw;
+        public float RawX { get; private set; }
+        public float RawY { get; private set; }
+        public float X { get; protected set; }
+        public float Y { get; protected set; }
 
-    public virtual void SetY(float y)
-    {
-        this.Y = y;
-    }
+        public Data(float x, float y)
+        {
+            this.RawX = x;
+            this.RawY = y;
+            this.X = x;
+            this.Y = y;
+        }
+        public Data(string raw,float x, float y) : this(x,y)
+        {
+            this.Raw = raw;
+        }
 
-    public abstract Vector3 GetPosition();
+        public virtual void SetX(float x)
+        {
+            this.X = x;
+        }
+
+        public virtual void SetY(float y)
+        {
+            this.Y = y;
+        }
+
+        public virtual float[] GetPosition()
+        {
+            return new float[]{RawX, RawY};
+        }
+    }
 }

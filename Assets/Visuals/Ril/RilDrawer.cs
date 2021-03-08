@@ -8,7 +8,7 @@ namespace Visuals.Ril
     
     public class RilDrawer : MonoBehaviour
     {
-        RilDataManager rilDataManager;
+        RilDataConverter rilDataConverter;
         [SerializeField] private float timelapseDuration = 60;
         private List<RilData> allData;
         private Stack<RilDataVisual> allBatDataVisuals = new Stack<RilDataVisual>();
@@ -20,13 +20,13 @@ namespace Visuals.Ril
         void Start()
         {
             //Prepare entities        
-            rilDataManager = (RilDataManager)FactoryDataManager.GetInstance(FactoryDataManager.AvailableDataManagerTypes.RIL);
-            rilDataManager.Init(Screen.width, Screen.height);
+            rilDataConverter = (RilDataConverter)FactoryDataManager.GetInstance(FactoryDataManager.AvailableDataManagerTypes.RIL);
+            rilDataConverter.Init(Screen.width, Screen.height);
         }
 
         public void FillWithData()
         {
-            allData = (List<RilData>) rilDataManager.GetAllData();
+            allData = (List<RilData>) rilDataConverter.GetAllData();
             allData = allData.OrderBy(rd => rd.T).Reverse().ToList();
             
             foreach (RilData currentRilData in allData)
@@ -37,16 +37,19 @@ namespace Visuals.Ril
                 if (!batVisual)
                     break;
 
-                Vector3 currentPosition = new Vector3(currentRilData.X, currentRilData.Y, 0);
+                Vector3 currentPosition = new Vector3(currentRilData.X, currentRilData.Y, (float)VisualPlanner.Layers.Ril);
                 batVisual.transform.position = currentPosition;
                 
                 allBatDataVisuals.Push(new RilDataVisual(currentRilData,batVisual));
             }
         }
-        
+
+        private float step = 0.0005f;
+        private float myTime = 0f;
         void Update()
         {
-            rilEventHatcher.HatchEvents(allBatDataVisuals, Time.realtimeSinceStartup / timelapseDuration);
+            rilEventHatcher.HatchEvents(allBatDataVisuals, myTime);
+            myTime += step;
         }
     }
 }

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
+using DataProcessing.Generic;
 
 namespace DataProcessing.City
 {
     public class CityDataReader : IDataReader
     {
-        string filePath = "Assets/DataAsset/Strasbourg/Shape/limits.dat";
+        readonly string filePath = "Assets/DataAsset/Strasbourg/Shape/limits.dat";
 
         protected char[] buffer;
         protected int bufferReadIndex;

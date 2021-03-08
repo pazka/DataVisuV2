@@ -10,8 +10,8 @@ namespace Visuals
     {
         // Creates a line renderer that follows a Sin() function
         // and animates it.
-        CityDataManager _cityDataManager;
-        DensityDataManager _densityDataManager;
+        CityDataConverter cityDataConverter;
+        DensityDataConverter densityDataConverter;
         List<DensityData> _densityData = new List<DensityData>();
         DensityData[] _dataBounds;
 
@@ -32,9 +32,9 @@ namespace Visuals
         void Start()
         {
             //Prepare entities
-            _densityDataManager = (DensityDataManager)FactoryDataManager.GetInstance(FactoryDataManager.AvailableDataManagerTypes.DENSITY);
+            densityDataConverter = (DensityDataConverter)FactoryDataManager.GetInstance(FactoryDataManager.AvailableDataManagerTypes.DENSITY);
 
-            _densityDataManager.Init(Screen.width, Screen.height);
+            densityDataConverter.Init(Screen.width, Screen.height);
 
             colorBlockShader = new MaterialPropertyBlock();
             globalmaterialForMesh = new Material(Shader.Find("Customs/InstancedColor"));
@@ -56,8 +56,8 @@ namespace Visuals
         public void FillWithData()
         {
             //Getting our Data
-            _densityData = (List<DensityData>)_densityDataManager.GetAllData();
-            _dataBounds = (DensityData[])_densityDataManager.getDataBounds();
+            _densityData = (List<DensityData>)densityDataConverter.GetAllData();
+            _dataBounds = (DensityData[])densityDataConverter.GetDataBounds();
 
             //Getting our visuals
             DensityData firstDensityData = _densityData[0];
@@ -81,7 +81,9 @@ namespace Visuals
 
                 Vector3 position = new Vector3(
                     (_densityData[i].X1 + _densityData[i].X3) / 2,
-                    (_densityData[i].Y1 + _densityData[i].Y2) / 2, 0);
+                    (_densityData[i].Y1 + _densityData[i].Y2) / 2, 
+                        (float)VisualPlanner.Layers.Density
+                    );
                 Quaternion rotation = Quaternion.Euler(0, 0, 0);
                 Vector3 scale = Vector3.one;
 

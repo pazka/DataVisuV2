@@ -2,11 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using Bounds;
+using DataProcessing.Generic;
 using UnityEngine;
 
 namespace DataProcessing.Ril
 {
-    public class RilDataManager : DataManager
+    public class RilDataConverter : DataConverter
     {
         private RilDataReader rilDataReader;
 
@@ -19,7 +20,7 @@ namespace DataProcessing.Ril
         //tmps Big Vars
         private IEnumerable<IData> allData;
 
-        public RilDataManager()
+        public RilDataConverter()
         {
             this.rilDataReader =
                 (RilDataReader) FactoryDataReader.GetInstance(FactoryDataReader.AvailableDataReaderTypes.RIL);
@@ -136,7 +137,7 @@ namespace DataProcessing.Ril
             return rilDataReader;
         }
 
-        public override IData[] getDataBounds()
+        public override IData[] GetDataBounds()
         {
             throw new System.NotImplementedException();
         }

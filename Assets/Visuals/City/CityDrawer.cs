@@ -8,7 +8,7 @@ public class CityDrawer : MonoBehaviour
     // Creates a line renderer that follows a Sin() function
     // and animates it.
     Mesh _cityBoundsMesh;
-    CityDataManager _cityDataManager;
+    CityDataConverter cityDataConverter;
     LineRenderer _lineRenderer;
     Vector3[] cityData;
    
@@ -20,11 +20,11 @@ public class CityDrawer : MonoBehaviour
 
         //The game object will inherit from the canvas ! 
         //so you need to have a canvas above in the hierarchy
-        gameObject.transform.position = new Vector3(0, 0, -1);
+        gameObject.transform.position = new Vector3(0, 0, (float)VisualPlanner.Layers.City);
         _lineRenderer = gameObject.AddComponent<LineRenderer>();
 
-        _cityDataManager = (CityDataManager)FactoryDataManager.GetInstance(FactoryDataManager.AvailableDataManagerTypes.CITY);
-        _cityDataManager.Init(Screen.width, Screen.height);
+        cityDataConverter = (CityDataConverter)FactoryDataManager.GetInstance(FactoryDataManager.AvailableDataManagerTypes.CITY);
+        cityDataConverter.Init(Screen.width, Screen.height);
 
         //Prepare Linerenderer
         _lineRenderer.sortingOrder = 1;
@@ -57,7 +57,7 @@ public class CityDrawer : MonoBehaviour
             return;
         }
 
-        List<CityData> cityData = (List<CityData>)_cityDataManager.GetAllData();
+        List<CityData> cityData = (List<CityData>)cityDataConverter.GetAllData();
 
         this.cityData = new Vector3[cityData.Count];
         for (int i = 0; i < cityData.Count; i++)

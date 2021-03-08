@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using DataProcessing.Generic;
 using UnityEngine;
 
 namespace DataProcessing.Ril
 {
-    public class RilData : Data
+    public class RilData : TimedData
     {
-        private float X, Y;
-        string Raw;
-        public float T { get; private set;}
         public string ACTUALITE { get; private set;}
         public string ANNEE_CONS { get; private set;}
         public string CANTON { get; private set;}
@@ -60,7 +58,6 @@ namespace DataProcessing.Ril
         public string apic_obj08 { get; private set;}
         public string apic_objec { get; private set;}
 
-
         public RilData(string raw, float rawX, float rawY, string actualite, string anneeCons,
             string canton, string categorie, string commentair, string complement, string comAncID, string comCapaci,
             string comDateC, string comNbLog, string comNom, string comSousC, string comStatut, string datemajEa,
@@ -69,11 +66,9 @@ namespace DataProcessing.Ril
             string nombreLog, string nombreNiv, string numero, string numeroPar, string numeroPer, string principal,
             string qp, string repetition, string rivoli, string sousType, string type, string typeLocal,
             string typeVoie, string apicObj00, string apicObj01, string apicObj02, string apicObj03, string apicObj04,
-            string apicObj05, string apicObj06, string apicObj07, string apicObj08, string apicObjec) : base(rawX, rawY)
+            string apicObj05, string apicObj06, string apicObj07, string apicObj08, string apicObjec) 
+            : base(raw,rawX, rawY)
         {
-            Raw = raw;
-            X = rawX;
-            Y = rawY;
             T = string.IsNullOrEmpty(anneeCons) ? 1850 : float.Parse(anneeCons);
             ACTUALITE = actualite;
             ANNEE_CONS = anneeCons;
@@ -124,28 +119,6 @@ namespace DataProcessing.Ril
             apic_obj07 = apicObj07;
             apic_obj08 = apicObj08;
             apic_objec = apicObjec;
-        }
-
-        public override void SetX(float x)
-        {
-            base.SetX(x);
-            this.X = x;
-        }
-
-        public override void SetY(float y)
-        {
-            base.SetY(y);
-            this.Y = y;
-        }
-
-        public void SetT(float t)
-        {
-            this.T = t;
-        }
-
-        public override Vector3 GetPosition()
-        {
-            return new Vector3(RawX, RawY);
         }
     }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using DataProcessing.City;
 using DataProcessing.Density;
+using DataProcessing.Generic;
 using DataProcessing.Ril;
 using UnityEngine;
 
@@ -20,19 +21,19 @@ public static class FactoryDataManager
         {
             case AvailableDataManagerTypes.CITY:
                 if (!instances.ContainsKey(dataManagerType))
-                    instances.Add(dataManagerType, new CityDataManager());
+                    instances.Add(dataManagerType, new CityDataConverter());
 
                 return instances[dataManagerType];
 
             case AvailableDataManagerTypes.DENSITY:
                 if (!instances.ContainsKey(dataManagerType))
-                    instances.Add(dataManagerType, new DensityDataManager());
+                    instances.Add(dataManagerType, new DensityDataConverter());
 
                 return instances[dataManagerType];
 
             case AvailableDataManagerTypes.RIL:
                 if (!instances.ContainsKey(dataManagerType))
-                    instances.Add(dataManagerType, new RilDataManager());
+                    instances.Add(dataManagerType, new RilDataConverter());
 
                 return instances[dataManagerType];
 
