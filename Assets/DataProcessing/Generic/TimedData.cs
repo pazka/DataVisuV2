@@ -3,11 +3,12 @@
 namespace DataProcessing.Generic
 {
     public interface ITimedData : IData
-    {
+    {   
         void SetT(float t);
+        float GetT();
     }
     
-    public class TimedData : Data
+    public class TimedData : Data, ITimedData
     {
         public float RawT { get; private set;}
         public float T { get; protected set;}
@@ -25,6 +26,11 @@ namespace DataProcessing.Generic
         public void SetT(float t)
         {
             this.T = t;
+        }
+
+        public float GetT()
+        {
+            return this.T;
         }
     }
 }

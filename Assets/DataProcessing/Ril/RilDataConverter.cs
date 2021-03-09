@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Bounds;
 using DataProcessing.Generic;
 using UnityEngine;
+using Tools;
 
 namespace DataProcessing.Ril
 {
@@ -94,17 +95,18 @@ namespace DataProcessing.Ril
             }
 
             this.geoBounds.StopRegisteringNewBounds();
-
             this.timeBounds.StopRegisteringNewBounds();
 
-            //Transforming raw data by converting to screen next
+            rilData = DataUtils.LinearizeTimedData<RilData>(rilData, 5);
 
-            //prepare ratio for getting coords in bounds
-            //OPTIONAL make scalling modulable gien screen size
+            //Transforming raw data by converting to screen 
+
+            //OPTIONAL make scaling modulable given screen size
 
             float[,] _geoBounds = (float[,]) this.geoBounds.GetCurrentBounds();
             float[] _timeBounds = (float[]) this.timeBounds.GetCurrentBounds();
             
+            //prepare ratio for getting coords in bounds
             float dataBoundsXYRatio = (_geoBounds[0, 1] - _geoBounds[0, 0]) / ((_geoBounds[1, 1] - _geoBounds[1, 0]));
 
             for (int i = 0; i < rilData.Count; i++)
