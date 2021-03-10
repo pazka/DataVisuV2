@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Bounds;
 using DataProcessing.Generic;
 using UnityEngine;
@@ -81,7 +82,7 @@ namespace DataProcessing.Ril
                 return allData;
             }
 
-            List<RilData> rilData = new List<RilData>();
+            List<RilData> notConvertedRilData = new List<RilData>();
             RilData tmpData;
 
             //get raw data first
@@ -90,14 +91,14 @@ namespace DataProcessing.Ril
                 tmpData = (RilData) GetNextData();
                 if (!rilDataReader.EndOfStream)
                 {
-                    rilData.Add(tmpData);
+                    notConvertedRilData.Add(tmpData);
                 }
             }
 
             this.geoBounds.StopRegisteringNewBounds();
             this.timeBounds.StopRegisteringNewBounds();
 
-            rilData = DataUtils.LinearizeTimedData<RilData>(rilData, 5);
+            List<RilData> rilData = DataUtils.LinearizeTimedData(notConvertedRilData, 5);
 
             //Transforming raw data by converting to screen 
 

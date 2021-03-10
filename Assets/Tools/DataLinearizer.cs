@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using DataProcessing.Generic;
 using UnityEngine.Assertions.Comparers;
@@ -10,24 +11,21 @@ namespace Tools
     {
         public static List<T> LinearizeTimedData<T>(List<T> nonLinearData, float gapTolerance) where T : ITimedData
         {
-            List<ITimedData> linearData = nonLinearData as List<ITimedData>;
-
-            if (linearData == null)
+            if (nonLinearData == null)
             {
-                throw new ArgumentException("Argument is not IITimedData", nameof(nonLinearData));
+                throw new ArgumentException("Argument is not ITimedData", nameof(nonLinearData));
             }
             
             if (nonLinearData.Count < 2)
             {
-                return nonLinearData;
+                return nonLinearData.OrderBy(rd => rd.GetT()).ToList();
             }
             
+            List<T> linearData = nonLinearData.OrderBy(rd => rd.GetT()).ToList();
             int cursor = 0;
-            
-            
-            while (cursor + 1 < nonLinearData.Count)
+
+            while (cursor + 1 < linearData.Count)
             {
-                
                 //increment toward next gap
                 float gap;
                 
@@ -35,18 +33,21 @@ namespace Tools
                     float currentDataProp = linearData[cursor].GetT();
                     float nextDataProp = linearData[cursor+1].GetT();
                     gap = GetNextDataTimeDistance(currentDataProp, nextDataProp);
-                }
-                while (++cursor + 1 < nonLinearData.Count && gap <= gapTolerance) ;
-                
-                //Get info to close the gap
-                int numberOfElementToCloseTheGap = GetFirstDataGroupLengthAfterIndex(linearData, cursor);
-                float step = (float)Math.Floor(gap / numberOfElementToCloseTheGap);
+                }while ((++cursor + 1) < nonLinearData.Count && gap <= gapTolerance) ;
 
-                CloseGap(linearData, cursor, cursor + numberOfElementToCloseTheGap , step);
-                cursor = cursor + numberOfElementToCloseTheGap ;
+                if (gap > gapTolerance)
+                {
+                    //Get info to close the gap
+                    int nbElemToCloseTheGap = GetFirstDataGroupLengthAfterIndex(linearData, cursor);
+                    float step = (float) gap / nbElemToCloseTheGap;
+
+                    CloseGap(linearData, cursor, cursor + nbElemToCloseTheGap , linearData[cursor].GetT() - gap,step);
+                    cursor = cursor + nbElemToCloseTheGap - 1 ;
+                }
+
             }
 
-            return nonLinearData;
+            return linearData;
         }
 
         private static float GetNextDataTimeDistance(float currentData, float nextData)
@@ -54,30 +55,31 @@ namespace Tools
             return nextData - currentData;
         }
 
-        private static int GetFirstDataGroupLengthAfterIndex(List<ITimedData> nonLinearData, int startIndex)
+        private static int GetFirstDataGroupLengthAfterIndex<T>(List<T> nonLinearData, int startIndex) where T : ITimedData
         {
-            int lengthOfDataGroup = 1;
+            int dataGroupLength = 1;
             
             for (int i = startIndex+1; i < nonLinearData.Count; i++)
             {
                 if (!nonLinearData[i].GetT().Equals(nonLinearData[i + 1].GetT()))
                 {
-                    return lengthOfDataGroup;
+                    return dataGroupLength;
                 }
 
-                ++lengthOfDataGroup;
+                ++dataGroupLength;
             }
 
-            return lengthOfDataGroup;
+            return dataGroupLength;
         }
 
-        private static void CloseGap(List<ITimedData> nonLinearData, int startIndex, int endIndex, float step)
+        private static void CloseGap<T>(List<T> nonLinearData, int startIndex, int endIndex, float gapStart,float step)where T : ITimedData
         {
-            int stepIndex = 1;
+            int stepIndex = 0;
 
-            for (int i = startIndex; i <= endIndex; i++)
+            //Case less elem than gap
+            for (int i = startIndex; i < endIndex; i++)
             {
-                nonLinearData[i].SetT(stepIndex * step);
+                nonLinearData[i].SetT(gapStart + stepIndex * step);
                 ++stepIndex;
             }
         }

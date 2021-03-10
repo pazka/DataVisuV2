@@ -27,8 +27,8 @@ namespace Visuals.Ril
         public void FillWithData()
         {
             allData = (List<RilData>) rilDataConverter.GetAllData();
-            allData = allData.OrderBy(rd => rd.T).Reverse().ToList();
-            
+            allData = allData.OrderBy(r => r.T).Reverse().ToList();
+                
             foreach (RilData currentRilData in allData)
             {
                 GameObject batVisual = Instantiate(batRessource);
@@ -44,12 +44,24 @@ namespace Visuals.Ril
             }
         }
 
-        private float step = 0.0005f;
-        private float myTime = 0f;
         void Update()
+        {
+            UpdateControlledFrameRate();
+            //UpdateRealtime();
+        }
+        
+        private float myTime = 0f;
+        private float step = 0.0005f;
+        
+        void UpdateControlledFrameRate()
         {
             rilEventHatcher.HatchEvents(allBatDataVisuals, myTime);
             myTime += step;
+        }
+        
+        void UpdateRealtime()
+        {
+            rilEventHatcher.HatchEvents(allBatDataVisuals, Time.realtimeSinceStartup / timelapseDuration);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Visuals.Ril
 
         protected override bool DecideIfReady(RilDataVisual data, dynamic timePassed)
         {
-            return data.Data.T <= (float)timePassed;
+            return data.Data.T.CompareTo((float)timePassed) <= 0;
         }
 
 

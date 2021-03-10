@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using DataProcessing.Generic;
+using Tools;
 using UnityEngine;
 
 namespace DataProcessing.Ril
@@ -69,7 +70,7 @@ namespace DataProcessing.Ril
             string apicObj05, string apicObj06, string apicObj07, string apicObj08, string apicObjec) 
             : base(raw,rawX, rawY)
         {
-            T = string.IsNullOrEmpty(anneeCons) ? 1850 : float.Parse(anneeCons);
+            T = Utils.IsNullEmptyOrZero(anneeCons) ? 1850 : float.Parse(anneeCons);
             ACTUALITE = actualite;
             ANNEE_CONS = anneeCons;
             CANTON = canton;
