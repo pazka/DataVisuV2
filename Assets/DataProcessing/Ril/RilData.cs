@@ -35,7 +35,7 @@ namespace DataProcessing.Ril
         public string LIEN_CMT { get; private set;}
         public string LISTE_INSE { get; private set;}
         public string NOMBRE_IMM { get; private set;}
-        public string NOMBRE_LOG { get; private set;}
+        public float NOMBRE_LOG { get; set;}
         public string NOMBRE_NIV { get; private set;}
         public string NUMERO { get; private set;}
         public string NUMERO_PAR { get; private set;}
@@ -97,11 +97,11 @@ namespace DataProcessing.Ril
             LIEN_CMT = lienCmt;
             LISTE_INSE = listeInse;
             NOMBRE_IMM = nombreImm;
-            NOMBRE_LOG = nombreLog;
+            NOMBRE_LOG = float.Parse(Utils.IsNullEmptyOrZero(nombreLog) ? "1" : nombreLog);
             NOMBRE_NIV = nombreNiv;
             NUMERO = numero;
             NUMERO_PAR = numeroPar;
-            NUMERO_PER = numeroPer;
+            NUMERO_PER = Utils.IsNullEmptyOrZero(numeroPer) ? "1" : numeroPer;
             PRINCIPAL = principal;
             QP = qp;
             REPETITION = repetition;

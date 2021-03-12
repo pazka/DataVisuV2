@@ -22,15 +22,12 @@ namespace Visuals
         bool activateDensityDrawer;
         [SerializeField]
         bool activateRilDrawer;
-        [SerializeField]
-        bool activateTest;
 
         void Start()
         {
             CityDrawer cityDrawer = GameObject.Find("CityDrawer").GetComponent<CityDrawer>();
             DensityDrawer densityDrawer = GameObject.Find("DensityDrawer").GetComponent<DensityDrawer>();
             RilDrawer rilDrawer = GameObject.Find("RilDrawer").GetComponent<RilDrawer>();
-            Test test = GameObject.Find("Test").GetComponent<Test>();
         
             if (activateCityDrawer){
                 cityDrawer.FillWithData();
@@ -42,10 +39,6 @@ namespace Visuals
 
             if (activateRilDrawer){
                 rilDrawer.FillWithData();
-            }
-
-            if (activateTest){
-                test.DrawTest();
             }
         }
 

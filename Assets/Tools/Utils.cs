@@ -4,7 +4,7 @@
     {
         public static bool IsNullEmptyOrZero(string s)
         {
-            return string.IsNullOrEmpty(s) || s == "0";
+            return string.IsNullOrEmpty(s) || s == "0" || s == "null";
         }
     }
 }

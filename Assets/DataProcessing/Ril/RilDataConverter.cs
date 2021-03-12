@@ -17,6 +17,7 @@ namespace DataProcessing.Ril
         int[] screenOffset = new int[2];
         GeographicBatBounds geoBounds;
         TimeBounds timeBounds;
+        private RilBounds dataBounds;
 
 
         //tmps Big Vars
@@ -30,6 +31,8 @@ namespace DataProcessing.Ril
                 (GeographicBatBounds) BoundsFactory.GetInstance(BoundsFactory.AvailableBoundsTypes.BATIMENT);
             this.timeBounds =
                 (TimeBounds) BoundsFactory.GetInstance(BoundsFactory.AvailableBoundsTypes.TIME);
+            this.dataBounds =
+                (RilBounds) BoundsFactory.GetInstance(BoundsFactory.AvailableBoundsTypes.RIL);
         }
 
         public override void Init(int screenBoundX, int screenBoundY)
@@ -59,6 +62,7 @@ namespace DataProcessing.Ril
             this.geoBounds.RegisterNewBounds(new float[] {rilData.RawX, rilData.RawY});
 
             this.timeBounds.RegisterNewBounds(rilData.T);
+            this.dataBounds.RegisterNewBounds(rilData.NOMBRE_LOG);
 
             return rilData;
         }
@@ -97,6 +101,7 @@ namespace DataProcessing.Ril
 
             this.geoBounds.StopRegisteringNewBounds();
             this.timeBounds.StopRegisteringNewBounds();
+            this.dataBounds.StopRegisteringNewBounds();
 
             List<RilData> rilData = DataUtils.LinearizeTimedData(notConvertedRilData, 5);
 
@@ -106,6 +111,7 @@ namespace DataProcessing.Ril
 
             float[,] _geoBounds = (float[,]) this.geoBounds.GetCurrentBounds();
             float[] _timeBounds = (float[]) this.timeBounds.GetCurrentBounds();
+            float[] _dataBounds = (float[]) this.dataBounds.GetCurrentBounds();
             
             //prepare ratio for getting coords in bounds
             float dataBoundsXYRatio = (_geoBounds[0, 1] - _geoBounds[0, 0]) / ((_geoBounds[1, 1] - _geoBounds[1, 0]));
@@ -126,6 +132,10 @@ namespace DataProcessing.Ril
                 //Convert Real time to time [0->1] relative to min and max of it's times 
                 float timeRange = _timeBounds[1] - _timeBounds[0];
                 rilData[i].SetT((rilData[i].T - _timeBounds[0]) / timeRange );
+                
+                //Convert Real time to time [0->1] relative to min and max of it's times 
+                float dataRange = _dataBounds[1] - _dataBounds[0];
+                rilData[i].NOMBRE_LOG = ((rilData[i].NOMBRE_LOG - _dataBounds[0]) / dataRange );
             }
 
             this.allData = rilData;

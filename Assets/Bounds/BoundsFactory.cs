@@ -6,7 +6,7 @@ namespace Bounds
     {
         public enum AvailableBoundsTypes
         {
-            GEOGRAPHIC,BATIMENT, TIME
+            GEOGRAPHIC,BATIMENT, TIME, RIL
         };
 
         private static Dictionary<AvailableBoundsTypes, IBounds> instances = new Dictionary<AvailableBoundsTypes, IBounds>();
@@ -30,6 +30,12 @@ namespace Bounds
                 case AvailableBoundsTypes.BATIMENT:
                     if (!instances.ContainsKey(boundsType))
                         instances.Add(boundsType, new GeographicBatBounds());
+
+                    return instances[boundsType];
+
+                case AvailableBoundsTypes.RIL:
+                    if (!instances.ContainsKey(boundsType))
+                        instances.Add(boundsType, new RilBounds());
 
                     return instances[boundsType];
 

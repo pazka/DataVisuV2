@@ -58,7 +58,7 @@
             }
         }
 
-        public void StopRegisteringNewBounds()
+        public override void StopRegisteringNewBounds()
         {
             canRegisterNewBounds = false;
         }

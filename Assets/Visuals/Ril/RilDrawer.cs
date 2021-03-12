@@ -16,6 +16,7 @@ namespace Visuals.Ril
         private RilEventHatcher rilEventHatcher = RilEventHatcher.Instance;
         
         public GameObject batRessource;
+        public GameObject progressBar;
         
         void Start()
         {
@@ -39,6 +40,7 @@ namespace Visuals.Ril
 
                 Vector3 currentPosition = new Vector3(currentRilData.X, currentRilData.Y, (float)VisualPlanner.Layers.Ril);
                 batVisual.transform.position = currentPosition;
+                batVisual.transform.localScale = new Vector3(2 + currentRilData.NOMBRE_LOG *30 ,2 + currentRilData.NOMBRE_LOG*30);
                 
                 allBatDataVisuals.Push(new RilDataVisual(currentRilData,batVisual));
             }
@@ -46,8 +48,8 @@ namespace Visuals.Ril
 
         void Update()
         {
-            UpdateControlledFrameRate();
-            //UpdateRealtime();
+            //UpdateControlledFrameRate();
+            UpdateRealtime();
         }
         
         private float myTime = 0f;
@@ -61,6 +63,7 @@ namespace Visuals.Ril
         
         void UpdateRealtime()
         {
+            progressBar.transform.localScale = new Vector3(Time.realtimeSinceStartup / timelapseDuration * 1920, 10);
             rilEventHatcher.HatchEvents(allBatDataVisuals, Time.realtimeSinceStartup / timelapseDuration);
         }
     }
