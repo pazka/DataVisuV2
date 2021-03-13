@@ -8,7 +8,7 @@
 | Bounds/ | Bounds to register during conversion for knowing how to scale things relative to the drawn data |
 | Tools/ | one-liners and other specific algorithms that needed to be put aside for the sake of clarity and honoring GRASP principles |
 
-# General developping procedure
+# General Development Procedure
 
 In order to add a new data in the visuals : 
 
