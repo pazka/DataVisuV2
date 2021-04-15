@@ -103,7 +103,7 @@ namespace DataProcessing.Ril
             this.timeBounds.StopRegisteringNewBounds();
             this.dataBounds.StopRegisteringNewBounds();
 
-            List<RilData> rilData = DataUtils.LinearizeTimedData(notConvertedRilData, 5);
+            List<RilData> rilData = DataUtils.LinearizeTimedData(notConvertedRilData, 2);
 
             //Transforming raw data by converting to screen 
 

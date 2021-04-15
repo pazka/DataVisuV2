@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DataProcessing.Density
 {
-    public class DensityData : Data
+    public class DensityData : Generic.Data
     {
         public float RawX1 { get; }
         public float RawY1 { get; }
