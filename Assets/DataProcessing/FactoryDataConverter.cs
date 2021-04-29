@@ -6,16 +6,16 @@ using DataProcessing.Generic;
 using DataProcessing.Ril;
 using UnityEngine;
 
-public static class FactoryDataManager 
+public static class FactoryDataConverter 
 {
     public enum AvailableDataManagerTypes
     {
         CITY, RIL,DENSITY
     };
 
-    private static Dictionary<AvailableDataManagerTypes, IDataManager> instances = new Dictionary<AvailableDataManagerTypes, IDataManager>();
+    private static Dictionary<AvailableDataManagerTypes, IDataConverter> instances = new Dictionary<AvailableDataManagerTypes, IDataConverter>();
 
-    public static IDataManager GetInstance(AvailableDataManagerTypes dataManagerType)
+    public static IDataConverter GetInstance(AvailableDataManagerTypes dataManagerType)
     {
         switch (dataManagerType)
         {

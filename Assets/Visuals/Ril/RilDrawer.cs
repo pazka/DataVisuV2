@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using DataProcessing;
 using DataProcessing.Ril;
 using UnityEngine;
 
@@ -9,11 +10,14 @@ namespace Visuals.Ril
     public class RilDrawer : MonoBehaviour
     {
         RilDataConverter rilDataConverter;
+        private RilDataExtrapolator rilDataExtrapolator;
         [SerializeField] private float timelapseDuration = 60;
         private List<RilData> allData;
-        private Stack<RilDataVisual> allBatDataVisuals = new Stack<RilDataVisual>();
+        private Stack<RilDataVisual> allBatDataVisuals;
         private GameObject currentBatVisual;
         private RilEventHatcher rilEventHatcher = RilEventHatcher.Instance;
+        private int totalEventHatched;
+        private bool firstTime = true;
         
         public GameObject batRessource;
         public GameObject progressBar;
@@ -21,15 +25,38 @@ namespace Visuals.Ril
         void Start()
         {
             //Prepare entities        
-            rilDataConverter = (RilDataConverter)FactoryDataManager.GetInstance(FactoryDataManager.AvailableDataManagerTypes.RIL);
+            rilDataConverter = (RilDataConverter)FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.RIL);
             rilDataConverter.Init(Screen.width, Screen.height);
+            
+            rilDataExtrapolator = (RilDataExtrapolator)FactoryDataExtrapolator.GetInstance(FactoryDataExtrapolator.AvailableDataExtrapolatorTypes.RIL);
         }
 
-        public void FillWithData()
+        private List<RilData> GetAllData()
         {
-            allData = (List<RilData>) rilDataConverter.GetAllData();
-            allData = allData.OrderBy(r => r.T).Reverse().ToList();
-                
+            List<RilData> tmpAllData;
+            if(firstTime)
+            {
+                tmpAllData = (List<RilData>) rilDataConverter.GetAllData();
+                firstTime = false;
+            }
+            else
+            {
+                tmpAllData = (List<RilData>) rilDataExtrapolator.RetreiveExtrapolation();
+            }
+            
+            tmpAllData = tmpAllData.OrderBy(r => r.T).Reverse().ToList();
+
+            rilDataExtrapolator.InitExtrapolation(tmpAllData);
+            return tmpAllData;
+        }
+
+        public void InitDrawing()
+        {
+            allData = GetAllData();
+            
+            totalEventHatched = 0;
+            allBatDataVisuals = new Stack<RilDataVisual>();
+            
             foreach (RilData currentRilData in allData)
             {
                 GameObject batVisual = Instantiate(batRessource);
@@ -57,14 +84,19 @@ namespace Visuals.Ril
         
         void UpdateControlledFrameRate()
         {
-            rilEventHatcher.HatchEvents(allBatDataVisuals, myTime);
             myTime += step;
+            rilEventHatcher.HatchEvents(allBatDataVisuals, myTime);
         }
         
         void UpdateRealtime()
         {
             progressBar.transform.localScale = new Vector3(Time.realtimeSinceStartup / timelapseDuration * 1920, 10);
-            rilEventHatcher.HatchEvents(allBatDataVisuals, Time.realtimeSinceStartup / timelapseDuration);
+            totalEventHatched += rilEventHatcher.HatchEvents(allBatDataVisuals, Time.realtimeSinceStartup / timelapseDuration).Count;
+
+            if (totalEventHatched == allData.Count)
+            {
+                InitDrawing();
+            }
         }
     }
 }

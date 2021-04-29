@@ -15,7 +15,7 @@ namespace DataProcessing.Generic
     /// 
     /// </summary>
 
-    public interface IDataManager
+    public interface IDataConverter
     {
         void Init(int screenBoundX, int screenBoundY);
         void Clean();

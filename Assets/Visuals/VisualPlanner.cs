@@ -30,15 +30,15 @@ namespace Visuals
             RilDrawer rilDrawer = GameObject.Find("RilDrawer").GetComponent<RilDrawer>();
         
             if (activateCityDrawer){
-                cityDrawer.FillWithData();
+                cityDrawer.InitDrawing();
             }
 
             if (activateDensityDrawer){
-                densityDrawer.FillWithData();
+                densityDrawer.InitDrawing();
             }
 
             if (activateRilDrawer){
-                rilDrawer.FillWithData();
+                rilDrawer.InitDrawing();
             }
         }
 

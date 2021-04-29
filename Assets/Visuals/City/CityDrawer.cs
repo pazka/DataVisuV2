@@ -23,7 +23,7 @@ public class CityDrawer : MonoBehaviour
         gameObject.transform.position = new Vector3(0, 0, (float)VisualPlanner.Layers.City);
         _lineRenderer = gameObject.AddComponent<LineRenderer>();
 
-        cityDataConverter = (CityDataConverter)FactoryDataManager.GetInstance(FactoryDataManager.AvailableDataManagerTypes.CITY);
+        cityDataConverter = (CityDataConverter)FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.CITY);
         cityDataConverter.Init(Screen.width, Screen.height);
 
         //Prepare Linerenderer
@@ -43,7 +43,7 @@ public class CityDrawer : MonoBehaviour
         this.LoadAllVectoredData();
     }
 
-    public void FillWithData()
+    public void InitDrawing()
     {
         _lineRenderer.positionCount = cityData.Length;
         _lineRenderer.SetPositions(cityData);

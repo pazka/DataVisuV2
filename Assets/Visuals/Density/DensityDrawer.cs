@@ -32,7 +32,7 @@ namespace Visuals
         void Start()
         {
             //Prepare entities
-            densityDataConverter = (DensityDataConverter)FactoryDataManager.GetInstance(FactoryDataManager.AvailableDataManagerTypes.DENSITY);
+            densityDataConverter = (DensityDataConverter)FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.DENSITY);
 
             densityDataConverter.Init(Screen.width, Screen.height);
 
@@ -53,7 +53,7 @@ namespace Visuals
             }
         }
 
-        public void FillWithData()
+        public void InitDrawing()
         {
             //Getting our Data
             _densityData = (List<DensityData>)densityDataConverter.GetAllData();

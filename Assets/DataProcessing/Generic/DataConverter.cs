@@ -2,7 +2,7 @@
 
 namespace DataProcessing.Generic
 {
-    public  abstract class DataConverter : IDataManager
+    public  abstract class DataConverter : IDataConverter
     {
         public abstract void Init(int screenBoundX, int screenBoundY);
         public abstract void Clean();
