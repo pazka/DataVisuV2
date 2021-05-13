@@ -6,46 +6,69 @@ using UnityEngine;
 
 namespace Visuals.Ril
 {
-    
     public class RilDrawer : MonoBehaviour
     {
+        public Tools.Logger logger;
         RilDataConverter rilDataConverter;
         private RilDataExtrapolator rilDataExtrapolator;
-        [SerializeField] private float timelapseDuration = 60;
+        [SerializeField] private float timelapseDuration = 30;
         private List<RilData> allData;
-        private Stack<RilDataVisual> allBatDataVisuals;
-        private GameObject currentBatVisual;
+        private Stack<RilDataVisual> remainingBatDataVisuals = new Stack<RilDataVisual>();
         private RilEventHatcher rilEventHatcher = RilEventHatcher.Instance;
-        private int totalEventHatched;
-        private bool firstTime = true;
+        private float currentIterationStartTimestamp = 0f;
         
+
+        private float myTime = 0f;
+        private float step = 0.0005f ;
+
         public GameObject batRessource;
         public GameObject progressBar;
-        
+
         void Start()
         {
             //Prepare entities        
-            rilDataConverter = (RilDataConverter)FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.RIL);
+            rilDataConverter =
+                (RilDataConverter) FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.RIL);
             rilDataConverter.Init(Screen.width, Screen.height);
+
+            rilDataExtrapolator =
+                (RilDataExtrapolator) FactoryDataExtrapolator.GetInstance(FactoryDataExtrapolator
+                    .AvailableDataExtrapolatorTypes.RIL);
+        }
+
+        public void ClearVisuals()
+        {
+            GameObject[] visualsToDestroy = GameObject.FindGameObjectsWithTag("bat:tmp");
+            foreach (var visualToDestroy in visualsToDestroy)
+            {
+                Destroy(visualToDestroy);
+            }
             
-            rilDataExtrapolator = (RilDataExtrapolator)FactoryDataExtrapolator.GetInstance(FactoryDataExtrapolator.AvailableDataExtrapolatorTypes.RIL);
+            remainingBatDataVisuals = new Stack<RilDataVisual>();
+            currentIterationStartTimestamp = Time.realtimeSinceStartup;
+            
+            //specific to updateControlled FrameRate
+            myTime = 0;
+            
+            //logger 
+            logger.Reset();
         }
 
         private List<RilData> GetAllData()
         {
             List<RilData> tmpAllData;
-            if(firstTime)
+            if (currentIterationStartTimestamp == 0f)
             {
                 tmpAllData = (List<RilData>) rilDataConverter.GetAllData();
-                firstTime = false;
             }
             else
             {
-                tmpAllData = (List<RilData>) rilDataExtrapolator.RetreiveExtrapolation();
+                tmpAllData = (List<RilData>) rilDataExtrapolator.RetrieveExtrapolation();
             }
-            
+
             tmpAllData = tmpAllData.OrderBy(r => r.T).Reverse().ToList();
 
+            step = timelapseDuration / tmpAllData.Count ;
             rilDataExtrapolator.InitExtrapolation(tmpAllData);
             return tmpAllData;
         }
@@ -53,50 +76,58 @@ namespace Visuals.Ril
         public void InitDrawing()
         {
             allData = GetAllData();
-            
-            totalEventHatched = 0;
-            allBatDataVisuals = new Stack<RilDataVisual>();
-            
+
             foreach (RilData currentRilData in allData)
             {
                 GameObject batVisual = Instantiate(batRessource);
+                batVisual.tag = "bat:tmp";
                 batVisual.SetActive(false);
-                
+
                 if (!batVisual)
                     break;
 
-                Vector3 currentPosition = new Vector3(currentRilData.X, currentRilData.Y, (float)VisualPlanner.Layers.Ril);
+                Vector3 currentPosition =
+                    new Vector3(currentRilData.X, currentRilData.Y, (float) VisualPlanner.Layers.Ril);
                 batVisual.transform.position = currentPosition;
-                batVisual.transform.localScale = new Vector3(2 + currentRilData.NOMBRE_LOG *30 ,2 + currentRilData.NOMBRE_LOG*30);
-                
-                allBatDataVisuals.Push(new RilDataVisual(currentRilData,batVisual));
+                batVisual.transform.localScale = new Vector3(2 + currentRilData.NOMBRE_LOG * 30,
+                    2 + currentRilData.NOMBRE_LOG * 30);
+
+                remainingBatDataVisuals.Push(new RilDataVisual(currentRilData, batVisual));
             }
         }
 
         void Update()
         {
+            UpdateFrame();
+        }
+
+        void UpdateFrame()
+        {
+            progressBar.transform.localScale = new Vector3((Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration * 1920, 10);
             //UpdateControlledFrameRate();
             UpdateRealtime();
-        }
-        
-        private float myTime = 0f;
-        private float step = 0.0005f;
+            
+            if (remainingBatDataVisuals.Count == 0)
+            {
+                ClearVisuals();
+                InitDrawing();
+            }
+        } 
         
         void UpdateControlledFrameRate()
         {
+
+            int hatched = rilEventHatcher.HatchEvents(remainingBatDataVisuals, myTime).Count;
+            logger.Log("Hatched : " + hatched);
             myTime += step;
-            rilEventHatcher.HatchEvents(allBatDataVisuals, myTime);
         }
-        
+
         void UpdateRealtime()
         {
-            progressBar.transform.localScale = new Vector3(Time.realtimeSinceStartup / timelapseDuration * 1920, 10);
-            totalEventHatched += rilEventHatcher.HatchEvents(allBatDataVisuals, Time.realtimeSinceStartup / timelapseDuration).Count;
 
-            if (totalEventHatched == allData.Count)
-            {
-                InitDrawing();
-            }
+            int hatched = rilEventHatcher
+                .HatchEvents(remainingBatDataVisuals, (Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration).Count;
+                if (hatched != 0) logger.Log("Hatched : " + hatched);
         }
     }
 }

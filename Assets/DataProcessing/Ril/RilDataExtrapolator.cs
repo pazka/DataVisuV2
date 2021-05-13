@@ -8,12 +8,12 @@ namespace DataProcessing.Ril
 {
     public class RilDataExtrapolator : IDataExtrapolator
     {
-        private Tools.Logger logger = GameObject.Find("Logger").GetComponent<Tools.Logger>();
+        private readonly Tools.Logger logger = GameObject.Find("Logger").GetComponent<Tools.Logger>();
         private List<RilData> dataToExtrapolate;
         private List<RilData> extrapolatedData;
-        private Mutex generatingData;
+        private readonly Mutex generatingData;
         private Thread generationThread;
-        AutoResetEvent waitForExtrapolation = new AutoResetEvent(false);
+        private CancellationToken token;
         
         public RilDataExtrapolator()
         {
@@ -26,7 +26,7 @@ namespace DataProcessing.Ril
             dataToExtrapolate = (List<RilData>)inputData;
             extrapolatedData = new List<RilData>();
             generatingData.ReleaseMutex();
-            
+                
             generationThread = new Thread(ExecuteExtrapolation);
             generationThread.Start();
         }
@@ -35,21 +35,22 @@ namespace DataProcessing.Ril
         {
             generatingData.WaitOne();
 
-            for (int i = 0; i < 100; i++)
+            for (var i = 1; i <= 30; i++)
             {
-                logger.Log($"I'm at {i}% completion");
+                logger.Log($"I'm at {( (double)i / 30 ) * 100}% completion");
                 Thread.Sleep(1000);
             }
 
             extrapolatedData = dataToExtrapolate;
             
             generatingData.ReleaseMutex();
-            waitForExtrapolation.Set();
+            logger.Log($"Extrapolation is Ready ! ");
         }
 
-        public IEnumerable<IData> RetreiveExtrapolation()
+        public IEnumerable<IData> RetrieveExtrapolation()
         {
-            waitForExtrapolation.WaitOne();
+            logger.Log($"Waiting for extrapolation thread ot end");
+            generationThread.Join();
             return extrapolatedData;
         }
     }

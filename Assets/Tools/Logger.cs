@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -21,17 +22,28 @@ namespace Tools
         
         public void Log(string str)
         {
-            debugLines = str + '\n' + debugLines ;
+            debugLines = str + '\n' +  debugLines;
+            lineCounter++;
         }
 
         public void Error(string str)
         {
-            debugLines += "ERROR : " + str + '\n';
+            Log("ERROR : " + str);
+        }
+
+        public void Reset()
+        {
+            this.debugLines = "";
         }
     
         public void Update()
         {
-            DebugText.SetText(debugLines);
+            Queue<String> res = new Queue<string>();
+            
+            foreach (var line in debugLines)
+            {
+                DebugText.SetText(debugLines);
+            }
         }
     }
 }
