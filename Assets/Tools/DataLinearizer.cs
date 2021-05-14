@@ -61,12 +61,12 @@ namespace Tools
             
             for (int i = startIndex+1; i < nonLinearData.Count; i++)
             {
+                ++dataGroupLength;
+                
                 if (!nonLinearData[i].GetT().Equals(nonLinearData[i + 1].GetT()))
                 {
                     return dataGroupLength;
                 }
-
-                ++dataGroupLength;
             }
 
             return dataGroupLength;

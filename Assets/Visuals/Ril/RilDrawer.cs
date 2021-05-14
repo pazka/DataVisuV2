@@ -70,6 +70,7 @@ namespace Visuals.Ril
 
             step = timelapseDuration / tmpAllData.Count ;
             rilDataExtrapolator.InitExtrapolation(tmpAllData);
+
             return tmpAllData;
         }
 
@@ -98,11 +99,6 @@ namespace Visuals.Ril
 
         void Update()
         {
-            UpdateFrame();
-        }
-
-        void UpdateFrame()
-        {
             progressBar.transform.localScale = new Vector3((Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration * 1920, 10);
             //UpdateControlledFrameRate();
             UpdateRealtime();
@@ -112,22 +108,20 @@ namespace Visuals.Ril
                 ClearVisuals();
                 InitDrawing();
             }
-        } 
+        }
         
         void UpdateControlledFrameRate()
         {
-
             int hatched = rilEventHatcher.HatchEvents(remainingBatDataVisuals, myTime).Count;
-            logger.Log("Hatched : " + hatched);
+            //logger.Log("Hatched : " + hatched);
             myTime += step;
         }
 
         void UpdateRealtime()
         {
-
             int hatched = rilEventHatcher
                 .HatchEvents(remainingBatDataVisuals, (Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration).Count;
-                if (hatched != 0) logger.Log("Hatched : " + hatched);
+                //if (hatched != 0) logger.Log("Hatched : " + hatched);
         }
     }
 }
