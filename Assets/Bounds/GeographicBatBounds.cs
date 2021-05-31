@@ -10,7 +10,6 @@
          * |-----------|
          */
         private float[,] bounds = new float[2,2];
-        private bool canRegisterNewBounds = true;
 
         public GeographicBatBounds()
         {
@@ -34,7 +33,7 @@
 
         public void RegisterNewBounds(float[] proposedBound)
         {
-            if (!canRegisterNewBounds)
+            if (!CanRegisterNewBounds)
                 return;
 
             if (proposedBound[0] < this.bounds[0, 0])
@@ -56,11 +55,6 @@
             {
                 this.bounds[1, 1] = proposedBound[1];
             }
-        }
-
-        public override void StopRegisteringNewBounds()
-        {
-            canRegisterNewBounds = false;
         }
     }
 }

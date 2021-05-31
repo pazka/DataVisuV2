@@ -4,10 +4,7 @@ namespace Bounds
 {
     public class RilBounds : GenericBound
     {
-        
         private float[] nbLogBounds = new float[2]{float.PositiveInfinity,float.NegativeInfinity};
-        private bool canRegisterNewBounds = true;
-
 
         public override object GetCurrentBounds()
         {
@@ -16,7 +13,7 @@ namespace Bounds
 
         public override void RegisterNewBounds(object data)
         {
-            if (!canRegisterNewBounds) return;
+            if (!CanRegisterNewBounds) return;
             
             if ((float)data < nbLogBounds[0])
                 nbLogBounds[0] = (float)data;
@@ -24,9 +21,5 @@ namespace Bounds
                 nbLogBounds[1] = (float)data;
         }
 
-        public override void StopRegisteringNewBounds()
-        {
-            canRegisterNewBounds = false;
-        }
     }
 }

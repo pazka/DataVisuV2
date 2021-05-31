@@ -38,7 +38,7 @@ namespace Visuals
             }
 
             if (activateRilDrawer){
-                rilDrawer.InitDrawing();
+                rilDrawer.SetActive();
             }
         }
 

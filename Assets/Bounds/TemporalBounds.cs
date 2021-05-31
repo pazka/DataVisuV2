@@ -6,7 +6,6 @@
          * | MinT | MaxT |
          */
         private float[] bounds = new float[2];
-        private bool canRegisterNewBounds = true;
 
         public TimeBounds()
         {
@@ -28,7 +27,7 @@
 
         public void RegisterNewBounds(float proposedBound)
         {
-            if (!canRegisterNewBounds)
+            if (!CanRegisterNewBounds)
                 return;
 
             if (proposedBound < this.bounds[0])
@@ -40,11 +39,6 @@
             {
                 this.bounds[1] = proposedBound;
             }
-        }
-
-        public override void StopRegisteringNewBounds()
-        {
-            canRegisterNewBounds = false;
         }
     }
 }

@@ -60,7 +60,6 @@ namespace DataProcessing.Ril
         private RilData RegisterData(RilData rilData)
         {
             this.geoBounds.RegisterNewBounds(new float[] {rilData.RawX, rilData.RawY});
-
             this.timeBounds.RegisterNewBounds(rilData.T);
             this.dataBounds.RegisterNewBounds(rilData.NOMBRE_LOG);
 
@@ -137,9 +136,9 @@ namespace DataProcessing.Ril
                 float dataRange = _dataBounds[1] - _dataBounds[0];
                 rilData[i].NOMBRE_LOG = ((rilData[i].NOMBRE_LOG - _dataBounds[0]) / dataRange );
             }
-
-            this.allData = rilData;
-            return rilData;
+            
+            this.allData  = rilData.OrderBy(r => ((RilData)r).T).Reverse().ToList();
+            return allData;
         }
 
 

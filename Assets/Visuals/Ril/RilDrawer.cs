@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using DataProcessing;
 using DataProcessing.Ril;
@@ -16,7 +17,7 @@ namespace Visuals.Ril
         private Stack<RilDataVisual> remainingBatDataVisuals = new Stack<RilDataVisual>();
         private RilEventHatcher rilEventHatcher = RilEventHatcher.Instance;
         private float currentIterationStartTimestamp = 0f;
-        
+        private bool isActive = false;
 
         private float myTime = 0f;
         private float step = 0.0005f ;
@@ -34,6 +35,12 @@ namespace Visuals.Ril
             rilDataExtrapolator =
                 (RilDataExtrapolator) FactoryDataExtrapolator.GetInstance(FactoryDataExtrapolator
                     .AvailableDataExtrapolatorTypes.RIL);
+        }
+
+        public void SetActive()
+        {
+            InitDrawing();
+            isActive = true;
         }
 
         public void ClearVisuals()
@@ -60,21 +67,18 @@ namespace Visuals.Ril
             if (currentIterationStartTimestamp == 0f)
             {
                 tmpAllData = (List<RilData>) rilDataConverter.GetAllData();
+                rilDataExtrapolator.InitExtrapolation(tmpAllData,true);
             }
-            else
-            {
-                tmpAllData = (List<RilData>) rilDataExtrapolator.RetrieveExtrapolation();
-            }
-
-            tmpAllData = tmpAllData.OrderBy(r => r.T).Reverse().ToList();
-
+            
+            tmpAllData = (List<RilData>) rilDataExtrapolator.RetrieveExtrapolation();
+            
+            rilDataExtrapolator.InitExtrapolation(tmpAllData,false);
             step = timelapseDuration / tmpAllData.Count ;
-            rilDataExtrapolator.InitExtrapolation(tmpAllData);
 
             return tmpAllData;
         }
 
-        public void InitDrawing()
+        private void InitDrawing()
         {
             allData = GetAllData();
 
@@ -99,6 +103,8 @@ namespace Visuals.Ril
 
         void Update()
         {
+            if (!isActive) return;
+            
             progressBar.transform.localScale = new Vector3((Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration * 1920, 10);
             //UpdateControlledFrameRate();
             UpdateRealtime();
@@ -121,7 +127,7 @@ namespace Visuals.Ril
         {
             int hatched = rilEventHatcher
                 .HatchEvents(remainingBatDataVisuals, (Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration).Count;
-                //if (hatched != 0) logger.Log("Hatched : " + hatched);
+                //logger.Log("Hatched : " + hatched);
         }
     }
 }

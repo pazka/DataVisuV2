@@ -4,5 +4,7 @@
     {
          object GetCurrentBounds();
          void RegisterNewBounds(object data);
+         void StopRegisteringNewBounds();
+         void StartRegisteringNewBounds();
     }
 }

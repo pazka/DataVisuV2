@@ -4,7 +4,8 @@ namespace DataProcessing.Generic
 {
     public interface IDataExtrapolator
     {
-         void InitExtrapolation(IEnumerable<IData> inputData);
+         void InitExtrapolation(IEnumerable<IData> inputData,object parameters);
+         
          IEnumerable<IData> RetrieveExtrapolation();
     }
 }
