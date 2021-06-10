@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Runtime.Remoting.Messaging;
 using System.Security.Permissions;
 using System.Threading;
 using DataProcessing.Generic;
@@ -14,7 +17,8 @@ namespace DataProcessing.Ril
         private List<RilData> dataToExtrapolate;
         private readonly Tools.Logger logger = GameObject.Find("Logger").GetComponent<Tools.Logger>();
 
-        private readonly Tools.GenericLine debugLine = GameObject.Find("GenericLine").GetComponent<Tools.GenericLine>();
+        private readonly Tools.DebugLine debugLine = GameObject.Find("DebugLine").GetComponent<Tools.DebugLine>();
+        private readonly Tools.DebugLine debugLineRed = GameObject.Find("DebugLineRed").GetComponent<Tools.DebugLine>();
 
         public RilDataExtrapolator() : base()
         {
@@ -27,7 +31,7 @@ namespace DataProcessing.Ril
 
         protected override void SetConcreteDataToExtrapolate(IEnumerable<IData> sourceData)
         {
-            this.dataToExtrapolate = (List<RilData>) sourceData;
+            this.dataToExtrapolate = ((List<RilData>) sourceData);
         }
 
         protected override void ExecuteExtrapolation(object parameters)
@@ -37,57 +41,194 @@ namespace DataProcessing.Ril
 
             if (isOnlyFutureExtrapolating)
             {
-                extrapolatedData = TryExtrapolateFutureData(dataToExtrapolate);
+                extrapolatedData = ExtrapolateFutureData(dataToExtrapolate);
             }
 
-            extrapolatedData = extrapolatedData.OrderBy(r => ((RilData) r).T).Reverse().ToList();
             ReleaseMutex();
 
             logger.Log($"Extrapolation is Ready ! ");
         }
 
-        private List<RilData> TryExtrapolateFutureData(List<RilData> pastData)
+        struct HeatMap
         {
-            List<RilData> dataToAddInTheFuture = new List<RilData>();
+            public float[][] map;
+            public float[] header;
+        }
+        private List<RilData> ExtrapolateFutureData(List<RilData> pastData)
+        {
+            const int nbSlices = 1000;
+            
+            //get growth Coefficient
+            float[] spawnCoeffs = CalculateSpawnCoefficient(pastData,nbSlices);
+            float[] growthCoeffs = CalculateGrowthCoefficient(pastData,nbSlices);
 
-            // # 1 Temporal data : 
+            HeatMap heatMap = CalculateHeatMap(pastData,(float)0.2,1921,1081);
+            
+            return PredictFutureData(pastData,spawnCoeffs,growthCoeffs,heatMap);
+        }
 
-            // Get data point of rolling average 
-            int rollingWidth = 501;
-            float[] rollingAverages = new float[pastData.Count - rollingWidth];
-            int midAverageWidth = (rollingWidth - 1) / 2;
+        private float[] CalculateSpawnCoefficient(List<RilData> pastData, int nbSlices)
+        {
+            float[] spawnCoeffs = new float[nbSlices];
 
-            for (int i = 0; i < rollingAverages.Length; i++)
+            int i = 0;
+            int sliceIndex = 0;
+
+            while (i < pastData.Count && sliceIndex < nbSlices)
             {
-                for (int j = -midAverageWidth; j < midAverageWidth; j++)
+                if (pastData[i].T > (1 / nbSlices) * sliceIndex + 1)
                 {
-                    // starting offset
-                    var indexToAccumulate = midAverageWidth + i + j;
-
-                    rollingAverages[i] += pastData[indexToAccumulate].NOMBRE_LOG;
+                    spawnCoeffs[sliceIndex] /= ((float)1 / nbSlices);
+                    ++sliceIndex;
                 }
 
-                rollingAverages[i] /= rollingWidth;
-                if(i%10 == 0)
-                    debugLine.AddPoint(((float)i / rollingAverages.Length) * 1920, rollingAverages[i] * 1080);
+                spawnCoeffs[sliceIndex] += 1;
+                i++;
+            }
+            
+            return spawnCoeffs;
+        }
+
+        private float[] CalculateGrowthCoefficient(List<RilData> pastData,int nbSlices)
+        {
+            float countBetweenSlices = 0;
+            float[] growthCoeffs = new float[nbSlices];
+
+            int i = 0;
+            int sliceIndex = 0;
+
+            while (i < pastData.Count && sliceIndex < nbSlices)
+            {
+                if (pastData[i].T > (1 / nbSlices) * sliceIndex + 1)
+                {
+                    growthCoeffs[sliceIndex] /= countBetweenSlices;
+                    countBetweenSlices = 0;
+                    ++sliceIndex;
+                }
+
+                growthCoeffs[sliceIndex] += 1;
+                i++;
+            }
+            
+            return growthCoeffs;
+        }
+
+        private HeatMap ConvertArraysToHeatMap(float[] mapXs, float[] mapYs)
+        {
+            int limitX = mapXs.Length;
+            int limitY = mapYs.Length;
+            
+            float[][] map = new float[limitX][];
+            float[][] resultMap = new float[limitX][];
+            for (int i = 0; i < limitX; i++)
+            {
+                map[i] = new float[limitY];
+                resultMap[i] = new float[limitY];
             }
 
+            float DiffusionCoeffEquation(float x) { return Math.Max((1 - (x * x) * 1000), 0);}
+            float DiffusionCoeffEquation1(float x) { return x == 0 ? 1 :0;}
+            float[] normalizedDiffusedMapX = new float[limitX];
+            float[] normalizedDiffusedMapY = new float[limitY];
+            
+            for (int x = 0; x < limitX; x++)
+            {
+                for (int x1 = 0; x1 < limitX; x1++)
+                {
+                    float test = DiffusionCoeffEquation((float)(x - x1)/(float)limitX) * mapXs[x1];
+                    normalizedDiffusedMapX[x] += test;
+                }
+            }
+            
+            for (int y = 0; y < limitY; y++)
+            {
+                for (int y1 = 0; y1 < limitY; y1++)
+                {
+                    float test = DiffusionCoeffEquation((float)(y - y1)/(float)limitY) * mapYs[y1];
+                    normalizedDiffusedMapY[y] += test;
+                }
+            }
+            
+            //Convert to probability arrays
+            float acc = normalizedDiffusedMapX.Sum();
+            float[] normalizedDiffusedProbabilityMapX = normalizedDiffusedMapX.Select(x =>x/acc).ToArray();
+            
+            acc = normalizedDiffusedMapY.Sum();
+            float[] normalizedDiffusedProbabilityMapY = normalizedDiffusedMapY.Select(x =>x/acc).ToArray();
+            
+            // for (int x = 0; x < limitX; x++)
+            // {
+            //     normalizedDiffusedMapX[x] = mapXs[x];
+            // }
+            //
+            // for (int y = 0; y < limitY; y++)
+            // {
+            //     normalizedDiffusedMapY[y] = mapYs[y];
+            // }
+            
+            //combine the two arrays into the heatmap
+            for (int x = 0; x < limitX; x++)
+            {
+                for (int y = 0; y < limitY; y++)
+                {
+                    resultMap[x][y] =  (float)Math.Sqrt(normalizedDiffusedProbabilityMapX[x] * normalizedDiffusedProbabilityMapY[y]);
+                }
+            }
 
-            // Extract data from last decade
-            // Get average of data data point y distance and same for X distance
-            // make that into a linear equation 
-            //Use this equation to extrapolate the time of appearance of data on next 100 years
+            HeatMap resHeatMap = new HeatMap();
+            resHeatMap.header = normalizedDiffusedProbabilityMapX;
+            resHeatMap.map = resultMap;
+            return resHeatMap;
+        }
 
-            // #2 Heat map of XY
 
-            // Generate a heat map of the position of of the data.
-            //get rolling average on the x axis 
-            // get rolling average on the y axis 
-            // Compare those average together to gain a heat map on two dimensions
+        private HeatMap CalculateHeatMap(List<RilData> pastData, float percentageToSample,int limitX, int limitY)
+        {
+            float[] mapXs = new float[limitX];
+            float[] mapYs = new float[limitY];
+            float acc = 0;
 
-            // #3 Result
-            // Using the heat map and the time , generate new values
+            int lengthOfLastData = (int)Math.Round((float)pastData.Count * percentageToSample);
 
+            for (int i = 0; i < lengthOfLastData; i++)
+            {
+                //round the pos to fill heat map cells
+                RilData rilData = pastData[pastData.Count - 1 - lengthOfLastData + i];
+                int mapXPosIndex = (int)Math.Round(rilData.X);
+                int mapYPosIndex = (int)Math.Round(rilData.Y);
+
+                //fill the meta heatmap information ( Acc X and Acc Y)
+                mapXs[mapXPosIndex] += rilData.NOMBRE_LOG;
+                mapYs[mapYPosIndex] += rilData.NOMBRE_LOG;
+            }
+
+            HeatMap valueHeatMap = ConvertArraysToHeatMap(mapXs, mapYs);
+
+            string smap = "";
+            using (StreamWriter sw = File.CreateText("debugHeatMap"))
+            {
+                sw.Write("");
+            }
+            using (StreamWriter sw = File.AppendText("debugHeatMap"))
+            {
+                for (int x = 0; x < valueHeatMap.map.Length; x++)
+                {
+                    for (int y = 0; y < valueHeatMap.map[x].Length; y++)
+                    {
+                        sw.Write(valueHeatMap.map[x][y] + ";");
+                    }
+                    sw.Write( "\n");
+                }
+            }
+
+            return valueHeatMap;
+        }
+
+        private List<RilData> PredictFutureData(List<RilData> pastData, float[] spawnCoeff, float[] growthCoeff,
+            HeatMap heatMap)
+        {
+            //generate heat map with rejection sampling for position and noise function for Nb log
+            //Add Noise here for organic results
             return pastData;
         }
     }

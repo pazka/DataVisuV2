@@ -132,12 +132,12 @@ namespace DataProcessing.Ril
                 float timeRange = _timeBounds[1] - _timeBounds[0];
                 rilData[i].SetT((rilData[i].T - _timeBounds[0]) / timeRange );
                 
-                //Convert Real time to time [0->1] relative to min and max of it's times 
+                //Convert Real NOMBRE_LOG to NOMBRE_LOG [0->1] relative to min and max of it's times 
                 float dataRange = _dataBounds[1] - _dataBounds[0];
                 rilData[i].NOMBRE_LOG = ((rilData[i].NOMBRE_LOG - _dataBounds[0]) / dataRange );
             }
             
-            this.allData  = rilData.OrderBy(r => ((RilData)r).T).Reverse().ToList();
+            this.allData  = rilData.OrderBy(r => ((RilData)r).T).ToList();
             return allData;
         }
 
