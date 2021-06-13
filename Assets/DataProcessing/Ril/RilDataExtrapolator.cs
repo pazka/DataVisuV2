@@ -52,7 +52,8 @@ namespace DataProcessing.Ril
         struct HeatMap
         {
             public float[][] map;
-            public float[] header;
+            public float[] headerX;
+            public float[] headerY;
         }
         private List<RilData> ExtrapolateFutureData(List<RilData> pastData)
         {
@@ -176,7 +177,8 @@ namespace DataProcessing.Ril
             }
 
             HeatMap resHeatMap = new HeatMap();
-            resHeatMap.header = normalizedDiffusedProbabilityMapX;
+            resHeatMap.headerX = normalizedDiffusedProbabilityMapX;
+            resHeatMap.headerY = normalizedDiffusedProbabilityMapY;
             resHeatMap.map = resultMap;
             return resHeatMap;
         }
