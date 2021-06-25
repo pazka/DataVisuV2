@@ -13,6 +13,7 @@ namespace Visuals.Ril
         RilDataConverter rilDataConverter;
         private RilDataExtrapolator rilDataExtrapolator;
         [SerializeField] private float timelapseDuration = 30;
+        [SerializeField] private float extrapolationRate = .1f;
         [SerializeField] private bool controlledUpdateTime = false;
         private List<RilData> allData;
         private Queue<RilDataVisual> remainingBatDataVisuals = new Queue<RilDataVisual>();
@@ -69,12 +70,20 @@ namespace Visuals.Ril
             if (currentIterationStartTimestamp == 0f)
             {
                 tmpAllData = (List<RilData>) rilDataConverter.GetAllData();
-                rilDataExtrapolator.InitExtrapolation(tmpAllData,true);
+                rilDataExtrapolator.InitExtrapolation(tmpAllData,new RilExtrapolationParameters()
+                {
+                    isOnlyFutureExtrapolating = true,
+                    extrapolationRate = extrapolationRate
+                });
             }
             
             tmpAllData = (List<RilData>) rilDataExtrapolator.RetrieveExtrapolation();
             
-            rilDataExtrapolator.InitExtrapolation(tmpAllData,false);
+            rilDataExtrapolator.InitExtrapolation(tmpAllData,new RilExtrapolationParameters()
+            {
+                isOnlyFutureExtrapolating = false,
+                extrapolationRate = extrapolationRate
+            });
             step = timelapseDuration / tmpAllData.Count ;
 
             return tmpAllData;

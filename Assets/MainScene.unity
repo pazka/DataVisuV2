@@ -401,7 +401,7 @@ GameObject:
   - component: {fileID: 662345311}
   - component: {fileID: 662345312}
   m_Layer: 0
-  m_Name: bat_red
+  m_Name: bat_fake
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -415,8 +415,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 662345310}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -987.59, y: -522.05, z: 33}
-  m_LocalScale: {x: 2.6053696, y: 25.576454, z: 2.525145}
+  m_LocalPosition: {x: -982.81, y: -522.05, z: 33}
+  m_LocalScale: {x: 12.161716, y: 25.576454, z: 2.525145}
   m_Children: []
   m_Father: {fileID: 1597805429}
   m_RootOrder: 2
@@ -461,7 +461,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: b0df4e32948234f4a89d58a8c2c5c893, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1307,7 +1307,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logger: {fileID: 1579690540}
-  timelapseDuration: 60
+  timelapseDuration: 30
+  extrapolationRate: 0.1
   controlledUpdateTime: 0
   batRessource: {fileID: 1187849936}
   batFutureRessource: {fileID: 662345310}

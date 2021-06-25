@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DataProcessing.Generic;
 using Tools;
 using UnityEngine;
+using Random = System.Random;
 
 namespace DataProcessing.Ril
 {
@@ -124,9 +125,22 @@ namespace DataProcessing.Ril
             apic_objec = apicObjec;
         }
     }
+    
 
     public class FutureRilData : RilData
     {
+        private static Random _rnd = new Random();
         public FutureRilData(float rawX, float rawY, float t) : base("future", rawX, rawY, t){}
+        
+        public void Randomize(){
+            float newX = this.X + (_rnd.Next(0, 50) - 25);
+            float newY = this.Y + (_rnd.Next(0, 50) - 25);
+            float ampl = Mathf.PerlinNoise( newX,newY);
+            ampl = 1 + 10 * ampl * ampl * ampl; 
+            
+            this.SetX(newX);
+            this.SetY(newY);
+            this.NOMBRE_LOG *= Math.Min(this.NOMBRE_LOG  *ampl,200);
+        }
     }
 }
