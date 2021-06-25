@@ -51,34 +51,6 @@ namespace DataProcessing.Ril
 
             logger.Log($"Extrapolation is Ready ! ");
         }
-        
-        private class HeatMap
-        {
-            public float[][] Map;
-            public float[] HeaderX;
-            public float[] HeaderY;
-            private Random random = new Random();
-
-            public float[] GetWeightedPosition()
-            {
-                float acc = 0f;
-                double rnd = random.NextDouble();
-                
-                for (int x = 0; x < HeaderX.Length; x++)
-                {
-                    for (int y = 0; y < HeaderY.Length; y++)
-                    {
-                        acc += Map[x][y];
-                        if (rnd < acc)
-                        {
-                            return new float[] {x, y};
-                        }
-                    }
-                }
-                
-                return new float[]{0,0};
-            }
-        }
 
         private struct SpawnCoeff
         {
@@ -102,9 +74,7 @@ namespace DataProcessing.Ril
             SpawnCoeff spawnCoeffs = CalculateSpawnCoefficient(pastData, 0.3f, nbSlices);
             GrowthCoeff growthCoeffs = CalculateGrowthCoefficient(pastData, 0.3f, nbSlices);
 
-            //HeatMap heatMap = CalculateHeatMap(pastData, 0.2f, 1921, 1081);
-            HeatMap heatMap = new HeatMap();
-            return PredictFutureData(pastData, spawnCoeffs, growthCoeffs, heatMap);
+            return PredictFutureData(pastData, spawnCoeffs, growthCoeffs);
         }
 
         private static SpawnCoeff CalculateSpawnCoefficient(List<RilData> pastData, float percentageToSample,
@@ -182,118 +152,10 @@ namespace DataProcessing.Ril
                 NormalizedTimespanOfSlice = normalizedTimeSlot
             };
         }
-
-        private static HeatMap CalculateHeatMap(List<RilData> pastData, float percentageToSample, int limitX,
-            int limitY)
-        {
-            float[] mapXs = new float[limitX];
-            float[] mapYs = new float[limitY];
-
-            int indexOfFirstData = pastData.Count - (int) Math.Round((float) pastData.Count * percentageToSample);
-
-            for (int i = 0; indexOfFirstData + i < pastData.Count; i++)
-            {
-                //round the pos to fill heat map cells
-                RilData rilData = pastData[indexOfFirstData + i];
-                int mapXPosIndex = (int) Math.Round(rilData.X);
-                int mapYPosIndex = (int) Math.Round(rilData.Y);
-
-                //fill the meta heatmap information ( Acc X and Acc Y)
-                mapXs[mapXPosIndex] += rilData.NOMBRE_LOG;
-                mapYs[mapYPosIndex] += rilData.NOMBRE_LOG;
-            }
-
-            HeatMap valueHeatMap = ConvertArraysToHeatMap(mapXs, mapYs);
-
-            return valueHeatMap;
-        }
-
-
-        private static HeatMap ConvertArraysToHeatMap(float[] mapXs, float[] mapYs)
-        {
-            int limitX = mapXs.Length;
-            int limitY = mapYs.Length;
-
-            float[][] map = new float[limitX][];
-            float[][] resultMap = new float[limitX][];
-            for (int i = 0; i < limitX; i++)
-            {
-                map[i] = new float[limitY];
-                resultMap[i] = new float[limitY];
-            }
-
-            float DiffusionCoeffEquation(float x)
-            {
-                return Math.Max((1 - (x * x) * 100), 0);
-            }
-
-            float DiffusionCoeffEquation1(float x)
-            {
-                return x == 0 ? 1 : 0;
-            }
-
-            float[] normalizedDiffusedMapX = new float[limitX];
-            float[] normalizedDiffusedMapY = new float[limitY];
-
-            for (int x = 0; x < limitX; x++)
-            {
-                for (int x1 = 0; x1 < limitX; x1++)
-                {
-                    float test = DiffusionCoeffEquation((float) (x - x1) / (float) limitX) * mapXs[x1];
-                    normalizedDiffusedMapX[x] += test;
-                }
-            }
-
-            for (int y = 0; y < limitY; y++)
-            {
-                for (int y1 = 0; y1 < limitY; y1++)
-                {
-                    float test = DiffusionCoeffEquation((float) (y - y1) / (float) limitY) * mapYs[y1];
-                    normalizedDiffusedMapY[y] += test;
-                }
-            }
-
-            //Convert to probability arrays
-            float acc = normalizedDiffusedMapX.Sum();
-            float[] normalizedDiffusedProbabilityMapX = normalizedDiffusedMapX.Select(x => x / acc).ToArray();
-
-            acc = normalizedDiffusedMapY.Sum();
-            float[] normalizedDiffusedProbabilityMapY = normalizedDiffusedMapY.Select(x => x / acc).ToArray();
-
-            float mapProbaTotal = 0f;
-
-            //combine the two arrays into the heatmap
-            for (int x = 0; x < limitX; x++)
-            {
-                for (int y = 0; y < limitY; y++)
-                {
-                    resultMap[x][y] = (float) Math.Sqrt(normalizedDiffusedProbabilityMapX[x] *normalizedDiffusedProbabilityMapY[y]);
-                    mapProbaTotal += resultMap[x][y];
-                }
-            }
-            
-            
-            //normalize them just in case
-            for (int x = 0; x < limitX; x++)
-            {
-                for (int y = 0; y < limitY; y++)
-                {
-                    resultMap[x][y] = resultMap[x][y] / mapProbaTotal;
-                }
-            }
-
-            return new HeatMap
-            {
-                HeaderX = normalizedDiffusedProbabilityMapX,
-                HeaderY = normalizedDiffusedProbabilityMapY,
-                Map = resultMap
-            };
-        }
-
+        
         private static List<RilData> PredictFutureData(List<RilData> pastData,
             SpawnCoeff spawnCoeffs,
-            GrowthCoeff growthCoeffs,
-            HeatMap heatMap)
+            GrowthCoeff growthCoeffs)
         {
             if (spawnCoeffs.Values.Length != growthCoeffs.Values.Length)
                 throw new Exception("Coefficient arrays are not the same length");
@@ -312,8 +174,7 @@ namespace DataProcessing.Ril
                 {
                     float futureT = lastT + timespanBetweenTwoSpawn;
 
-                    //generate new data with rejection sampling for position and noise function for Nb log
-                    //float[] futurePos = heatMap.GetWeightedPosition();
+                    //noise function for Nb log
                     RilData pastDatatoGetPosFrom = pastData[rnd.Next(0, pastData.Count - 1)];
                     float[] futurePos = new[] {pastDatatoGetPosFrom.X, pastDatatoGetPosFrom.Y};
 
