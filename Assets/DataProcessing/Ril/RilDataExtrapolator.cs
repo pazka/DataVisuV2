@@ -163,27 +163,31 @@ namespace DataProcessing.Ril
             List<RilData> newData = new List<RilData>(pastData); 
             
             Random rnd = new Random();
+            float lastT = 1f; // we start the time at the end of the normalized timeline
+            
             for (int i = 0; i < spawnCoeffs.Values.Length; i++)
             {
                 int nbOfDataToCreate = (int) Math.Ceiling(spawnCoeffs.Values[i]);
                 float timespanBetweenTwoSpawn = spawnCoeffs.NormalizedTimespanOfSlice / nbOfDataToCreate;
                 float batSize = growthCoeffs.Values[i] / nbOfDataToCreate;
-                float lastT = 1f; // we start the time at the end of the normalized timeline
 
                 for (int dataToCreateIndex = 0; dataToCreateIndex < nbOfDataToCreate; dataToCreateIndex++)
                 {
-                    float futureT = lastT + timespanBetweenTwoSpawn;
+                    float futureT = lastT;
+                    lastT += timespanBetweenTwoSpawn;
 
                     //noise function for Nb log
-                    RilData pastDatatoGetPosFrom = pastData[rnd.Next(0, pastData.Count - 1)];
-                    float[] futurePos = new[] {pastDatatoGetPosFrom.X, pastDatatoGetPosFrom.Y};
+                    RilData pastDataToGetPosFrom = pastData[rnd.Next(0, pastData.Count - 1)];
+                    float[] futurePos = {pastDataToGetPosFrom.X, pastDataToGetPosFrom.Y};
 
                     futurePos[0] += (rnd.Next(0, 50) - 25);
                     futurePos[1] += (rnd.Next(0, 50) - 25);
-                    RilData rilData = new RilData("future", futurePos[0], futurePos[1], futureT)
+                    float ampl = Mathf.PerlinNoise( futurePos[0],futurePos[1]);
+                    ampl = 1 + 10 * ampl * ampl * ampl; 
+                    
+                    FutureRilData rilData = new FutureRilData(futurePos[0], futurePos[1], futureT)
                     {
-                        //TODO : Add Noise here for organic results
-                        NOMBRE_LOG = batSize
+                        NOMBRE_LOG = batSize * ampl 
                     };
 
                     newData.Add(rilData);
@@ -192,7 +196,7 @@ namespace DataProcessing.Ril
 
             //Reassign new T with max being extrapolation
             float newMaxT = newData.Max(data => data.T);
-            foreach (RilData rilData in pastData)
+            foreach (RilData rilData in newData)
             {
                 rilData.SetT( rilData.T / newMaxT);
             }

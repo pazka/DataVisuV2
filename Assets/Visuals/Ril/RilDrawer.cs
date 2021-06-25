@@ -87,17 +87,17 @@ namespace Visuals.Ril
             foreach (RilData currentRilData in allData)
             {
                 GameObject batVisual;
-                if (currentRilData.Raw != "future")
-                {
-                    batVisual = Instantiate(batRessource);
-                }
-                else
+                if (currentRilData.Raw == "future")
                 {
                     batVisual = Instantiate(batFutureRessource);
                 }
+                else
+                {
+                    batVisual = Instantiate(batRessource);
+                }
                 
                 batVisual.tag = "bat:tmp";
-                //batVisual.SetActive(false);
+                batVisual.SetActive(false);
 
                 if (!batVisual)
                     break;
@@ -105,7 +105,8 @@ namespace Visuals.Ril
                 Vector3 currentPosition =
                     new Vector3(currentRilData.X, currentRilData.Y, (float) VisualPlanner.Layers.Ril);
                 batVisual.transform.position = currentPosition;
-                batVisual.transform.localScale = new Vector3(2 + currentRilData.NOMBRE_LOG * 30,
+                batVisual.transform.localScale = new Vector3(
+                    2 + currentRilData.NOMBRE_LOG * 30,
                     2 + currentRilData.NOMBRE_LOG * 30);
 
                 remainingBatDataVisuals.Enqueue(new RilDataVisual(currentRilData, batVisual));
@@ -117,6 +118,7 @@ namespace Visuals.Ril
             if (!isActive) return;
             
             progressBar.transform.localScale = new Vector3((Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration * 1920, 10);
+            
             if(controlledUpdateTime)
                 UpdateControlledFrameRate();
             else

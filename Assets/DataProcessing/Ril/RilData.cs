@@ -125,4 +125,8 @@ namespace DataProcessing.Ril
         }
     }
 
+    public class FutureRilData : RilData
+    {
+        public FutureRilData(float rawX, float rawY, float t) : base("future", rawX, rawY, t){}
+    }
 }

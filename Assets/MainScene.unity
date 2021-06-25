@@ -1307,7 +1307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logger: {fileID: 1579690540}
-  timelapseDuration: 30
+  timelapseDuration: 60
   controlledUpdateTime: 0
   batRessource: {fileID: 1187849936}
   batFutureRessource: {fileID: 662345310}
