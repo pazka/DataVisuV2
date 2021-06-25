@@ -6,6 +6,7 @@ namespace Tools
     {
         void Start()
         {
+            return;
             Texture2D texture = new Texture2D(128, 128);
             GetComponent<Renderer>().material.mainTexture = texture;
 

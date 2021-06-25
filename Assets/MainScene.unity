@@ -302,7 +302,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97aba402a471c0e40922bb23f406d999, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: e954411e4a77e014c85f3fb446e8b87e, type: 2}
 --- !u!1 &589042127
 GameObject:
   m_ObjectHideFlags: 0
@@ -1309,7 +1308,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logger: {fileID: 1579690540}
   timelapseDuration: 30
+  controlledUpdateTime: 0
   batRessource: {fileID: 1187849936}
+  batFutureRessource: {fileID: 662345310}
   progressBar: {fileID: 1177338392}
 --- !u!1 &1856231691
 GameObject:

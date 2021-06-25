@@ -69,7 +69,7 @@ namespace DataProcessing.Ril
         public override IData GetNextData()
         {
             rilDataReader.GoToNextData();
-            if (!rilDataReader.EndOfStream)
+            if (!rilDataReader.streamEnd)
             {
                 return RegisterData((RilData) rilDataReader.GetData());
             }
@@ -89,10 +89,10 @@ namespace DataProcessing.Ril
             RilData tmpData;
 
             //get raw data first
-            while (!rilDataReader.EndOfStream)
+            while (!rilDataReader.streamEnd)
             {
                 tmpData = (RilData) GetNextData();
-                if (!rilDataReader.EndOfStream)
+                if (!rilDataReader.streamEnd)
                 {
                     notConvertedRilData.Add(tmpData);
                 }
@@ -137,7 +137,7 @@ namespace DataProcessing.Ril
                 rilData[i].NOMBRE_LOG = ((rilData[i].NOMBRE_LOG - _dataBounds[0]) / dataRange );
             }
             
-            this.allData  = rilData.OrderBy(r => ((RilData)r).T).ToList();
+            this.allData  = rilData.OrderBy(r => r.T).ToList();
             return allData;
         }
 

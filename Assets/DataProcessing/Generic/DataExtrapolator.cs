@@ -27,7 +27,8 @@ namespace DataProcessing.Generic
         }
         
         public IEnumerable<IData> RetrieveExtrapolation() {
-            GenerationThread.Join();
+                GenerationThread.Join();
+            
             return GetConcreteExtrapolation();
         }
         

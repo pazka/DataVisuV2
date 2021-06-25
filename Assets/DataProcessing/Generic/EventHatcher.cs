@@ -17,13 +17,13 @@ namespace DataProcessing.Generic
         /// <param name="sortedData"></param>
         /// <param name="criteria"></param>
         /// <returns> Triggered data </returns>
-        public ICollection<T> HatchEvents(Stack<T> sortedData,dynamic criteria)
+        public ICollection<T> HatchEvents(Queue<T> sortedData,dynamic criteria)
         {
             ICollection < T > triggeredData = new List<T>();
 
             while (sortedData.Count > 0 && DecideIfReady(sortedData.Peek(), criteria))
             {
-                triggeredData.Add(ExecuteData(sortedData.Pop()));
+                triggeredData.Add(ExecuteData(sortedData.Dequeue()));
             }
             
             return triggeredData;

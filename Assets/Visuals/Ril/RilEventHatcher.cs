@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using DataProcessing.Generic;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ namespace Visuals.Ril
     public class RilEventHatcher : EventHatcher<RilDataVisual>
     {
         public static RilEventHatcher Instance { get; } = new RilEventHatcher();
+        //private readonly Tools.Logger logger = GameObject.Find("Logger").GetComponent<Tools.Logger>();
 
         protected override bool DecideIfReady(RilDataVisual data, dynamic timePassed)
         {

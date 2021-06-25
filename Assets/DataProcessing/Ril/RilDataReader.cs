@@ -11,7 +11,7 @@ namespace DataProcessing.Ril
         readonly string FilePath = "Assets/DataAsset/Strasbourg/Ril/RIL_2018.json";
         int Cursor;
         List<IntermediateJsonObject> AllDataRead;
-        public bool EndOfStream;
+        public bool streamEnd;
 
 
         [Serializable]
@@ -96,7 +96,7 @@ namespace DataProcessing.Ril
         public void Init()
         {
             Cursor = 0;
-            EndOfStream = false;
+            streamEnd = false;
 
             using (StreamReader r = new StreamReader(this.FilePath))
             {
@@ -108,7 +108,7 @@ namespace DataProcessing.Ril
         public void Clean()
         {
             AllDataRead = new List<IntermediateJsonObject>();
-            EndOfStream = false;
+            streamEnd = false;
         }
 
         public IData GetData()
@@ -172,14 +172,14 @@ namespace DataProcessing.Ril
 
         public void GoToNextData()
         {
-            if (EndOfStream)
+            if (streamEnd)
                 return;
 
             Cursor++;
 
             if (Cursor == AllDataRead.Count)
             {
-                EndOfStream = true;
+                streamEnd = true;
             }
         }
     }

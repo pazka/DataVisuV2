@@ -59,6 +59,8 @@ namespace DataProcessing.Ril
         public string apic_obj08 { get; private set;}
         public string apic_objec { get; private set;}
 
+        public RilData(string raw, float rawX, float rawY,float t):base(raw,rawX,rawY,t){}
+        
         public RilData(string raw, float rawX, float rawY, string actualite, string anneeCons,
             string canton, string categorie, string commentair, string complement, string comAncID, string comCapaci,
             string comDateC, string comNbLog, string comNom, string comSousC, string comStatut, string datemajEa,

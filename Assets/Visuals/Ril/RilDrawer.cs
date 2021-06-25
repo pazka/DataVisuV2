@@ -13,8 +13,9 @@ namespace Visuals.Ril
         RilDataConverter rilDataConverter;
         private RilDataExtrapolator rilDataExtrapolator;
         [SerializeField] private float timelapseDuration = 30;
+        [SerializeField] private bool controlledUpdateTime = false;
         private List<RilData> allData;
-        private Stack<RilDataVisual> remainingBatDataVisuals = new Stack<RilDataVisual>();
+        private Queue<RilDataVisual> remainingBatDataVisuals = new Queue<RilDataVisual>();
         private RilEventHatcher rilEventHatcher = RilEventHatcher.Instance;
         private float currentIterationStartTimestamp = 0f;
         private bool isActive = false;
@@ -23,6 +24,7 @@ namespace Visuals.Ril
         private float step = 0.0005f ;
 
         public GameObject batRessource;
+        public GameObject batFutureRessource;
         public GameObject progressBar;
 
         void Start()
@@ -51,7 +53,7 @@ namespace Visuals.Ril
                 Destroy(visualToDestroy);
             }
             
-            remainingBatDataVisuals = new Stack<RilDataVisual>();
+            remainingBatDataVisuals = new Queue<RilDataVisual>();
             currentIterationStartTimestamp = Time.realtimeSinceStartup;
             
             //specific to updateControlled FrameRate
@@ -84,9 +86,18 @@ namespace Visuals.Ril
 
             foreach (RilData currentRilData in allData)
             {
-                GameObject batVisual = Instantiate(batRessource);
+                GameObject batVisual;
+                if (currentRilData.Raw != "future")
+                {
+                    batVisual = Instantiate(batRessource);
+                }
+                else
+                {
+                    batVisual = Instantiate(batFutureRessource);
+                }
+                
                 batVisual.tag = "bat:tmp";
-                batVisual.SetActive(false);
+                //batVisual.SetActive(false);
 
                 if (!batVisual)
                     break;
@@ -97,7 +108,7 @@ namespace Visuals.Ril
                 batVisual.transform.localScale = new Vector3(2 + currentRilData.NOMBRE_LOG * 30,
                     2 + currentRilData.NOMBRE_LOG * 30);
 
-                remainingBatDataVisuals.Push(new RilDataVisual(currentRilData, batVisual));
+                remainingBatDataVisuals.Enqueue(new RilDataVisual(currentRilData, batVisual));
             }
         }
 
@@ -106,8 +117,10 @@ namespace Visuals.Ril
             if (!isActive) return;
             
             progressBar.transform.localScale = new Vector3((Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration * 1920, 10);
-            //UpdateControlledFrameRate();
-            UpdateRealtime();
+            if(controlledUpdateTime)
+                UpdateControlledFrameRate();
+            else
+                UpdateRealtime();
             
             if (remainingBatDataVisuals.Count == 0)
             {
