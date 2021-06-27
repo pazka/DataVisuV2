@@ -7,6 +7,10 @@ using UnityEngine;
 
 namespace Visuals.Ril
 {
+    enum DrawingState
+    {
+        Drawing,Destroying,Inactive,Active
+    }
     public class RilDrawer : MonoBehaviour
     {
         public Tools.Logger logger;
@@ -19,15 +23,20 @@ namespace Visuals.Ril
         private Queue<RilDataVisual> remainingBatDataVisuals = new Queue<RilDataVisual>();
         private RilEventHatcher rilEventHatcher = RilEventHatcher.Instance;
         private float currentIterationStartTimestamp = 0f;
-        private bool isActive = false;
 
         private float myTime = 0f;
         private float step = 0.0005f ;
+        private DrawingState drawingState = DrawingState.Drawing;
 
         public GameObject batRessource;
         public GameObject batFutureRessource;
         public GameObject progressBar;
-
+        
+        public void SetActive()
+        {
+            drawingState = DrawingState.Active;
+            InitDrawing();
+        }
         void Start()
         {
             //Prepare entities        
@@ -40,58 +49,52 @@ namespace Visuals.Ril
                     .AvailableDataExtrapolatorTypes.RIL);
         }
 
-        public void SetActive()
+        void Update()
         {
+            switch (drawingState)
+            {
+                case DrawingState.Drawing : 
+                    DisplayData();
+                    break;
+                
+                case DrawingState.Destroying:
+                    ResetData();
+                    break;
+                
+                case DrawingState.Inactive:
+                    return;
+            }
+            
+            if (remainingBatDataVisuals.Count == 0)
+            {
+                drawingState = DrawingState.Destroying;
+            }
+        }
+
+        void DisplayData()
+        {
+            progressBar.transform.localScale = new Vector3((Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration * 1920, 10);
+            
+            if(controlledUpdateTime)
+                UpdateControlledFrameRate();
+            else
+                UpdateRealtime();
+        }
+
+        void ResetData()
+        {
+            ClearVisuals();
             InitDrawing();
-            isActive = true;
         }
-
-        public void ClearVisuals()
+        
+        void DestroyData()
         {
-            GameObject[] visualsToDestroy = GameObject.FindGameObjectsWithTag("bat:tmp");
-            foreach (var visualToDestroy in visualsToDestroy)
-            {
-                Destroy(visualToDestroy);
-            }
             
-            remainingBatDataVisuals = new Queue<RilDataVisual>();
-            currentIterationStartTimestamp = Time.realtimeSinceStartup;
-            
-            //specific to updateControlled FrameRate
-            myTime = 0;
-            
-            //logger 
-            logger.Reset();
-        }
-
-        private List<RilData> GetAllData()
-        {
-            List<RilData> tmpAllData;
-            if (currentIterationStartTimestamp == 0f)
-            {
-                tmpAllData = (List<RilData>) rilDataConverter.GetAllData();
-                rilDataExtrapolator.InitExtrapolation(tmpAllData,new RilExtrapolationParameters()
-                {
-                    isOnlyFutureExtrapolating = true,
-                    extrapolationRate = extrapolationRate
-                });
-            }
-            
-            tmpAllData = (List<RilData>) rilDataExtrapolator.RetrieveExtrapolation();
-            
-            rilDataExtrapolator.InitExtrapolation(tmpAllData,new RilExtrapolationParameters()
-            {
-                isOnlyFutureExtrapolating = false,
-                extrapolationRate = extrapolationRate
-            });
-            step = timelapseDuration / tmpAllData.Count ;
-
-            return tmpAllData;
         }
 
         private void InitDrawing()
         {
-            allData = GetAllData();
+            allData = GetDataToDisplay();
 
             foreach (RilData currentRilData in allData)
             {
@@ -120,24 +123,51 @@ namespace Visuals.Ril
 
                 remainingBatDataVisuals.Enqueue(new RilDataVisual(currentRilData, batVisual));
             }
+            
+            drawingState = DrawingState.Drawing;
         }
 
-        void Update()
+        
+        private List<RilData> GetDataToDisplay()
         {
-            if (!isActive) return;
-            
-            progressBar.transform.localScale = new Vector3((Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration * 1920, 10);
-            
-            if(controlledUpdateTime)
-                UpdateControlledFrameRate();
-            else
-                UpdateRealtime();
-            
-            if (remainingBatDataVisuals.Count == 0)
+            List<RilData> tmpAllData;
+            if (currentIterationStartTimestamp == 0f)
             {
-                ClearVisuals();
-                InitDrawing();
+                tmpAllData = (List<RilData>) rilDataConverter.GetAllData();
+                rilDataExtrapolator.InitExtrapolation(tmpAllData,new RilExtrapolationParameters()
+                {
+                    isOnlyFutureExtrapolating = true,
+                    extrapolationRate = extrapolationRate
+                });
             }
+            
+            tmpAllData = (List<RilData>) rilDataExtrapolator.RetrieveExtrapolation();
+            
+            rilDataExtrapolator.InitExtrapolation(tmpAllData,new RilExtrapolationParameters()
+            {
+                isOnlyFutureExtrapolating = false,
+                extrapolationRate = extrapolationRate
+            });
+            step = timelapseDuration / tmpAllData.Count ;
+
+            return tmpAllData;
+        }
+        public void ClearVisuals()
+        {
+            GameObject[] visualsToDestroy = GameObject.FindGameObjectsWithTag("bat:tmp");
+            foreach (var visualToDestroy in visualsToDestroy)
+            {
+                Destroy(visualToDestroy);
+            }
+            
+            remainingBatDataVisuals = new Queue<RilDataVisual>();
+            currentIterationStartTimestamp = Time.realtimeSinceStartup;
+            
+            //specific to updateControlled FrameRate
+            myTime = 0;
+            
+            //logger 
+            logger.Reset();
         }
         
         void UpdateControlledFrameRate()
