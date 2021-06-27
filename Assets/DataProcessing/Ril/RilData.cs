@@ -132,15 +132,15 @@ namespace DataProcessing.Ril
         private static Random _rnd = new Random();
         public FutureRilData(float rawX, float rawY, float t) : base("future", rawX, rawY, t){}
         
-        public void Randomize(){
-            float newX = this.X + (_rnd.Next(0, 50) - 25);
-            float newY = this.Y + (_rnd.Next(0, 50) - 25);
-            float ampl = Mathf.PerlinNoise( newX,newY);
+        public void Randomize(int posRnd = 50, int perlinRnd = 500, int maxBatSize = 1){
+            float newX = this.X + (_rnd.Next(0, posRnd*2) - posRnd);
+            float newY = this.Y + (_rnd.Next(0, posRnd*2) - posRnd);
+            float ampl = Mathf.PerlinNoise( _rnd.Next(0, 500) - 250 + newX,_rnd.Next(0, perlinRnd*2) - perlinRnd + newY);
             ampl = 1 + 10 * ampl * ampl * ampl; 
             
             this.SetX(newX);
             this.SetY(newY);
-            this.NOMBRE_LOG *= Math.Min(this.NOMBRE_LOG  *ampl,200);
+            this.NOMBRE_LOG = Math.Min(this.NOMBRE_LOG  *ampl,maxBatSize);
         }
     }
 }

@@ -27,6 +27,7 @@ namespace Visuals.Ril
         private RilEventHatcher rilEventHatcher = RilEventHatcher.Instance;
         private float currentIterationStartTimestamp = 0f;
 
+        private int nbIteration = 1;
         private float myTime = 0f;
         private float step = 0.0005f ;
         private DrawingState drawingState = DrawingState.Drawing;
@@ -93,17 +94,21 @@ namespace Visuals.Ril
         
         void DestroyData()
         {
-            HideSomeVisuals(disappearingRate);
             
             if (usedBatDataVisuals.Count == 0)
             {
                 ResetData();
+                return;
             }
+            
+            HideSomeVisuals(disappearingRate);
+            
         }
 
         private void InitDrawing()
         {
             allData = GetDataToDisplay();
+            logger.Log("#" + nbIteration++ + " = " + allData.Count);
 
             foreach (RilData currentRilData in allData)
             {
@@ -178,7 +183,7 @@ namespace Visuals.Ril
             myTime = 0;
             
             //logger 
-            logger.Reset();
+            //logger.Reset();
         }
         
         public void HideSomeVisuals(float disappearingRate)
@@ -198,7 +203,6 @@ namespace Visuals.Ril
         void UpdateControlledFrameRate()
         {
             ICollection<RilDataVisual> hatchedData  = rilEventHatcher.HatchEvents(remainingBatDataVisuals, myTime);
-            //logger.Log("Hatched : " + hatched);
             myTime += step;
             
             foreach (RilDataVisual rilDataVisual in hatchedData)

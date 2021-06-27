@@ -20,3 +20,13 @@ In order to add a new data in the visuals :
 - Create a visual to display ```/Visual/[script-of-visual]``` 
     1. Import your datas from DataConverter.cs 
     2. Enrich everything you want from the Unity Engine and Editor
+
+
+## Note on generation For RilData
+
+
+Extrapolation Rate : 0.1
+
+Disappearing rate : 0.01
+
+=> 13 iterations to be all white
