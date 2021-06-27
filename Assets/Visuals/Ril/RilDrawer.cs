@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using DataProcessing;
@@ -19,6 +20,7 @@ namespace Visuals.Ril
         [SerializeField] private float timelapseDuration = 30;
         [SerializeField] private float extrapolationRate = .1f;
         [SerializeField] private bool controlledUpdateTime = false;
+        [SerializeField] private float disappearingRate = .01f;
         private List<RilData> allData;
         private Queue<RilDataVisual> remainingBatDataVisuals = new Queue<RilDataVisual>();
         private List<RilDataVisual> usedBatDataVisuals = new List<RilDataVisual>();
@@ -59,16 +61,11 @@ namespace Visuals.Ril
                     break;
                 
                 case DrawingState.Destroying:
-                    ResetData();
+                    DestroyData();
                     break;
                 
                 case DrawingState.Inactive:
                     return;
-            }
-            
-            if (remainingBatDataVisuals.Count == 0)
-            {
-                drawingState = DrawingState.Destroying;
             }
         }
 
@@ -80,6 +77,12 @@ namespace Visuals.Ril
                 UpdateControlledFrameRate();
             else
                 UpdateRealtime();
+            
+            
+            if (remainingBatDataVisuals.Count == 0)
+            {
+                drawingState = DrawingState.Destroying;
+            }
         }
 
         void ResetData()
@@ -90,7 +93,12 @@ namespace Visuals.Ril
         
         void DestroyData()
         {
+            HideSomeVisuals(disappearingRate);
             
+            if (usedBatDataVisuals.Count == 0)
+            {
+                ResetData();
+            }
         }
 
         private void InitDrawing()
@@ -171,6 +179,20 @@ namespace Visuals.Ril
             
             //logger 
             logger.Reset();
+        }
+        
+        public void HideSomeVisuals(float disappearingRate)
+        {
+            int nbToTake = (int)Math.Max( Math.Round(usedBatDataVisuals.Count * disappearingRate),50);
+            GameObject[] visualsToDestroy = usedBatDataVisuals.Select(x => x.Visual).Take(nbToTake).ToArray();
+            int nbTook = visualsToDestroy.Length;
+            foreach (var visualToDestroy in visualsToDestroy)
+            {
+                visualToDestroy.SetActive(false);
+                Destroy(visualToDestroy.gameObject);
+            }
+
+            usedBatDataVisuals = usedBatDataVisuals.GetRange(nbTook,usedBatDataVisuals.Count()-nbTook);
         }
         
         void UpdateControlledFrameRate()
