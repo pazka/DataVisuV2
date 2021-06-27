@@ -21,6 +21,7 @@ namespace Visuals.Ril
         [SerializeField] private bool controlledUpdateTime = false;
         private List<RilData> allData;
         private Queue<RilDataVisual> remainingBatDataVisuals = new Queue<RilDataVisual>();
+        private List<RilDataVisual> usedBatDataVisuals = new List<RilDataVisual>();
         private RilEventHatcher rilEventHatcher = RilEventHatcher.Instance;
         private float currentIterationStartTimestamp = 0f;
 
@@ -154,12 +155,14 @@ namespace Visuals.Ril
         }
         public void ClearVisuals()
         {
-            GameObject[] visualsToDestroy = GameObject.FindGameObjectsWithTag("bat:tmp");
+            GameObject[] visualsToDestroy = usedBatDataVisuals.Select(x => x.Visual).ToArray();
+            
             foreach (var visualToDestroy in visualsToDestroy)
             {
                 Destroy(visualToDestroy);
             }
-            
+
+            usedBatDataVisuals = new List<RilDataVisual>();
             remainingBatDataVisuals = new Queue<RilDataVisual>();
             currentIterationStartTimestamp = Time.realtimeSinceStartup;
             
@@ -172,16 +175,25 @@ namespace Visuals.Ril
         
         void UpdateControlledFrameRate()
         {
-            int hatched = rilEventHatcher.HatchEvents(remainingBatDataVisuals, myTime).Count;
+            ICollection<RilDataVisual> hatchedData  = rilEventHatcher.HatchEvents(remainingBatDataVisuals, myTime);
             //logger.Log("Hatched : " + hatched);
             myTime += step;
+            
+            foreach (RilDataVisual rilDataVisual in hatchedData)
+            {
+                usedBatDataVisuals.Add(rilDataVisual);
+            }
         }
 
         void UpdateRealtime()
         {
-            int hatched = rilEventHatcher
-                .HatchEvents(remainingBatDataVisuals, (Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration).Count;
-                //logger.Log("Hatched : " + hatched);
+            ICollection<RilDataVisual> hatchedData  = rilEventHatcher
+                .HatchEvents(remainingBatDataVisuals, (Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration);
+
+            foreach (RilDataVisual rilDataVisual in hatchedData)
+            {
+                usedBatDataVisuals.Add(rilDataVisual);
+            }
         }
     }
 }
