@@ -132,8 +132,8 @@ namespace Visuals.Ril
                     new Vector3(currentRilData.X, currentRilData.Y, (float) VisualPlanner.Layers.Ril);
                 batVisual.transform.position = currentPosition;
                 batVisual.transform.localScale = new Vector3(
-                    2 + currentRilData.NOMBRE_LOG * 30,
-                    2 + currentRilData.NOMBRE_LOG * 30);
+                    5 + currentRilData.NOMBRE_LOG * 50,
+                    5 + currentRilData.NOMBRE_LOG * 50);
 
                 remainingBatDataVisuals.Enqueue(new RilDataVisual(currentRilData, batVisual));
             }
