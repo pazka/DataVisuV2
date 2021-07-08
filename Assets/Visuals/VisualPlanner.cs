@@ -26,25 +26,44 @@ namespace Visuals
         void Start()
         {
             CityDrawer cityDrawer = GameObject.Find("CityDrawer").GetComponent<CityDrawer>();
-            DensityDrawer densityDrawer = GameObject.Find("DensityDrawer").GetComponent<DensityDrawer>();
-            RilDrawer rilDrawer = GameObject.Find("RilDrawer").GetComponent<RilDrawer>();
-        
             if (activateCityDrawer){
-                cityDrawer.InitDrawing();
-            }
-
+                cityDrawer.SetActive(true);
+            }  
+            
+            DensityDrawer densityDrawer = GameObject.Find("DensityDrawer").GetComponent<DensityDrawer>();
             if (activateDensityDrawer){
-                densityDrawer.InitDrawing();
+                densityDrawer.SetActive(true);
             }
-
+            
+            RilDrawer rilDrawer = GameObject.Find("RilDrawer").GetComponent<RilDrawer>();
             if (activateRilDrawer){
-                rilDrawer.SetActive();
+                rilDrawer.SetActive(true);
             }
         }
 
         // Update is called once per frame
         void Update()
         {
+            if (Input.GetKeyDown(KeyCode.F1))
+            {
+                activateCityDrawer = !activateCityDrawer;
+                CityDrawer cityDrawer = GameObject.Find("CityDrawer").GetComponent<CityDrawer>();
+                cityDrawer.SetActive(activateCityDrawer);
+            }
+
+            if (Input.GetKeyDown(KeyCode.F2))
+            {
+                activateDensityDrawer = !activateDensityDrawer;
+                DensityDrawer densityDrawer = GameObject.Find("DensityDrawer").GetComponent<DensityDrawer>();
+                densityDrawer.SetActive(activateDensityDrawer);
+            }
+
+            if (Input.GetKeyDown(KeyCode.F3))
+            {
+                activateRilDrawer = !activateRilDrawer;
+                RilDrawer rilDrawer = GameObject.Find("RilDrawer").GetComponent<RilDrawer>();
+                rilDrawer.SetActive(activateRilDrawer);
+            }
         }
     }
 }

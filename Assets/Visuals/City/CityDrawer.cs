@@ -11,9 +11,34 @@ public class CityDrawer : MonoBehaviour
     CityDataConverter cityDataConverter;
     LineRenderer _lineRenderer;
     Vector3[] cityData;
+
+    private bool isActive;
    
 
     void Start()
+    {
+        _lineRenderer = gameObject.AddComponent<LineRenderer>();
+        cityDataConverter = (CityDataConverter)FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.CITY);
+        cityDataConverter.Init(Screen.width, Screen.height);
+    }
+    
+    public void SetActive(bool state)
+    {
+        isActive = state;
+        if (state)
+            InitDrawing();
+        else
+            StopDrawing();
+
+    }
+
+    void StopDrawing()
+    {
+        _lineRenderer.positionCount = 0;
+        _lineRenderer.SetPositions(new Vector3[]{});
+    }
+    
+    public void InitDrawing()
     {
         //Prepare entities
         _cityBoundsMesh = new Mesh();
@@ -21,10 +46,6 @@ public class CityDrawer : MonoBehaviour
         //The game object will inherit from the canvas ! 
         //so you need to have a canvas above in the hierarchy
         gameObject.transform.position = new Vector3(0, 0, (float)VisualPlanner.Layers.City);
-        _lineRenderer = gameObject.AddComponent<LineRenderer>();
-
-        cityDataConverter = (CityDataConverter)FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.CITY);
-        cityDataConverter.Init(Screen.width, Screen.height);
 
         //Prepare Linerenderer
         _lineRenderer.sortingOrder = 1;
@@ -41,10 +62,6 @@ public class CityDrawer : MonoBehaviour
         //_lineRenderer.BakeMesh(_cityBoundsMesh, true);
 
         this.LoadAllVectoredData();
-    }
-
-    public void InitDrawing()
-    {
         _lineRenderer.positionCount = cityData.Length;
         _lineRenderer.SetPositions(cityData);
     }
@@ -52,6 +69,11 @@ public class CityDrawer : MonoBehaviour
 
     public void LoadAllVectoredData()
     {
+        if (!isActive)
+        {
+            return;
+        }
+        
         if (this.cityData != null)
         {
             return;

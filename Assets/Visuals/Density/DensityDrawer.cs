@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DataProcessing.City;
 using DataProcessing.Density;
 using UnityEngine;
+using Visuals.Ril;
 
 namespace Visuals
 {
@@ -14,6 +15,7 @@ namespace Visuals
         DensityDataConverter densityDataConverter;
         List<DensityData> _densityData = new List<DensityData>();
         DensityData[] _dataBounds;
+        private bool isActive = false;
 
 
         //visual vars
@@ -51,6 +53,13 @@ namespace Visuals
                 colorScales[i] = new GUIStyle();
                 colorScales[i].normal.background = square;
             }
+        }
+        
+        public void SetActive(bool state)
+        {
+            isActive = state;
+            if (state)
+                InitDrawing();
         }
 
         public void InitDrawing()
@@ -143,7 +152,7 @@ namespace Visuals
 
         void Update()
         {
-            if (_densityData.Count > 0)
+            if (_densityData.Count > 0 && isActive)
             {
                 Graphics.DrawMeshInstanced(meshInstance, 0, globalmaterialForMesh, matricesOfDensity, _densityData.Count, colorBlockShader);
             }
@@ -151,6 +160,9 @@ namespace Visuals
 
         void OnGUI()
         { 
+            if (!isActive)
+                return;
+            
             int i;
             float legendWidth = 50;
             for (i = 0;  i < colorScales.Length; i++)

@@ -29,8 +29,7 @@ namespace Visuals.Ril
         [SerializeField] private bool controlledUpdateTime = false;
         [SerializeField] private float disappearingRate = .01f;
 
-        private List<RilData> originalData;
-        private List<RilData> allData;
+        private List<RilData> allData = new List<RilData>();
         private Queue<RilDataVisual> remainingBatDataVisuals = new Queue<RilDataVisual>();
         private List<RilDataVisual> usedBatDataVisuals = new List<RilDataVisual>();
 
@@ -38,16 +37,29 @@ namespace Visuals.Ril
         private int nbIteration = 1;
         private float currentIterationTime = 0f;
         private float step = 0.0005f;
-        private DrawingState drawingState = DrawingState.Drawing;
+        private DrawingState drawingState = DrawingState.Inactive;
 
         public GameObject batRessource;
         public GameObject batFutureRessource;
         public GameObject progressBar;
 
-        public void SetActive()
+        public void SetActive(bool state)
         {
-            drawingState = DrawingState.Active;
-            InitDrawing();
+            drawingState = state ? DrawingState.Active : DrawingState.Inactive;
+
+            if (state)
+            {
+                ClearVisuals();
+                InitData();
+                InitDrawing();
+            }
+            else
+            {
+                ClearVisuals();
+                usedBatDataVisuals = remainingBatDataVisuals.ToList();
+                ClearVisuals();
+            }
+
         }
 
         void Start()
@@ -73,11 +85,7 @@ namespace Visuals.Ril
                 case DrawingState.Destroying:
                     DestroyVisuals();
                     break;
-
-                case DrawingState.Resetting:
-                    ResetVisual();
-                    break;
-
+                
                 case DrawingState.Inactive:
                     return;
             }
@@ -165,18 +173,17 @@ namespace Visuals.Ril
             List<RilData> initialDataToExtrapolate;
             if (currentIterationStartTimestamp == 0f)
             {
-                logger.Log("Initializing all data for the first time");
-                //starting point, we extrapolate the future of the original dataset once
-                //the next extrapolation will only be on the current timeline
-                initialDataToExtrapolate = (List<RilData>) rilDataConverter.GetAllData();
-                originalData = initialDataToExtrapolate;
+                logger.Log("Initializing all data for the first time Or maybe the second");
             }
             else
             {
                 logger.Log("Re-initializing all data");
-                //Critical point of extrapolation, we reset the visual to the starting point
-                initialDataToExtrapolate = originalData;
             }
+
+            //starting point, we extrapolate the future of the original dataset once
+            //the next extrapolation will only be on the current timeline
+            
+            initialDataToExtrapolate = (List<RilData>) rilDataConverter.GetAllData();
 
             rilDataExtrapolator.InitExtrapolation(initialDataToExtrapolate, new RilExtrapolationParameters()
             {
@@ -211,6 +218,11 @@ namespace Visuals.Ril
 
             foreach (var visualToDestroy in visualsToDestroy)
             {
+                Destroy(visualToDestroy);
+            }
+            while (remainingBatDataVisuals.Count > 0)
+            {
+                var visualToDestroy = remainingBatDataVisuals.Dequeue().Visual;
                 Destroy(visualToDestroy);
             }
 
