@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using DataProcessing;
@@ -10,37 +11,45 @@ namespace Visuals.Ril
 {
     enum DrawingState
     {
-        Drawing,Destroying,Inactive,Active
+        Drawing,
+        Destroying,
+        Inactive,
+        Active
     }
+
     public class RilDrawer : MonoBehaviour
     {
         public Tools.Logger logger;
         RilDataConverter rilDataConverter;
         private RilDataExtrapolator rilDataExtrapolator;
+        private RilEventHatcher rilEventHatcher = RilEventHatcher.Instance;
+
         [SerializeField] private float timelapseDuration = 30;
         [SerializeField] private float extrapolationRate = .1f;
         [SerializeField] private bool controlledUpdateTime = false;
         [SerializeField] private float disappearingRate = .01f;
+
+        private List<RilData> originalData;
         private List<RilData> allData;
         private Queue<RilDataVisual> remainingBatDataVisuals = new Queue<RilDataVisual>();
         private List<RilDataVisual> usedBatDataVisuals = new List<RilDataVisual>();
-        private RilEventHatcher rilEventHatcher = RilEventHatcher.Instance;
-        private float currentIterationStartTimestamp = 0f;
 
+        private float currentIterationStartTimestamp = 0f;
         private int nbIteration = 1;
-        private float myTime = 0f;
-        private float step = 0.0005f ;
+        private float currentIterationTime = 0f;
+        private float step = 0.0005f;
         private DrawingState drawingState = DrawingState.Drawing;
 
         public GameObject batRessource;
         public GameObject batFutureRessource;
         public GameObject progressBar;
-        
+
         public void SetActive()
         {
             drawingState = DrawingState.Active;
             InitDrawing();
         }
+
         void Start()
         {
             //Prepare entities        
@@ -57,14 +66,18 @@ namespace Visuals.Ril
         {
             switch (drawingState)
             {
-                case DrawingState.Drawing : 
+                case DrawingState.Drawing:
                     DisplayData();
                     break;
-                
+
                 case DrawingState.Destroying:
-                    DestroyData();
+                    DestroyVisuals();
                     break;
-                
+
+                case DrawingState.Resetting:
+                    ResetVisual();
+                    break;
+
                 case DrawingState.Inactive:
                     return;
             }
@@ -72,37 +85,37 @@ namespace Visuals.Ril
 
         void DisplayData()
         {
-            progressBar.transform.localScale = new Vector3((Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration * 1920, 10);
-            
-            if(controlledUpdateTime)
+            progressBar.transform.localScale =
+                new Vector3((Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration * 1920,
+                    10);
+
+            if (controlledUpdateTime)
                 UpdateControlledFrameRate();
             else
                 UpdateRealtime();
-            
-            
+
+
             if (remainingBatDataVisuals.Count == 0)
             {
                 drawingState = DrawingState.Destroying;
             }
         }
 
-        void ResetData()
+        void ResetVisual()
         {
             ClearVisuals();
             InitDrawing();
         }
-        
-        void DestroyData()
+
+        void DestroyVisuals()
         {
-            
             if (usedBatDataVisuals.Count == 0)
             {
-                ResetData();
+                ResetVisual();
                 return;
             }
-            
+
             HideSomeVisuals(disappearingRate);
-            
         }
 
         private void InitDrawing()
@@ -121,7 +134,7 @@ namespace Visuals.Ril
                 {
                     batVisual = Instantiate(batRessource);
                 }
-                
+
                 batVisual.tag = "bat:tmp";
                 batVisual.SetActive(false);
 
@@ -135,41 +148,67 @@ namespace Visuals.Ril
                     5 + currentRilData.NOMBRE_LOG * 50,
                     5 + currentRilData.NOMBRE_LOG * 50);
 
+                /*
+                Renderer renderer;
+                batVisual.TryGetComponent<Renderer>(out renderer);
+                renderer.material.SetFloat("_Offset",currentRilData.T);
+                   */
+
                 remainingBatDataVisuals.Enqueue(new RilDataVisual(currentRilData, batVisual));
             }
-            
+
             drawingState = DrawingState.Drawing;
         }
 
-        
-        private List<RilData> GetDataToDisplay()
+        private void InitData()
         {
-            List<RilData> tmpAllData;
+            List<RilData> initialDataToExtrapolate;
             if (currentIterationStartTimestamp == 0f)
             {
-                tmpAllData = (List<RilData>) rilDataConverter.GetAllData();
-                rilDataExtrapolator.InitExtrapolation(tmpAllData,new RilExtrapolationParameters()
-                {
-                    isOnlyFutureExtrapolating = true,
-                    extrapolationRate = extrapolationRate
-                });
+                logger.Log("Initializing all data for the first time");
+                //starting point, we extrapolate the future of the original dataset once
+                //the next extrapolation will only be on the current timeline
+                initialDataToExtrapolate = (List<RilData>) rilDataConverter.GetAllData();
+                originalData = initialDataToExtrapolate;
             }
-            
-            tmpAllData = (List<RilData>) rilDataExtrapolator.RetrieveExtrapolation();
-            
-            rilDataExtrapolator.InitExtrapolation(tmpAllData,new RilExtrapolationParameters()
+            else
+            {
+                logger.Log("Re-initializing all data");
+                //Critical point of extrapolation, we reset the visual to the starting point
+                initialDataToExtrapolate = originalData;
+            }
+
+            rilDataExtrapolator.InitExtrapolation(initialDataToExtrapolate, new RilExtrapolationParameters()
+            {
+                isOnlyFutureExtrapolating = true,
+                extrapolationRate = extrapolationRate
+            });
+        }
+
+        private List<RilData> GetDataToDisplay()
+        {
+            if (currentIterationStartTimestamp == 0f || allData.Count > 90000)
+            {
+                InitData();
+            }
+
+            List<RilData> tmpAllData = (List<RilData>) rilDataExtrapolator.RetrieveExtrapolation();
+
+            rilDataExtrapolator.InitExtrapolation(tmpAllData, new RilExtrapolationParameters()
             {
                 isOnlyFutureExtrapolating = false,
                 extrapolationRate = extrapolationRate
             });
-            step = timelapseDuration / tmpAllData.Count ;
+
+            step = timelapseDuration / tmpAllData.Count;
 
             return tmpAllData;
         }
+
         public void ClearVisuals()
         {
             GameObject[] visualsToDestroy = usedBatDataVisuals.Select(x => x.Visual).ToArray();
-            
+
             foreach (var visualToDestroy in visualsToDestroy)
             {
                 Destroy(visualToDestroy);
@@ -178,17 +217,17 @@ namespace Visuals.Ril
             usedBatDataVisuals = new List<RilDataVisual>();
             remainingBatDataVisuals = new Queue<RilDataVisual>();
             currentIterationStartTimestamp = Time.realtimeSinceStartup;
-            
+
             //specific to updateControlled FrameRate
-            myTime = 0;
-            
+            currentIterationTime = 0;
+
             //logger 
             //logger.Reset();
         }
-        
+
         public void HideSomeVisuals(float disappearingRate)
         {
-            int nbToTake = (int)Math.Max( Math.Round(usedBatDataVisuals.Count * disappearingRate),50);
+            int nbToTake = (int) Math.Max(Math.Round(usedBatDataVisuals.Count * disappearingRate), 50);
             GameObject[] visualsToDestroy = usedBatDataVisuals.Select(x => x.Visual).Take(nbToTake).ToArray();
             int nbTook = visualsToDestroy.Length;
             foreach (var visualToDestroy in visualsToDestroy)
@@ -197,14 +236,15 @@ namespace Visuals.Ril
                 Destroy(visualToDestroy.gameObject);
             }
 
-            usedBatDataVisuals = usedBatDataVisuals.GetRange(nbTook,usedBatDataVisuals.Count()-nbTook);
+            usedBatDataVisuals = usedBatDataVisuals.GetRange(nbTook, usedBatDataVisuals.Count() - nbTook);
         }
-        
+
         void UpdateControlledFrameRate()
         {
-            ICollection<RilDataVisual> hatchedData  = rilEventHatcher.HatchEvents(remainingBatDataVisuals, myTime);
-            myTime += step;
-            
+            ICollection<RilDataVisual> hatchedData =
+                rilEventHatcher.HatchEvents(remainingBatDataVisuals, currentIterationTime);
+            currentIterationTime += step;
+
             foreach (RilDataVisual rilDataVisual in hatchedData)
             {
                 usedBatDataVisuals.Add(rilDataVisual);
@@ -213,8 +253,9 @@ namespace Visuals.Ril
 
         void UpdateRealtime()
         {
-            ICollection<RilDataVisual> hatchedData  = rilEventHatcher
-                .HatchEvents(remainingBatDataVisuals, (Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration);
+            ICollection<RilDataVisual> hatchedData = rilEventHatcher
+                .HatchEvents(remainingBatDataVisuals,
+                    (Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration);
 
             foreach (RilDataVisual rilDataVisual in hatchedData)
             {

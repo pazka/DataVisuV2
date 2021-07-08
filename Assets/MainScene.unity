@@ -1307,7 +1307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logger: {fileID: 1579690540}
-  timelapseDuration: 60
+  timelapseDuration: 10
   extrapolationRate: 0.1
   controlledUpdateTime: 0
   disappearingRate: 0.01
