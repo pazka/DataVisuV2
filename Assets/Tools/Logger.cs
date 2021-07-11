@@ -11,15 +11,12 @@ namespace Tools
     {
         public int LineLimit = 0;
         public TextMeshPro DebugText;
-        string debugFile = "Assets/Resources/screenCityLogs.txt";
         
         private int lineCounter = 0;
         private String displayText;
-        private StreamWriter fileDumper;
         
         public void Start()
         {
-            fileDumper = new StreamWriter(debugFile);
             lineCounter = 0;
             displayText = "";
         }
@@ -30,12 +27,6 @@ namespace Tools
             displayText = str + '\n' +  displayText;
             lineCounter++;
         }
-
-        public void LogFile(string str)
-        {
-            fileDumper.WriteLine(str);
-        }
-
         public void Error(string str)
         {
             Log("ERROR : " + str);
@@ -54,11 +45,6 @@ namespace Tools
             {
                 DebugText.SetText(displayText);
             }
-        }
-
-        public void OnDestroy()
-        {
-            fileDumper.Close();
         }
     }
 }
