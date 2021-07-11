@@ -9,7 +9,7 @@ public class CityDrawer : MonoBehaviour
     // and animates it.
     Mesh _cityBoundsMesh;
     CityDataConverter cityDataConverter;
-    LineRenderer _lineRenderer;
+    public LineRenderer _lineRenderer;
     Vector3[] cityData;
 
     private bool isActive;
@@ -17,7 +17,6 @@ public class CityDrawer : MonoBehaviour
 
     void Start()
     {
-        _lineRenderer = gameObject.AddComponent<LineRenderer>();
         cityDataConverter = (CityDataConverter)FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.CITY);
         cityDataConverter.Init(Screen.width, Screen.height);
     }
@@ -36,60 +35,51 @@ public class CityDrawer : MonoBehaviour
     {
         _lineRenderer.positionCount = 0;
         _lineRenderer.SetPositions(new Vector3[]{});
+        this.cityData = null;
     }
     
     public void InitDrawing()
     {
         //Prepare entities
         _cityBoundsMesh = new Mesh();
-
-        //The game object will inherit from the canvas ! 
-        //so you need to have a canvas above in the hierarchy
-        gameObject.transform.position = new Vector3(0, 0, (float)VisualPlanner.Layers.City);
-
-        //Prepare Linerenderer
-        _lineRenderer.sortingOrder = 1;
-        _lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-        _lineRenderer.material.color = Color.blue;
-        _lineRenderer.useWorldSpace = true;
-        _lineRenderer.loop = true;
-
-        _lineRenderer.startWidth = 1f;
-        _lineRenderer.endWidth = 1f;
-
+        
+        this.LoadAllVectoredData();
+        _lineRenderer.positionCount = cityData.Length;
+        _lineRenderer.SetPositions(cityData);
+        
         //link LineRenderer to Data
         //TODO : Bake when unity is less shitty
         //_lineRenderer.BakeMesh(_cityBoundsMesh, true);
 
-        this.LoadAllVectoredData();
-        _lineRenderer.positionCount = cityData.Length;
-        _lineRenderer.SetPositions(cityData);
     }
 
 
     public void LoadAllVectoredData()
     {
-        if (!isActive)
-        {
+        if (!isActive || this.cityData != null)
             return;
-        }
-        
-        if (this.cityData != null)
-        {
-            return;
-        }
 
         List<CityData> cityData = (List<CityData>)cityDataConverter.GetAllData();
 
         this.cityData = new Vector3[cityData.Count];
         for (int i = 0; i < cityData.Count; i++)
         {
-            this.cityData[i] = new Vector3(cityData[i].X, cityData[i].Y, 1);
+            this.cityData[i] = transform.rotation * new Vector3(transform.position.x + cityData[i].X * transform.localScale.x,transform.position.y +  cityData[i].Y * transform.localScale.y, 1);
         }
     }
 
     void Update()
     {
+        if (!isActive)
+            return;
+        
+        if (transform.hasChanged)
+        {
+            StopDrawing();
+            InitDrawing();
+            transform.hasChanged = false;
+        }
+        
         //TODO : Bake when unity is less shitty
         //_lineRenderer.SetPositions(_cityBoundsMesh.vertices);
     }

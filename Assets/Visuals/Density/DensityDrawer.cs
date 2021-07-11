@@ -88,13 +88,13 @@ namespace Visuals
                 int indexSlice = (int)Math.Floor(tmpPop / (((_dataBounds[1].Pop + 1f) - _dataBounds[0].Pop) / scaleGradientDetail));
 
 
-                Vector3 position = new Vector3(
-                    (_densityData[i].X1 + _densityData[i].X3) / 2,
-                    (_densityData[i].Y1 + _densityData[i].Y2) / 2, 
+                Vector3 position = transform.rotation * new Vector3(
+                    transform.position.x + (_densityData[i].X1 + _densityData[i].X3) / 2 * transform.localScale.x,
+                    transform.position.y + (_densityData[i].Y1 + _densityData[i].Y2) / 2 * transform.localScale.y, 
                         (float)VisualPlanner.Layers.Density
                     );
-                Quaternion rotation = Quaternion.Euler(0, 0, 0);
-                Vector3 scale = Vector3.one;
+                Quaternion rotation = transform.rotation;
+                Vector3 scale = transform.localScale;
 
                 matricesOfDensity[i] = Matrix4x4.TRS(position, rotation, scale);
                 colors[i] = this.gradientColors[indexSlice]; 
@@ -152,16 +152,21 @@ namespace Visuals
 
         void Update()
         {
-            if (_densityData.Count > 0 && isActive)
+            if (_densityData.Count < 0 || !isActive) return;
+
+            if (transform.hasChanged)
             {
-                Graphics.DrawMeshInstanced(meshInstance, 0, globalmaterialForMesh, matricesOfDensity, _densityData.Count, colorBlockShader);
+                InitDrawing();
+                transform.hasChanged = false;
             }
+            
+            Graphics.DrawMeshInstanced(meshInstance, 0, globalmaterialForMesh, matricesOfDensity, _densityData.Count, colorBlockShader);
+            
         }
 
-        void OnGUI()
-        { 
-            if (!isActive)
-                return;
+        private void OnGUI()
+        {
+            if ( !isActive) return;
             
             int i;
             float legendWidth = 50;
