@@ -38,11 +38,19 @@ namespace Visuals.Ril
         private float currentIterationTime = 0f;
         private float step = 0.0005f;
         private DrawingState drawingState = DrawingState.Inactive;
+        private DrawingState previousDrawingState = DrawingState.Inactive;
 
         public GameObject batRessource;
         public GameObject batFutureRessource;
         public GameObject progressBar;
 
+        struct CityAlign
+        {
+            public static Vector3 position = new Vector3(-3410f,-1014.5f,0);
+            public static Quaternion rotation = Quaternion.Euler(0, 0, 20f);
+            public static Vector3 localScale = new Vector3(-0.79f,0.88f,1);
+        }
+        
         public void SetActive(bool state)
         {
             drawingState = state ? DrawingState.Active : DrawingState.Inactive;
@@ -64,6 +72,10 @@ namespace Visuals.Ril
 
         void Start()
         {
+            transform.position = transform.position + CityAlign.position;
+            transform.rotation = transform.rotation * CityAlign.rotation;
+            transform.localScale = Vector3.Scale(transform.localScale ,CityAlign.localScale);
+            
             //Prepare entities        
             rilDataConverter =
                 (RilDataConverter) FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.RIL);
@@ -76,6 +88,19 @@ namespace Visuals.Ril
 
         void Update()
         {
+            if (Input.GetKeyDown(KeyCode.F5))
+            {
+                if (drawingState != DrawingState.Inactive)
+                {
+                    previousDrawingState = drawingState;
+                    drawingState = DrawingState.Inactive;
+                }
+                else
+                {
+                    drawingState = previousDrawingState;
+                }
+            }
+
             switch (drawingState)
             {
                 case DrawingState.Drawing:
@@ -149,8 +174,14 @@ namespace Visuals.Ril
                 if (!batVisual)
                     break;
 
-                Vector3 currentPosition =
-                    new Vector3(currentRilData.X, currentRilData.Y, (float) VisualPlanner.Layers.Ril);
+                Vector3 currentPosition = new Vector3(
+                        currentRilData.X, 
+                        currentRilData.Y,
+                        (float) VisualPlanner.Layers.Ril
+                        ) + transform.position;
+
+                currentPosition = transform.rotation * Vector3.Scale(currentPosition, transform.localScale);
+                
                 batVisual.transform.position = currentPosition;
                 batVisual.transform.localScale = new Vector3(
                     5 + currentRilData.NOMBRE_LOG * 50,

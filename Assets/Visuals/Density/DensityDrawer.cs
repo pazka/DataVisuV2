@@ -31,9 +31,19 @@ namespace Visuals
         Vector4[] colors;
         MaterialPropertyBlock colorBlockShader;
 
+        struct CityAlign
+        {
+            public static Vector3 position = new Vector3(-582.01f, -534.84f, 10);
+            public static Quaternion rotation = Quaternion.Euler(0, 0, 0.73f);
+            public static Vector3 localScale = new Vector3(0.808f,0.824f,1);
+        }
         void Start()
         {
-            //Prepare entities
+            transform.position = transform.position + CityAlign.position;
+            transform.rotation = transform.rotation * CityAlign.rotation;
+            transform.localScale = Vector3.Scale(transform.localScale ,CityAlign.localScale);
+
+             //Prepare entities
             densityDataConverter = (DensityDataConverter)FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.DENSITY);
 
             densityDataConverter.Init(Screen.width, Screen.height);
@@ -87,16 +97,15 @@ namespace Visuals
                 float tmpPop = densityData.Pop - _dataBounds[0].Pop;
                 int indexSlice = (int)Math.Floor(tmpPop / (((_dataBounds[1].Pop + 1f) - _dataBounds[0].Pop) / scaleGradientDetail));
 
-
-                Vector3 position = transform.rotation * new Vector3(
-                    transform.position.x + (_densityData[i].X1 + _densityData[i].X3) / 2 * transform.localScale.x,
-                    transform.position.y + (_densityData[i].Y1 + _densityData[i].Y2) / 2 * transform.localScale.y, 
-                        (float)VisualPlanner.Layers.Density
-                    );
-                Quaternion rotation = transform.rotation;
-                Vector3 scale = transform.localScale;
-
-                matricesOfDensity[i] = Matrix4x4.TRS(position, rotation, scale);
+                Vector3 position = new Vector3(
+                    (_densityData[i].X1 + _densityData[i].X3) / 2,
+                    (_densityData[i].Y1 + _densityData[i].Y2) / 2,
+                    (float) VisualPlanner.Layers.Density
+                ) + transform.position;
+                
+                position = transform.rotation * Vector3.Scale(position, transform.localScale);
+                
+                matricesOfDensity[i] = Matrix4x4.TRS(position, transform.rotation, transform.localScale);
                 colors[i] = this.gradientColors[indexSlice]; 
             }
 
