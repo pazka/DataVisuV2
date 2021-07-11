@@ -1,12 +1,13 @@
 ﻿using System;
 using System.IO;
 using DataProcessing.Generic;
+using UnityEngine;
 
 namespace DataProcessing.City
 {
     public class CityDataReader : IDataReader
     {
-        readonly string filePath = "Assets/DataAsset/Strasbourg/Shape/limits.dat";
+        readonly string filePath = Application.dataPath + "/StreamingAssets/Strasbourg/Shape/limits.dat";
 
         protected char[] buffer;
         protected int bufferReadIndex;

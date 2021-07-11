@@ -8,7 +8,7 @@ namespace DataProcessing.Density
 {
     public class DensityDataReader : IDataReader
     {
-        readonly string FilePath = "Assets/DataAsset/Strasbourg/Density/res_density.json";
+        readonly string FilePath = Application.dataPath + "/StreamingAssets/Strasbourg/Density/res_density.json";
         int Cursor;
         List<RootJsonObject> AllDataRead;
         public bool EndOfStream;

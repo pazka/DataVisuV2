@@ -8,7 +8,7 @@ namespace DataProcessing.Ril
 {
     public class RilDataReader : IDataReader
     {
-        readonly string FilePath = "Assets/DataAsset/Strasbourg/Ril/RIL_2018.json";
+        readonly string FilePath = Application.dataPath + "/StreamingAssets/Strasbourg/Ril/RIL_2018.json";
         int Cursor;
         List<IntermediateJsonObject> AllDataRead;
         public bool streamEnd;

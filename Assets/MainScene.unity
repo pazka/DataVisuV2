@@ -1357,7 +1357,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bbca9dd45647a74280bbbc1d680299f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activateCityDrawer: 0
+  activateCityDrawer: 1
   activateDensityDrawer: 1
   activateRilDrawer: 0
 --- !u!1 &1579690538
@@ -1452,7 +1452,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logger: {fileID: 1579690540}
-  timelapseDuration: 10
+  timelapseDuration: 60
   extrapolationRate: 0.1
   controlledUpdateTime: 0
   disappearingRate: 0.01
