@@ -158,21 +158,33 @@ namespace SoundProcessing
         {
             try
             {
+                if(Sender != null)
+                {
+                    Sender.Close();
+                    Sender.Dispose();
+                }
+                
                 Sender = new UdpClient();
                 Debug.Log("Opening OSC listener on port " + localPort);
 
                 IPEndPoint listenerIp = new IPEndPoint(IPAddress.Any, localPort);
+                
+                if(Receiver != null)
+                {
+                    Receiver.Close();
+                    Receiver.Dispose();
+                }
+                
                 Receiver = new UdpClient(listenerIp);
-
-
+                
                 socketsOpen = true;
 
                 return true;
             }
             catch (Exception e)
             {
-                Debug.LogWarning("cannot open udp client interface at port " + localPort);
-                Debug.LogWarning(e);
+                Debug.LogError("cannot open udp client interface at port " + localPort);
+                Debug.LogError(e);
             }
 
             return false;
@@ -231,8 +243,6 @@ namespace SoundProcessing
         /// <returns>The number of bytes read, or 0 on failure.</returns>
         public int ReceivePacket(byte[] buffer)
         {
-            if (!IsOpen())
-                Open();
             if (!IsOpen())
                 return 0;
 
@@ -302,6 +312,12 @@ namespace SoundProcessing
             this.values = values;
         }
         public OscMessage(string address,int value)
+        {
+            this.address = address;
+            this.values = new ArrayList();
+            this.values.Add(value);
+        }
+        public OscMessage(string address,float value)
         {
             this.address = address;
             this.values = new ArrayList();
@@ -434,13 +450,14 @@ namespace SoundProcessing
             //print("Opening OSC listener on port " + inPort);
 
             OscPacketIO = new UdpPacketIO(this.outIp, this.outPort, this.inPort);
+            OscPacketIO.Open();
+            
             AddressTable = new Hashtable();
 
             messagesReceived = new ArrayList();
 
             buffer = new byte[1000];
-
-
+            
             ReadThread = new Thread(Read);
             ReaderRunning = true;
             ReadThread.IsBackground = true;

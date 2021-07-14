@@ -97,7 +97,15 @@ namespace SoundProcessing
             osc.Send(message);
         }
 
-        public void SendOscMessage(string address, dynamic value)
+        public void SendOscMessage(string address, int value)
+        {
+            Send(new OscMessage(address, value));
+        }
+        public void SendOscMessage(string address, float value)
+        {
+            Send(new OscMessage(address, value));
+        }
+        public void SendOscMessage(string address, string value)
         {
             Send(new OscMessage(address, value));
         }

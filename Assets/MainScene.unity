@@ -404,7 +404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75d5e68de1dc1cc42b3a085a95a336fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDisplayed: 0
+  isDisplayed: 1
 --- !u!1 &662345310
 GameObject:
   m_ObjectHideFlags: 0
@@ -1402,7 +1402,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activateCityDrawer: 1
-  activateDensityDrawer: 1
+  activateDensityDrawer: 0
   activateRilDrawer: 0
 --- !u!1 &1579690538
 GameObject:
