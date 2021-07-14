@@ -94,7 +94,7 @@ namespace DataProcessing.City
 
             try
             {
-                tmpX = float.Parse(new string(convertionBuffer));
+                tmpX = float.Parse(new string(convertionBuffer),System.Globalization.NumberStyles.Any,System.Globalization.CultureInfo.InvariantCulture);
             }
             catch (Exception)
             {
@@ -106,7 +106,7 @@ namespace DataProcessing.City
 
             try
             {
-                tmpY = float.Parse(new string(convertionBuffer));
+                tmpY = float.Parse(new string(convertionBuffer),System.Globalization.NumberStyles.Any,System.Globalization.CultureInfo.InvariantCulture);
             }
             catch (Exception)
             {

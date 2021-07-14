@@ -73,7 +73,7 @@ namespace DataProcessing.Ril
             string apicObj05, string apicObj06, string apicObj07, string apicObj08, string apicObjec) 
             : base(raw,rawX, rawY)
         {
-            T = Utils.IsNullEmptyOrZero(anneeCons) ? 1850 : float.Parse(anneeCons);
+            T = Utils.IsNullEmptyOrZero(anneeCons) ? 1850 : float.Parse(anneeCons,System.Globalization.NumberStyles.Any,System.Globalization.CultureInfo.InvariantCulture);
             ACTUALITE = actualite;
             ANNEE_CONS = anneeCons;
             CANTON = canton;
@@ -100,7 +100,7 @@ namespace DataProcessing.Ril
             LIEN_CMT = lienCmt;
             LISTE_INSE = listeInse;
             NOMBRE_IMM = nombreImm;
-            NOMBRE_LOG = float.Parse(Utils.IsNullEmptyOrZero(nombreLog) ? "1" : nombreLog);
+            NOMBRE_LOG = float.Parse(Utils.IsNullEmptyOrZero(nombreLog) ? "1" : nombreLog,System.Globalization.NumberStyles.Any,System.Globalization.CultureInfo.InvariantCulture);
             NOMBRE_NIV = nombreNiv;
             NUMERO = numero;
             NUMERO_PAR = numeroPar;

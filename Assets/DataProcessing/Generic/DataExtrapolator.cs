@@ -23,6 +23,7 @@ namespace DataProcessing.Generic
             ReleaseMutex();
                 
             GenerationThread = new Thread(ExecuteExtrapolation);
+            GenerationThread.IsBackground = true;  
             GenerationThread.Start(parameters);
         }
         

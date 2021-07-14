@@ -88,7 +88,7 @@ namespace Visuals.Ril
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F5))
+            if (Input.GetKeyDown(KeyCode.F4))
             {
                 if (drawingState != DrawingState.Inactive)
                 {
