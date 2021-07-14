@@ -295,6 +295,24 @@ namespace SoundProcessing
         {
             values = new ArrayList();
         }
+        
+        public OscMessage(string address,ArrayList values)
+        {
+            this.address = address;
+            this.values = values;
+        }
+        public OscMessage(string address,int value)
+        {
+            this.address = address;
+            this.values = new ArrayList();
+            this.values.Add(value);
+        }
+        public OscMessage(string address,string value)
+        {
+            this.address = address;
+            this.values = new ArrayList();
+            this.values.Add(value);
+        }
 
         public override string ToString()
         {

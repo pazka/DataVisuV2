@@ -1,4 +1,5 @@
 ﻿using Assets.Visuals;
+using Tools;
 using UnityEngine;
 using Visuals;
 using Visuals.Ril;
@@ -44,21 +45,21 @@ namespace Visuals
         // Update is called once per frame
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F1))
+            if (Input.GetKeyDown(KeyBindings.ToggleCityLine))
             {
                 activateCityDrawer = !activateCityDrawer;
                 CityDrawer cityDrawer = GameObject.Find("CityDrawer").GetComponent<CityDrawer>();
                 cityDrawer.SetActive(activateCityDrawer);
             }
 
-            if (Input.GetKeyDown(KeyCode.F2))
+            if (Input.GetKeyDown(KeyBindings.ToggleDensity))
             {
                 activateDensityDrawer = !activateDensityDrawer;
                 DensityDrawer densityDrawer = GameObject.Find("DensityDrawer").GetComponent<DensityDrawer>();
                 densityDrawer.SetActive(activateDensityDrawer);
             }
 
-            if (Input.GetKeyDown(KeyCode.F3))
+            if (Input.GetKeyDown(KeyBindings.ToggleRilDrawing))
             {
                 activateRilDrawer = !activateRilDrawer;
                 RilDrawer rilDrawer = GameObject.Find("RilDrawer").GetComponent<RilDrawer>();

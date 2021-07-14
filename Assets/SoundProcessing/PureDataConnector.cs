@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Tools;
 using UnityEngine;
 
 namespace SoundProcessing
@@ -33,7 +34,7 @@ namespace SoundProcessing
         private void Update()
         {
             
-            if (Input.GetKeyDown(KeyCode.F6))
+            if (Input.GetKeyDown(KeyBindings.TogglePureData))
             {
                 if(!IsOpen())
                 {
@@ -94,6 +95,11 @@ namespace SoundProcessing
                 logger.Log("Error when trying to send a message, the connection is not open")
                     ;
             osc.Send(message);
+        }
+
+        public void SendOscMessage(string address, dynamic value)
+        {
+            Send(new OscMessage(address, value));
         }
     }
 }

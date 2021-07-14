@@ -5,7 +5,10 @@ using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using DataProcessing;
 using DataProcessing.Ril;
+using SoundProcessing;
+using Tools;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Visuals.Ril
 {
@@ -20,6 +23,7 @@ namespace Visuals.Ril
     public class RilDrawer : MonoBehaviour
     {
         public Tools.Logger logger;
+        public PureDataConnector pureData;
         RilDataConverter rilDataConverter;
         private RilDataExtrapolator rilDataExtrapolator;
         private RilEventHatcher rilEventHatcher = RilEventHatcher.Instance;
@@ -27,6 +31,7 @@ namespace Visuals.Ril
         [SerializeField] private float timelapseDuration = 30;
         [SerializeField] private float extrapolationRate = .1f;
         [SerializeField] private bool controlledUpdateTime = false;
+        [SerializeField] private float controlledFramerateStep = 0.0005f;
         [SerializeField] private float disappearingRate = .01f;
 
         private List<RilData> allData = new List<RilData>();
@@ -36,7 +41,6 @@ namespace Visuals.Ril
         private float currentIterationStartTimestamp = 0f;
         private int nbIteration = 1;
         private float currentIterationTime = 0f;
-        private float step = 0.0005f;
         private DrawingState drawingState = DrawingState.Inactive;
         private DrawingState previousDrawingState = DrawingState.Inactive;
 
@@ -88,7 +92,7 @@ namespace Visuals.Ril
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F4))
+            if (Input.GetKeyDown(KeyBindings.PauseRilDrawing))
             {
                 if (drawingState != DrawingState.Inactive)
                 {
@@ -118,14 +122,21 @@ namespace Visuals.Ril
 
         void DisplayData()
         {
-            progressBar.transform.localScale =
-                new Vector3((Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration * 1920,
-                    10);
 
+            
+            
             if (controlledUpdateTime)
+            {
                 UpdateControlledFrameRate();
+                float progress = usedBatDataVisuals.Count / allData.Count;
+                progressBar.transform.localScale = new Vector3(progress * 1920,10);
+            }
             else
+            {
                 UpdateRealtime();
+                float progress = (Time.realtimeSinceStartup - currentIterationStartTimestamp)/ timelapseDuration;
+                progressBar.transform.localScale =new Vector3( progress * 1920, 10);
+            }
 
 
             if (remainingBatDataVisuals.Count == 0)
@@ -238,7 +249,7 @@ namespace Visuals.Ril
                 extrapolationRate = extrapolationRate
             });
 
-            step = timelapseDuration / tmpAllData.Count;
+            controlledFramerateStep = timelapseDuration / tmpAllData.Count;
 
             return tmpAllData;
         }
@@ -286,12 +297,9 @@ namespace Visuals.Ril
         {
             ICollection<RilDataVisual> hatchedData =
                 rilEventHatcher.HatchEvents(remainingBatDataVisuals, currentIterationTime);
-            currentIterationTime += step;
+            currentIterationTime += controlledFramerateStep;
 
-            foreach (RilDataVisual rilDataVisual in hatchedData)
-            {
-                usedBatDataVisuals.Add(rilDataVisual);
-            }
+            DefinitiveUpdateAction(hatchedData);
         }
 
         void UpdateRealtime()
@@ -299,11 +307,21 @@ namespace Visuals.Ril
             ICollection<RilDataVisual> hatchedData = rilEventHatcher
                 .HatchEvents(remainingBatDataVisuals,
                     (Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration);
+            
+            DefinitiveUpdateAction(hatchedData);
+        }
 
+        void DefinitiveUpdateAction(ICollection<RilDataVisual> hatchedData)
+        {
             foreach (RilDataVisual rilDataVisual in hatchedData)
             {
                 usedBatDataVisuals.Add(rilDataVisual);
+
+                pureData.SendOscMessage("/data_bang", 1);
             }
+
+            float progress = usedBatDataVisuals.Count / allData.Count;
+            pureData.SendOscMessage("/data_clock", progress);
         }
     }
 }

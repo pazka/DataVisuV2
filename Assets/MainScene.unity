@@ -1496,9 +1496,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logger: {fileID: 1579690540}
+  pureData: {fileID: 1158691146}
   timelapseDuration: 60
   extrapolationRate: 0.1
   controlledUpdateTime: 0
+  controlledFramerateStep: 0.0005
   disappearingRate: 0.01
   batRessource: {fileID: 1187849936}
   batFutureRessource: {fileID: 662345310}
