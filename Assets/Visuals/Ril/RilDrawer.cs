@@ -138,7 +138,6 @@ namespace Visuals.Ril
                 progressBar.transform.localScale =new Vector3( progress * 1920, 10);
             }
 
-
             if (remainingBatDataVisuals.Count == 0)
             {
                 drawingState = DrawingState.Destroying;
@@ -197,12 +196,6 @@ namespace Visuals.Ril
                 batVisual.transform.localScale = new Vector3(
                     5 + currentRilData.NOMBRE_LOG * 25,
                     5 + currentRilData.NOMBRE_LOG * 25);
-
-                /*
-                Renderer renderer;
-                batVisual.TryGetComponent<Renderer>(out renderer);
-                renderer.material.SetFloat("_Offset",currentRilData.T);
-                   */
 
                 remainingBatDataVisuals.Enqueue(new RilDataVisual(currentRilData, batVisual));
             }
@@ -313,6 +306,11 @@ namespace Visuals.Ril
 
         void DefinitiveUpdateAction(ICollection<RilDataVisual> hatchedData)
         {
+
+            float progress = Convert.ToSingle(usedBatDataVisuals.Count) / Convert.ToSingle(allData.Count);
+            pureData.SendOscMessage("/data_clock", progress);
+            Renderer batVisualRenderer;
+            
             foreach (RilDataVisual rilDataVisual in hatchedData)
             {
                 usedBatDataVisuals.Add(rilDataVisual);
@@ -320,8 +318,11 @@ namespace Visuals.Ril
                 pureData.SendOscMessage("/data_bang", 1);
             }
 
-            float progress = Convert.ToSingle(usedBatDataVisuals.Count) / Convert.ToSingle(allData.Count);
-            pureData.SendOscMessage("/data_clock", progress);
+            foreach (RilDataVisual rilDataVisual in usedBatDataVisuals)
+            {
+                rilDataVisual.Visual.TryGetComponent<Renderer>(out batVisualRenderer);
+                batVisualRenderer.material.SetFloat("_Clock",progress);
+            }
         }
     }
 }
