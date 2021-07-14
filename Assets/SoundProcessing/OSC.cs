@@ -509,15 +509,6 @@ namespace SoundProcessing
         }
 
 
-        public void OnApplicationPause(bool pauseStatus)
-        {
-#if !UNITY_EDITOR
-		paused = pauseStatus;
-		print ("Application paused : " + pauseStatus);
-#endif
-        }
-
-
         public void Update()
         {
             if (messagesReceived.Count > 0)

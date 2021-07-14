@@ -240,7 +240,7 @@ namespace DataProcessing.Ril
                         NOMBRE_LOG = pastRilData.NOMBRE_LOG
                     };
 
-                    extrapolatedData.Randomize();
+                    extrapolatedData.Randomize(bias:new float[]{0,50});
                     newData.Add(extrapolatedData);
                 } 
             }

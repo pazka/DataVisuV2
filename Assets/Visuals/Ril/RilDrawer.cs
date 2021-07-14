@@ -128,7 +128,7 @@ namespace Visuals.Ril
             if (controlledUpdateTime)
             {
                 UpdateControlledFrameRate();
-                float progress = usedBatDataVisuals.Count / allData.Count;
+                float progress =  Convert.ToSingle(usedBatDataVisuals.Count) / Convert.ToSingle(allData.Count);
                 progressBar.transform.localScale = new Vector3(progress * 1920,10);
             }
             else
@@ -195,8 +195,8 @@ namespace Visuals.Ril
                 
                 batVisual.transform.position = currentPosition;
                 batVisual.transform.localScale = new Vector3(
-                    5 + currentRilData.NOMBRE_LOG * 50,
-                    5 + currentRilData.NOMBRE_LOG * 50);
+                    5 + currentRilData.NOMBRE_LOG * 25,
+                    5 + currentRilData.NOMBRE_LOG * 25);
 
                 /*
                 Renderer renderer;
@@ -320,7 +320,7 @@ namespace Visuals.Ril
                 pureData.SendOscMessage("/data_bang", 1);
             }
 
-            float progress = usedBatDataVisuals.Count / allData.Count;
+            float progress = Convert.ToSingle(usedBatDataVisuals.Count) / Convert.ToSingle(allData.Count);
             pureData.SendOscMessage("/data_clock", progress);
         }
     }
