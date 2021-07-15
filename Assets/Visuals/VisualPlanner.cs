@@ -3,6 +3,7 @@ using Tools;
 using UnityEngine;
 using Visuals;
 using Visuals.Ril;
+using Logger = Tools.Logger;
 
 namespace Visuals
 {
@@ -15,6 +16,9 @@ namespace Visuals
             Ril = 4,
             Density = 5
         }
+
+        [SerializeField]
+        private Logger logger;
         
         // Start is called before the first frame update
         [SerializeField]
@@ -26,6 +30,8 @@ namespace Visuals
 
         void Start()
         {
+            //logger.Log(KeyBindings.GetBindingStrings());
+            
             CityDrawer cityDrawer = GameObject.Find("CityDrawer").GetComponent<CityDrawer>();
             if (activateCityDrawer){
                 cityDrawer.SetActive(true);

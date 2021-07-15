@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Reflection;
+using UnityEngine;
     
 namespace Tools
 {
@@ -10,5 +11,17 @@ namespace Tools
         public static readonly KeyCode ToggleRilDrawing = KeyCode.F4;
         public static readonly KeyCode PauseRilDrawing = KeyCode.F5;
         public static readonly KeyCode TogglePureData = KeyCode.F6;
+        public static string GetBindingStrings()
+        {
+            string res = "";
+            PropertyInfo[] props = typeof(KeyBindings).GetProperties();
+            foreach (var prop in props)
+            {
+                res += prop.Name + " = " + (prop.GetValue(null,null)) + "\n";
+            }
+
+            return res;
+        }
     }
+
 }
