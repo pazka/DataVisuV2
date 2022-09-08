@@ -41,7 +41,9 @@ namespace Visuals
 
         void Start()
         {
-            transform.position += CityAlign.position;
+            var config = Configuration.GetConfig();
+
+            transform.position += Vector3.Scale(CityAlign.position, new Vector3(config.scaleX, config.scaleY, 1f));
             transform.rotation *= CityAlign.rotation;
             transform.localScale = Vector3.Scale(transform.localScale, CityAlign.localScale);
 
@@ -80,6 +82,8 @@ namespace Visuals
 
         public void InitDrawing()
         {
+            var config = Configuration.GetConfig();
+            var parentTransform = transform;
             //Getting our Data
             _densityData = (List<DensityData>) densityDataConverter.GetAllData();
             _dataBounds = (DensityData[]) densityDataConverter.GetDataBounds();
@@ -88,14 +92,17 @@ namespace Visuals
             DensityData firstDensityData = _densityData[0];
             this.meshInstance = CreateQuad(
                 0, 0,
-                firstDensityData.X1 - firstDensityData.X2, firstDensityData.Y1 - firstDensityData.Y2,
-                firstDensityData.X1 - firstDensityData.X3, firstDensityData.Y1 - firstDensityData.Y3,
-                firstDensityData.X1 - firstDensityData.X4, firstDensityData.Y1 - firstDensityData.Y4
+                config.scaleX * (firstDensityData.X1 - firstDensityData.X2),
+                config.scaleY * (firstDensityData.Y1 - firstDensityData.Y2),
+                config.scaleX * (firstDensityData.X1 - firstDensityData.X3),
+                config.scaleY * (firstDensityData.Y1 - firstDensityData.Y3),
+                config.scaleX * (firstDensityData.X1 - firstDensityData.X4),
+                config.scaleY * (firstDensityData.Y1 - firstDensityData.Y4)
             );
+
 
             this.matricesOfDensity = new Matrix4x4[_densityData.Count];
             colors = new Vector4[_densityData.Count];
-            var parentTransform = gameObject.transform;
 
             for (int i = 0; i < _densityData.Count; i++)
             {
@@ -105,16 +112,16 @@ namespace Visuals
                 int indexSlice =
                     (int) Math.Floor(tmpPop / (((_dataBounds[1].Pop + 1f) - _dataBounds[0].Pop) / scaleGradientDetail));
 
-
-                Vector3 position = parentTransform.position + new Vector3(
+                Vector3 rectPosition = new Vector3(
                     (_densityData[i].X1 + _densityData[i].X3) / 2,
                     (_densityData[i].Y1 + _densityData[i].Y2) / 2,
                     (float) VisualPlanner.Layers.Density
                 );
 
-                position = parentTransform.rotation * Vector3.Scale(position, parentTransform.localScale);
+                Vector3 position = transform.position +
+                                   Vector3.Scale(rectPosition, new Vector3(config.scaleX, config.scaleY, 1f));
 
-                matricesOfDensity[i] = Matrix4x4.TRS(position, parentTransform.rotation, parentTransform.localScale);
+                matricesOfDensity[i] = Matrix4x4.TRS(position, transform.rotation, transform.localScale);
                 colors[i] = this.gradientColors[indexSlice];
             }
 

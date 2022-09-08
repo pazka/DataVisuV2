@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &64658568
 RectTransform:
   m_ObjectHideFlags: 0
@@ -410,7 +410,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 589042128}
-  - component: {fileID: 589042130}
   - component: {fileID: 589042129}
   m_Layer: 0
   m_Name: DensityDrawer
@@ -451,18 +450,6 @@ MonoBehaviour:
   - {r: 0, g: 0, b: 1, a: 1}
   - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
---- !u!114 &589042130
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 589042127}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19c57bb5544c48a293b07cd121c1427f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &608158484
 GameObject:
   m_ObjectHideFlags: 0
@@ -858,7 +845,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 698190934}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6adc473be56143a487dfb235ed176961, type: 3}
   m_Name: 
@@ -1278,7 +1265,7 @@ RectTransform:
   - {fileID: 1570511816}
   - {fileID: 646468390}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1294,7 +1281,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1024058047}
-  - component: {fileID: 1024058049}
   - component: {fileID: 1024058046}
   - component: {fileID: 1024058048}
   m_Layer: 0
@@ -1428,18 +1414,6 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 0
   m_Loop: 1
---- !u!114 &1024058049
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1024058045}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19c57bb5544c48a293b07cd121c1427f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1111888672
 GameObject:
   m_ObjectHideFlags: 0
@@ -1520,7 +1494,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1158691146
 MonoBehaviour:
@@ -1887,12 +1861,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1311467934}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 941.8823, y: 499.79477, z: 8.09}
+  m_LocalPosition: {x: 111, y: -25.000092, z: 555.59}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 608158485}
   - {fileID: 698190935}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1579690539}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1570511815
@@ -1904,6 +1878,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1570511816}
+  - component: {fileID: 1570511818}
   - component: {fileID: 1570511817}
   m_Layer: 0
   m_Name: VisualPlanner
@@ -1945,6 +1920,18 @@ MonoBehaviour:
   activateCityDrawer: 1
   activateDensityDrawer: 1
   activateRilDrawer: 1
+--- !u!114 &1570511818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1570511815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19c57bb5544c48a293b07cd121c1427f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1579690538
 GameObject:
   m_ObjectHideFlags: 0
@@ -1974,6 +1961,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 723528934}
+  - {fileID: 1311467935}
   m_Father: {fileID: 646468390}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2000,7 +1988,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1597805429}
-  - component: {fileID: 1597805431}
   - component: {fileID: 1597805430}
   m_Layer: 0
   m_Name: RilDrawer
@@ -2047,18 +2034,6 @@ MonoBehaviour:
   batRessource: {fileID: 1187849936}
   batFutureRessource: {fileID: 662345310}
   progressBar: {fileID: 1177338392}
---- !u!114 &1597805431
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1597805428}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19c57bb5544c48a293b07cd121c1427f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1622456916
 GameObject:
   m_ObjectHideFlags: 0
@@ -2200,7 +2175,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1888892076
 GameObject:

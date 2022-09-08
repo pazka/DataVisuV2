@@ -50,8 +50,8 @@ namespace Visuals.Ril
 
         public struct CityAlign
         {
-            public static Vector3 position = new Vector3(1023, -224.9f, -12);
-            public static Quaternion rotation = Quaternion.Euler(0, 0, 21f);
+            public static Vector3 position = new Vector3(1010, -224.9f, -12);
+            public static Quaternion rotation = Quaternion.Euler(0, 0, 20f);
             public static Vector3 localScale = new Vector3(0.8f, 0.8f, 1);
         }
 
@@ -83,7 +83,7 @@ namespace Visuals.Ril
             this.extrapolationRate = config.extrapolationRate;
             this.disappearingRate = config.disappearingRate;
             
-            transform.position = transform.position + CityAlign.position;
+            transform.position += Vector3.Scale(CityAlign.position,new Vector3(config.scaleX,config.scaleY,1f));
             transform.rotation = CityAlign.rotation;
             transform.localScale = Vector3.Scale(transform.localScale, CityAlign.localScale);
 
