@@ -16,6 +16,8 @@ namespace Tools
         public float timelapseDuration;
         public float extrapolationRate;
         public float disappearingRate;
+        public string comPort;
+        public float[] densityGradiant;
 
         public JsonConfiguration(
             int outPort,
@@ -27,7 +29,10 @@ namespace Tools
             float scaleY,
             float timelapseDuration,
             float extrapolationRate,
-            float disappearingRate)
+            float disappearingRate,
+            string comPort,
+            float[] densityGradiant
+            )
         {
             this.outPort = outPort;
             this.outIp = outIp;
@@ -39,6 +44,8 @@ namespace Tools
             this.timelapseDuration = timelapseDuration;
             this.extrapolationRate = extrapolationRate;
             this.disappearingRate = disappearingRate;
+            this.comPort = comPort;
+            this.densityGradiant = densityGradiant;
         }
     }
 

@@ -17,10 +17,10 @@ namespace Visuals
         List<DensityData> _densityData = new List<DensityData>();
         DensityData[] _dataBounds;
         private bool isActive = false;
-
-
+        
         //visual vars
         int scaleGradientDetail = 5;
+        private float[] scaleGradientSteps = new[] {0f, 0.2f, 0.4f, 0.6f, 0.8f, 1f};
         GUIStyle[] colorScales = new GUIStyle[5];
         public Color[] gradientColors = {Color.red, Color.green, Color.blue, Color.yellow, Color.white};
 
@@ -88,6 +88,8 @@ namespace Visuals
             _densityData = (List<DensityData>) densityDataConverter.GetAllData();
             _dataBounds = (DensityData[]) densityDataConverter.GetDataBounds();
 
+            scaleGradientSteps = config.densityGradiant;
+
             //Getting our visuals
             DensityData firstDensityData = _densityData[0];
             this.meshInstance = CreateQuad(
@@ -109,8 +111,12 @@ namespace Visuals
                 DensityData densityData = _densityData[i];
 
                 float tmpPop = densityData.Pop - _dataBounds[0].Pop;
-                int indexSlice =
-                    (int) Math.Floor(tmpPop / (((_dataBounds[1].Pop + 1f) - _dataBounds[0].Pop) / scaleGradientDetail));
+                float uvPop = tmpPop / (((_dataBounds[1].Pop + 1f) - _dataBounds[0].Pop));
+                int indexSlice = 0;
+                while ((indexSlice + 1) < gradientColors.Length && uvPop > scaleGradientSteps[indexSlice + 1])
+                {
+                    indexSlice++;
+                }
 
                 Vector3 rectPosition = new Vector3(
                     (_densityData[i].X1 + _densityData[i].X3) / 2,
