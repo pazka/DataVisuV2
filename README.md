@@ -33,8 +33,13 @@ Disappearing rate : 0.01
 
 # KeyBindings
 
+
 F1 = Toggle on screen logs
+
 F2 = Toggle CityLine
+
 F3 = Toggle Density display
+
 F4 = Start/Restart Screencity display
+
 F5 = Pause ScreenCity Display
