@@ -5,29 +5,14 @@ using UnityEngine;
 
 namespace SoundProcessing
 {
-    class JsonConfigWrapper
-    {
-        public int inPort;
-        public string outIp;
-        public int outPort;
-
-        public JsonConfigWrapper(int outPort, string outIp, int inPort)
-        {
-            this.outPort = outPort;
-            this.outIp = outIp;
-            this.inPort = inPort;
-        }
-    }
     
     public class PureDataConnector : MonoBehaviour
     {
         public Tools.Logger logger;
         private OSC osc;
-        private string configFile;
-        private JsonConfigWrapper config;
+        private JsonConfiguration config;
         private void Start()
         {
-            configFile = Application.dataPath + "/StreamingAssets/PureDataConfig.json";
             OpenConnection();
         }
 
@@ -64,9 +49,7 @@ namespace SoundProcessing
         
         void OpenConnection()
         {
-            string configText = File.ReadAllText(configFile);
-            config = JsonUtility.FromJson<JsonConfigWrapper>(configText);
-
+            config = Tools.Configuration.GetConfig();
             try
             {
                 osc = new OSC(config.inPort,config.outIp,config.outPort);

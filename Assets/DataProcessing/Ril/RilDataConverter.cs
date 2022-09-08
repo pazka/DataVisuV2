@@ -122,14 +122,14 @@ namespace DataProcessing.Ril
             {
                 //voluntary inversion
                 float widthAsRatioOfOriginalTotalWidth =
-                    ((rilData[i].RawY - _geoBounds[1, 0]) / (_geoBounds[1, 1] - _geoBounds[1, 0]));
-                rilData[i].SetX(widthAsRatioOfOriginalTotalWidth * screenBounds[0]);
+                    ((_geoBounds[1, 0] - rilData[i].RawY) / (_geoBounds[1, 1] - _geoBounds[1, 0]));
+                rilData[i].SetX(this.screenOffset[0] + widthAsRatioOfOriginalTotalWidth * screenBounds[0]);
 
                 // Y is set as the % of total original height * the current width * the old % totalwidth by totalheight 
                 float heightAsRatioOfOriginalTotalHeight =
                     ((rilData[i].RawX - _geoBounds[0, 0]) / (_geoBounds[0, 1] - _geoBounds[0, 0]));
                 float newMaxYHeight = dataBoundsXYRatio * screenBounds[1];
-                rilData[i].SetY(screenBounds[1] - heightAsRatioOfOriginalTotalHeight * screenBounds[1]);
+                rilData[i].SetY(this.screenOffset[1] + screenBounds[1] - heightAsRatioOfOriginalTotalHeight * screenBounds[1]);
 
                 //Convert Real time to time [0->1] relative to min and max of it's times 
                 float timeRange = _timeBounds[1] - _timeBounds[0];

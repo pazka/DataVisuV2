@@ -48,42 +48,52 @@ namespace Visuals.Ril
         public GameObject batFutureRessource;
         public GameObject progressBar;
 
-        struct CityAlign
+        public struct CityAlign
         {
-            public static Vector3 position = new Vector3(-3410f,-1014.5f,0);
-            public static Quaternion rotation = Quaternion.Euler(0, 0, 20f);
-            public static Vector3 localScale = new Vector3(-0.79f,0.88f,1);
+            public static Vector3 position = new Vector3(1023, -224.9f, -12);
+            public static Quaternion rotation = Quaternion.Euler(0, 0, 21f);
+            public static Vector3 localScale = new Vector3(0.8f, 0.8f, 1);
         }
-        
+
         public void SetActive(bool state)
         {
             drawingState = state ? DrawingState.Active : DrawingState.Inactive;
 
             if (state)
             {
+                logger.Log("Starting Ril Draw");
                 ClearVisuals();
                 InitData();
                 InitDrawing();
             }
             else
             {
+                logger.Log("Stopping Ril Draw");
                 ClearVisuals();
                 usedBatDataVisuals = remainingBatDataVisuals.ToList();
                 ClearVisuals();
             }
-
         }
 
         void Start()
         {
-            transform.position = transform.position + CityAlign.position;
-            transform.rotation = transform.rotation * CityAlign.rotation;
-            transform.localScale = Vector3.Scale(transform.localScale ,CityAlign.localScale);
+            var config = Configuration.GetConfig();
             
+            this.timelapseDuration = config.timelapseDuration;
+            this.extrapolationRate = config.extrapolationRate;
+            this.disappearingRate = config.disappearingRate;
+            
+            transform.position = transform.position + CityAlign.position;
+            transform.rotation = CityAlign.rotation;
+            transform.localScale = Vector3.Scale(transform.localScale, CityAlign.localScale);
+
             //Prepare entities        
             rilDataConverter =
                 (RilDataConverter) FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.RIL);
-            rilDataConverter.Init(Screen.width, Screen.height);
+            rilDataConverter.Init(
+                (int) (Screen.width),
+                (int) (Screen.height)
+            );
 
             rilDataExtrapolator =
                 (RilDataExtrapolator) FactoryDataExtrapolator.GetInstance(FactoryDataExtrapolator
@@ -96,11 +106,13 @@ namespace Visuals.Ril
             {
                 if (drawingState != DrawingState.Inactive)
                 {
+                    logger.Log("Pausing Drawing");
                     previousDrawingState = drawingState;
                     drawingState = DrawingState.Inactive;
                 }
                 else
                 {
+                    logger.Log("Resuming Drawing");
                     drawingState = previousDrawingState;
                 }
             }
@@ -114,7 +126,7 @@ namespace Visuals.Ril
                 case DrawingState.Destroying:
                     DestroyVisuals();
                     break;
-                
+
                 case DrawingState.Inactive:
                     return;
             }
@@ -122,20 +134,17 @@ namespace Visuals.Ril
 
         void DisplayData()
         {
-
-            
-            
             if (controlledUpdateTime)
             {
                 UpdateControlledFrameRate();
-                float progress =  Convert.ToSingle(usedBatDataVisuals.Count) / Convert.ToSingle(allData.Count);
-                progressBar.transform.localScale = new Vector3(progress * 1920,10);
+                float progress = Convert.ToSingle(usedBatDataVisuals.Count) / Convert.ToSingle(allData.Count);
+                progressBar.transform.localScale = new Vector3(progress * 1920, 10);
             }
             else
             {
                 UpdateRealtime();
-                float progress = (Time.realtimeSinceStartup - currentIterationStartTimestamp)/ timelapseDuration;
-                progressBar.transform.localScale =new Vector3( progress * 1920, 10);
+                float progress = (Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration;
+                progressBar.transform.localScale = new Vector3(progress * 1920, 10);
             }
 
             if (remainingBatDataVisuals.Count == 0)
@@ -178,21 +187,26 @@ namespace Visuals.Ril
                     batVisual = Instantiate(batRessource);
                 }
 
-                batVisual.tag = "bat:tmp";
-                batVisual.SetActive(false);
-
                 if (!batVisual)
                     break;
 
-                Vector3 currentPosition = new Vector3(
-                        currentRilData.X, 
-                        currentRilData.Y,
-                        (float) VisualPlanner.Layers.Ril
-                        ) + transform.position;
+                batVisual.tag = "bat:tmp";
+                batVisual.SetActive(false);
 
-                currentPosition = transform.rotation * Vector3.Scale(currentPosition, transform.localScale);
-                
-                batVisual.transform.position = currentPosition;
+
+                batVisual.transform.parent =
+                    gameObject.transform; // to make the visual affected by the parent gameobject 
+
+                Vector3 currentPosition = new Vector3(
+                    currentRilData.X,
+                    currentRilData.Y,
+                    (float) VisualPlanner.Layers.Ril
+                );
+
+                //currentPosition = transform.rotation * Vector3.Scale(currentPosition, transform.localScale);
+                batVisual.transform.localPosition = currentPosition;
+                //batVisual.transform.localRotation *= new Quaternion(0,-180,0,0); 
+
                 batVisual.transform.localScale = new Vector3(
                     5 + currentRilData.NOMBRE_LOG * 25,
                     5 + currentRilData.NOMBRE_LOG * 25);
@@ -217,7 +231,7 @@ namespace Visuals.Ril
 
             //starting point, we extrapolate the future of the original dataset once
             //the next extrapolation will only be on the current timeline
-            
+
             initialDataToExtrapolate = (List<RilData>) rilDataConverter.GetAllData();
 
             rilDataExtrapolator.InitExtrapolation(initialDataToExtrapolate, new RilExtrapolationParameters()
@@ -255,6 +269,7 @@ namespace Visuals.Ril
             {
                 Destroy(visualToDestroy);
             }
+
             while (remainingBatDataVisuals.Count > 0)
             {
                 var visualToDestroy = remainingBatDataVisuals.Dequeue().Visual;
@@ -300,17 +315,16 @@ namespace Visuals.Ril
             ICollection<RilDataVisual> hatchedData = rilEventHatcher
                 .HatchEvents(remainingBatDataVisuals,
                     (Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration);
-            
+
             DefinitiveUpdateAction(hatchedData);
         }
 
         void DefinitiveUpdateAction(ICollection<RilDataVisual> hatchedData)
         {
-
             float progress = Convert.ToSingle(usedBatDataVisuals.Count) / Convert.ToSingle(allData.Count);
             pureData.SendOscMessage("/data_clock", progress);
             Renderer batVisualRenderer;
-            
+
             foreach (RilDataVisual rilDataVisual in hatchedData)
             {
                 usedBatDataVisuals.Add(rilDataVisual);
@@ -321,7 +335,7 @@ namespace Visuals.Ril
             foreach (RilDataVisual rilDataVisual in usedBatDataVisuals)
             {
                 rilDataVisual.Visual.TryGetComponent<Renderer>(out batVisualRenderer);
-                batVisualRenderer.material.SetFloat("_Clock",progress);
+                batVisualRenderer.material.SetFloat("_Clock", progress);
             }
         }
     }

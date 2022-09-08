@@ -24,6 +24,7 @@ namespace Tools
         public void Log(string str)
         {
             //fileDumper.WriteLine(displayText);
+            Console.WriteLine(str);
             displayText = str + '\n' +  displayText;
             lineCounter++;
         }
