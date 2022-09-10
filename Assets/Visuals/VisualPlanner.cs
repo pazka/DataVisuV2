@@ -31,6 +31,15 @@ namespace Visuals
         void Start()
         {
             //logger.Log(KeyBindings.GetBindingStrings());
+            var config = Configuration.GetConfig();
+
+            if (!config.isDev)
+            {
+                activateCityDrawer = config.cityVisual;
+                activateDensityDrawer = config.densityVisual;
+                activateRilDrawer = config.rilVisual;
+            }
+            
             
             CityDrawer cityDrawer = GameObject.Find("CityDrawer").GetComponent<CityDrawer>();
             if (activateCityDrawer){

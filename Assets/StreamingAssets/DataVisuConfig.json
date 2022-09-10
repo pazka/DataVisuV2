@@ -1,4 +1,5 @@
 {
+  "isDev" : false, 
   "offsetX" : 0,
   "offsetY" : 0,
   "scaleX" : 1,
@@ -9,6 +10,11 @@
   "extrapolationRate" : 0.1,
   "disappearingRate" : 0.01,
   "nbDataBeforeRestart" : 90000,
+  
+  "debugVisual" : false,
+  "cityVisual" : "false",
+  "densityVisual" :  false,
+  "rilVisual" :  true,
   
   "comPort" : "COM3",
   "inPort": 10301,

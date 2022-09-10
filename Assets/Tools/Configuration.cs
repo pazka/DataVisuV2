@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 namespace Tools
@@ -19,6 +20,11 @@ namespace Tools
         public string comPort;
         public float[] densityGradiant;
         public int nbDataBeforeRestart;
+        public bool debugVisual;
+        public bool cityVisual;
+        public bool densityVisual;
+        public bool rilVisual;
+        public bool isDev;
 
         public JsonConfiguration(
             int outPort,
@@ -33,8 +39,13 @@ namespace Tools
             float disappearingRate,
             string comPort,
             float[] densityGradiant,
-            int nbDataBeforeRestart
-            )
+            int nbDataBeforeRestart,
+            bool debugVisual,
+            bool cityVisual,
+            bool densityVisual,
+            bool rilVisual,
+            bool isDev
+        )
         {
             this.outPort = outPort;
             this.outIp = outIp;
@@ -49,6 +60,11 @@ namespace Tools
             this.comPort = comPort;
             this.densityGradiant = densityGradiant;
             this.nbDataBeforeRestart = nbDataBeforeRestart;
+            this.debugVisual = debugVisual;
+            this.cityVisual = cityVisual;
+            this.densityVisual = densityVisual;
+            this.rilVisual = rilVisual;
+            this.isDev = isDev;
         }
     }
 
@@ -61,6 +77,11 @@ namespace Tools
         {
             ConfigContent = File.ReadAllText(ConfigPath);
             var config = JsonUtility.FromJson<JsonConfiguration>(ConfigContent);
+            // I would love to have something like this:
+#if DEVELOPMENT_BUILD
+            config.isDev = true;
+#endif
+
             return config;
         }
     }
