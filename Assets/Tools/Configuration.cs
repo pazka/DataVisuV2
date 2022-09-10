@@ -18,6 +18,7 @@ namespace Tools
         public float disappearingRate;
         public string comPort;
         public float[] densityGradiant;
+        public int nbDataBeforeRestart;
 
         public JsonConfiguration(
             int outPort,
@@ -31,7 +32,8 @@ namespace Tools
             float extrapolationRate,
             float disappearingRate,
             string comPort,
-            float[] densityGradiant
+            float[] densityGradiant,
+            int nbDataBeforeRestart
             )
         {
             this.outPort = outPort;
@@ -46,6 +48,7 @@ namespace Tools
             this.disappearingRate = disappearingRate;
             this.comPort = comPort;
             this.densityGradiant = densityGradiant;
+            this.nbDataBeforeRestart = nbDataBeforeRestart;
         }
     }
 

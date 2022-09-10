@@ -1,29 +1,29 @@
-#N canvas 332 -916 1088 591 10;
-#X obj 22 75 tgl 15 0 empty empty empty 17 7 0 10 -204786 -1 -1 1 1
-;
+#N canvas 202 403 1088 591 10;
+#X obj 22 75 tgl 15 0 empty empty empty 17 7 0 10 #c4fcc4 #000000 #000000
+0 1;
 #X msg 22 95 \; pd dsp \$1;
-#N canvas 513 -836 993 734 sampler 1;
+#N canvas 777 267 993 734 sampler 1;
 #X obj 107 383 phasor~ 1;
 #X obj 107 426 *~;
 #X obj 295 44 loadbang;
 #X obj 295 116 soundfiler;
-#X floatatom 295 137 10 0 0 0 - - -;
-#X floatatom 122 296 10 0 0 0 - - -;
+#X floatatom 295 137 10 0 0 0 - - - 0;
+#X floatatom 122 296 10 0 0 0 - - - 0;
 #X obj 122 276 expr 44100 / $f1;
 #X obj 295 157 s \$0-sampllang;
 #X obj 122 255 r \$0-sampllang;
 #X obj 122 406 r \$0-sampllang;
 #X obj 107 316 *;
-#X floatatom 107 338 5 0 0 0 - - -;
-#X obj 126 156 hsl 128 15 0 127 0 0 empty empty empty -2 -8 0 10 -262144
--1 -1 6350 1;
+#X floatatom 107 338 5 0 0 0 - - - 0;
+#X obj 126 156 hsl 128 15 0 127 0 0 empty empty empty -2 -8 0 10 #fcfcfc
+#000000 #000000 0 1;
 #X obj 122 179 / 127;
 #X obj 122 201 * 2;
 #X msg 122 138 63.5;
 #X obj 122 223 s acc;
 #X obj 72 299 r acc;
 #X obj 158 343 r glitch;
-#X floatatom 158 363 5 0 0 0 - - -;
+#X floatatom 158 363 5 0 0 0 - - - 0;
 #X obj 107 448 +~ 1;
 #X obj 106 588 *~;
 #X obj 121 545 / 127;
@@ -36,12 +36,12 @@
 #X msg 73 374 -1;
 #X obj 106 502 tabread~ ville1;
 #X obj 224 400 snapshot~;
-#X obj 224 357 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
-1;
+#X obj 224 357 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
 #X obj 224 378 metro 10;
 #X obj 224 422 s phase;
 #X obj 224 336 loadbang;
-#X floatatom 279 421 5 0 0 0 - - -;
+#X floatatom 279 421 5 0 0 0 - - - 0;
 #X obj 278 593 *~;
 #X obj 293 550 / 127;
 #X obj 293 572 line~;
@@ -60,29 +60,26 @@
 #X obj 298 238 table ville3;
 #X obj 298 260 table ville4;
 #X msg 380 366 0.9;
-#X msg 295 91 read -maxsize 2.205e+007 -resize ville1b.wav ville1;
-#X msg 398 112 read -maxsize 2.205e+007 -resize ville2b.wav ville2
-;
-#X msg 414 135 read -maxsize 2.205e+007 -resize ville3b.wav ville3
-;
-#X msg 444 158 read -maxsize 2.205e+007 -resize ville4b.wav ville4
-;
+#X msg 295 91 read -maxsize 2.205e+07 -resize ville1b.wav ville1;
+#X msg 398 112 read -maxsize 2.205e+07 -resize ville2b.wav ville2;
+#X msg 414 135 read -maxsize 2.205e+07 -resize ville3b.wav ville3;
+#X msg 444 158 read -maxsize 2.205e+07 -resize ville4b.wav ville4;
 #X obj 121 524 r v_ville;
 #X obj 293 529 r v_ville;
 #X obj 402 527 r v_ville;
 #X obj 506 526 r v_ville;
 #X obj 45 276 r reverse;
-#X obj 45 300 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
-1;
-#X floatatom 161 179 5 0 0 0 - - -;
+#X obj 45 300 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
+#X floatatom 161 179 5 0 0 0 - - - 0;
 #X text 452 202 la version 1m23 sans déformations car limite du buffer
 voir si possible de faire autrement ???;
 #X text 69 84 lire un peu au ralenti ???;
 #X obj 220 41 print;
 #X obj 106 610 dac~ 1;
 #X obj 278 614 dac~ 2;
-#X obj 388 612 dac~ 1;
-#X obj 491 611 dac~ 2;
+#X obj 388 612 dac~ 3;
+#X obj 491 611 dac~ 4;
 #X connect 0 0 1 0;
 #X connect 0 0 31 0;
 #X connect 1 0 20 0;
@@ -152,26 +149,26 @@ voir si possible de faire autrement ???;
 #X connect 63 0 64 0;
 #X connect 64 0 26 0;
 #X restore 243 278 pd sampler;
-#N canvas 427 -897 566 356 beatrepeat 1;
-#X floatatom 260 246 5 0 0 0 - - -;
-#X obj 243 126 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
+#N canvas 424 136 566 355 beatrepeat 1;
+#X floatatom 260 246 5 0 0 0 - - - 0;
+#X obj 243 126 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
 #X obj 67 222 delay;
-#X obj 260 204 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
-1;
+#X obj 260 204 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
 #X msg 260 183 1;
 #X msg 67 242 0;
-#X floatatom 104 222 5 0 0 0 - - -;
+#X floatatom 104 222 5 0 0 0 - - - 0;
 #X obj 260 265 s glitch;
 #X obj 260 224 metro 50;
 #X obj 306 165 r phase;
 #X obj 291 186 f;
-#X floatatom 360 205 5 0 0 0 - - -;
+#X floatatom 360 205 5 0 0 0 - - - 0;
 #X obj 243 104 r b_clock;
-#X floatatom 59 102 9 0 0 0 - - -;
+#X floatatom 59 102 9 0 0 0 - - - 0;
 #X obj 59 80 r clock;
 #X obj 243 144 t b b b b;
-#X floatatom 59 143 5 0 0 0 - - -;
+#X floatatom 59 143 5 0 0 0 - - - 0;
 #X text 357 139 longueur des grains;
 #X text 17 46 longueur du glitch augmente avec la clock;
 #X obj 59 162 / 8;
@@ -209,18 +206,18 @@ voir si possible de faire autrement ???;
 #X connect 24 0 6 0;
 #X restore 402 278 pd beatrepeat;
 #X obj 238 115 snapshot~;
-#X obj 238 72 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
-1;
+#X obj 238 72 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
 #X obj 238 93 metro 10;
 #X obj 238 51 loadbang;
-#X floatatom 238 137 5 0 0 0 - - -;
-#X obj 246 300 hsl 128 15 0 127 0 0 empty empty empty -2 -8 0 10 -204786
--1 -1 8700 1;
+#X floatatom 238 137 5 0 0 0 - - - 0;
+#X obj 246 300 hsl 128 15 0 127 0 0 empty empty empty -2 -8 0 10 #c4fcc4
+#000000 #000000 0 1;
 #X obj 243 320 s v_ville;
 #X obj 243 360 s reverse;
-#X obj 243 341 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
-1;
-#N canvas 459 -775 804 460 wave 1;
+#X obj 243 341 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
+#N canvas 70 503 804 460 wave 1;
 #X obj 66 345 *~;
 #X obj 66 257 *~;
 #X obj 251 258 *~;
@@ -230,20 +227,20 @@ voir si possible de faire autrement ???;
 #X obj 81 80 r clock;
 #X obj 66 236 osc~ 120;
 #X obj 251 105 r clock;
-#X floatatom 251 174 5 0 0 0 - - -;
+#X floatatom 251 174 5 0 0 0 - - - 0;
 #X obj 251 193 + 120;
-#X floatatom 251 215 5 0 0 0 - - -;
+#X floatatom 251 215 5 0 0 0 - - - 0;
 #X obj 428 107 r clock;
-#X floatatom 428 176 5 0 0 0 - - -;
+#X floatatom 428 176 5 0 0 0 - - - 0;
 #X obj 428 195 + 120;
-#X floatatom 428 217 5 0 0 0 - - -;
+#X floatatom 428 217 5 0 0 0 - - - 0;
 #X obj 428 153 * -1;
 #X obj 428 238 osc~ 120;
 #X obj 251 237 osc~ 120;
 #X obj 613 110 r clock;
-#X floatatom 613 176 5 0 0 0 - - -;
+#X floatatom 613 176 5 0 0 0 - - - 0;
 #X obj 613 195 + 120;
-#X floatatom 613 217 5 0 0 0 - - -;
+#X floatatom 613 217 5 0 0 0 - - - 0;
 #X obj 613 239 osc~ 120;
 #X obj 81 321 line~;
 #X msg 81 302 \$1 30;
@@ -273,11 +270,11 @@ voir si possible de faire autrement ???;
 #X obj 502 70 r reset;
 #X obj 502 114 + 1;
 #X obj 502 136 * -1;
-#X floatatom 502 158 5 0 0 0 - - -;
-#X floatatom 327 157 5 0 0 0 - - -;
+#X floatatom 502 158 5 0 0 0 - - - 0;
+#X floatatom 327 157 5 0 0 0 - - - 0;
 #X obj 684 93 r reset;
 #X obj 684 137 + 1;
-#X floatatom 684 159 5 0 0 0 - - -;
+#X floatatom 684 159 5 0 0 0 - - - 0;
 #X text 158 23 les basses se dephasent et augmentent en intensité
 en f°de la clock Elles changent a chaque round;
 #X obj 502 92 random 8;
@@ -285,8 +282,8 @@ en f°de la clock Elles changent a chaque round;
 #X obj 327 113 random 3;
 #X obj 66 368 dac~ 1;
 #X obj 251 369 dac~ 2;
-#X obj 428 372 dac~ 2;
-#X obj 613 369 dac~ 1;
+#X obj 428 372 dac~ 3;
+#X obj 590 373 dac~ 4;
 #X connect 0 0 61 0;
 #X connect 1 0 0 0;
 #X connect 2 0 27 0;
@@ -351,38 +348,38 @@ en f°de la clock Elles changent a chaque round;
 #X restore 50 279 pd wave;
 #X obj 50 319 / 127;
 #X obj 50 341 / 4;
-#X floatatom 50 363 5 0 0 0 - - -;
-#X obj 53 300 hsl 128 15 0 127 0 0 empty empty empty -2 -8 0 10 -204786
--1 -1 12700 1;
+#X floatatom 50 363 5 0 0 0 - - - 0;
+#X obj 53 300 hsl 128 15 0 127 0 0 empty empty empty -2 -8 0 10 #c4fcc4
+#000000 #000000 0 1;
 #X obj 50 382 s v_wave;
 #X msg 226 30 0.9;
 #X obj 773 143 oscformat;
 #X obj 705 143 oscparse;
 #X msg 705 96 listen 10300;
 #X obj 705 121 netreceive -u -b 10300;
-#X floatatom 705 214 5 0 0 0 - - -;
-#X obj 781 233 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
+#X floatatom 705 214 5 0 0 0 - - - 0;
+#X obj 781 233 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
 #X obj 705 190 route data_clock data_bang;
 #X obj 705 166 route list;
 #X obj 781 212 sel 1;
 #X obj 781 323 f;
 #X obj 781 367 sel 0;
-#X obj 737 391 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
+#X obj 737 391 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
 #X obj 807 323 + 1;
 #X obj 858 265 timer;
-#X floatatom 858 287 5 0 0 0 - - -;
-#X obj 858 223 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
-1;
+#X floatatom 858 287 5 0 0 0 - - - 0;
+#X obj 858 223 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
 #X obj 858 243 sel 0 1;
-#X obj 857 327 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
-1;
+#X obj 857 327 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
 #X obj 737 303 spigot;
 #X obj 781 303 spigot;
 #X obj 857 347 - 1;
-#X obj 857 369 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 -1
-1;
+#X obj 857 369 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
 #X obj 737 435 s b_clock;
 #X obj 238 157 s fake_clock;
 #X obj 705 233 s clock;
@@ -390,16 +387,16 @@ en f°de la clock Elles changent a chaque round;
 #X obj 857 411 s open_rand;
 #X obj 857 390 change;
 #X obj 151 51 phasor~ 0.02;
-#X obj 781 388 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
+#X obj 781 388 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
 #X msg 671 213 0;
 #X obj 781 345 % 100;
 #X text 590 504 quand le tps entre 2 données > 500ms il prend tout
 les bangs sinon filtre tous les 100 bangs;
-#X obj 819 349 tgl 8 0 empty empty empty 17 7 0 10 -4032 -1 -1 0 1
-;
-#X obj 895 310 tgl 8 0 empty empty empty 17 7 0 10 -4032 -1 -1 0 1
-;
+#X obj 819 349 tgl 8 0 empty empty empty 17 7 0 10 #00f8fc #000000
+#000000 0 1;
+#X obj 895 310 tgl 8 0 empty empty empty 17 7 0 10 #00f8fc #000000
+#000000 0 1;
 #X text 620 46 commande de unity -> un clock de 0 à 1 + des bangs
 (envoi de données);
 #X text 153 28 fakeclock;
@@ -407,16 +404,16 @@ les bangs sinon filtre tous les 100 bangs;
 #X text 52 231 changer la balance en fonction des tableaux ?;
 #X obj 737 413 spigot;
 #X obj 634 335 > 0.06;
-#X obj 633 356 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
-1;
+#X obj 633 356 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
 #X text 462 336 commence pas tout de suite;
-#X obj 570 215 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
--1 -1;
+#X obj 570 215 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
 #X obj 570 235 s reset;
 #X obj 570 127 * 1000;
 #X obj 570 149 int;
 #X obj 570 171 change;
-#X floatatom 628 206 5 0 0 0 - - -;
+#X floatatom 628 206 5 0 0 0 - - - 0;
 #X text 379 107 change les multiple de wave a chaque round;
 #X obj 570 194 sel 60;
 #X connect 0 0 1 0;

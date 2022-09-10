@@ -243,7 +243,8 @@ namespace Visuals.Ril
 
         private List<RilData> GetDataToDisplay()
         {
-            if (currentIterationStartTimestamp == 0f || allData.Count > 90000)
+            var config = Configuration.GetConfig();
+            if (currentIterationStartTimestamp == 0f || allData.Count > config.nbDataBeforeRestart)
             {
                 InitData();
             }

@@ -26,6 +26,12 @@ namespace Tools
         // Update is called once per frame
         void Update()
         {
+            
+            if (Input.GetKeyDown(KeyBindings.Quit))
+            {
+                Application.Quit();
+            }
+            
             if (Input.GetKeyDown(KeyBindings.ToggleDebugText))
             {
                 isDisplayed = !isDisplayed;

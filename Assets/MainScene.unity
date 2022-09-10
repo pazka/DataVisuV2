@@ -524,7 +524,7 @@ MonoBehaviour:
     Connexion
 
 
-    ESC = Open/Close Menu'
+    ESC = Quit Application'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -593,10 +593,10 @@ MonoBehaviour:
   m_margin: {x: 16.996399, y: 14.708374, z: 1578.7914, w: 815.3423}
   m_textInfo:
     textComponent: {fileID: 608158486}
-    characterCount: 170
+    characterCount: 171
     spriteCount: 0
     spaceCount: 36
-    wordCount: 33
+    wordCount: 32
     linkCount: 0
     lineCount: 10
     pageCount: 1
