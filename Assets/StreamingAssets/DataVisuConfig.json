@@ -12,7 +12,7 @@
   "nbDataBeforeRestart" : 90000,
   
   "debugVisual" : false,
-  "cityVisual" : "false",
+  "cityVisual" : false,
   "densityVisual" :  false,
   "rilVisual" :  true,
   
