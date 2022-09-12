@@ -7,6 +7,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Security.Permissions;
 using System.Threading;
 using DataProcessing.Generic;
+using Tools;
 using UnityEngine;
 using Random = System.Random;
 
@@ -53,7 +54,6 @@ namespace DataProcessing.Ril
             RilExtrapolationParameters extrapolationParameters = (RilExtrapolationParameters) parameters;
             bool isOnlyFutureExtrapolating = extrapolationParameters.isOnlyFutureExtrapolating;
             float extrapolationRate = extrapolationParameters.extrapolationRate;
-            
             WaitForMutex();
 
             if (isOnlyFutureExtrapolating)

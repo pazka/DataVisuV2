@@ -75,7 +75,10 @@ namespace Tools
 
         public static JsonConfiguration GetConfig()
         {
-            ConfigContent = File.ReadAllText(ConfigPath);
+            if (ConfigContent == null)
+            {
+                ConfigContent = File.ReadAllText(ConfigPath);
+            }
             var config = JsonUtility.FromJson<JsonConfiguration>(ConfigContent);
             // I would love to have something like this:
 #if DEVELOPMENT_BUILD
