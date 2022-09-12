@@ -12,7 +12,7 @@ namespace Tools
 {
     public class Logger : MonoBehaviour
     {
-        public int LineLimit = 0;
+        public int LineLimit = 30;
         public TextMeshPro DebugText;
         static string LogPath;
         public int lastIndex = 0;
@@ -27,7 +27,7 @@ namespace Tools
         {
             if (fileDump == null)
             {
-                LogPath = Application.persistentDataPath + "/../Logs." + GetTimeString()+".txt";
+                LogPath = Application.persistentDataPath + "/../Logs." + GetTimeString() + ".txt";
             }
 
             return fileDump;
@@ -41,8 +41,12 @@ namespace Tools
 
         public void Start()
         {
+            var tstr = GetTimeString();
             lineCounter = 0;
-            LogPath = Application.persistentDataPath + "/../Logs." + GetTimeString()+".txt";
+            Directory.CreateDirectory(Application.persistentDataPath + "/DataVisuLogs");
+            LogPath = Application.persistentDataPath + "/DataVisuLogs/" + tstr + ".txt";
+            File.WriteAllText(LogPath, "");
+            Log("LogFile : " + Application.persistentDataPath + "/DataVisuLogs/" + tstr + ".txt");
         }
 
         public void Log(string str)
@@ -74,14 +78,19 @@ namespace Tools
         {
             if (lastIndex != lineCounter)
             {
-                File.WriteAllText(LogPath,String.Join("\n",logLinesToDump));
+                File.AppendAllText(LogPath, String.Join("\n", logLinesToDump));
                 logLinesToDump.Clear();
-                
-                DebugText.SetText(String.Join("\n", logLines));
-                
+
+                var str = "";
+                foreach (var logLine in logLines)
+                {
+                    str = logLine + "\n" + str;
+                }
+
+                DebugText.SetText(str);
+
                 lastIndex = lineCounter;
             }
-            
         }
     }
 }

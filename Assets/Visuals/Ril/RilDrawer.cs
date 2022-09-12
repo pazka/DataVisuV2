@@ -33,6 +33,7 @@ namespace Visuals.Ril
         [SerializeField] private bool controlledUpdateTime = false;
         [SerializeField] private float controlledFramerateStep = 0.0005f;
         [SerializeField] private float disappearingRate = .01f;
+        [SerializeField] private int nbDataBeforeRestart = 90000;
 
         private List<RilData> allData = new List<RilData>();
         private Queue<RilDataVisual> remainingBatDataVisuals = new Queue<RilDataVisual>();
@@ -82,6 +83,7 @@ namespace Visuals.Ril
             this.timelapseDuration = config.timelapseDuration;
             this.extrapolationRate = config.extrapolationRate;
             this.disappearingRate = config.disappearingRate;
+            this.nbDataBeforeRestart = config.nbDataBeforeRestart;
             
             transform.position += Vector3.Scale(CityAlign.position,new Vector3(config.scaleX,config.scaleY,1f));
             transform.rotation = CityAlign.rotation;
@@ -168,6 +170,7 @@ namespace Visuals.Ril
             }
 
             HideSomeVisuals(disappearingRate);
+            GC.Collect();
         }
 
         private void InitDrawing()
@@ -194,8 +197,7 @@ namespace Visuals.Ril
                 batVisual.SetActive(false);
 
 
-                batVisual.transform.parent =
-                    gameObject.transform; // to make the visual affected by the parent gameobject 
+                batVisual.transform.parent = gameObject.transform; // to make the visual affected by the parent gameobject 
 
                 Vector3 currentPosition = new Vector3(
                     currentRilData.X,
@@ -244,7 +246,7 @@ namespace Visuals.Ril
         private List<RilData> GetDataToDisplay()
         {
             var config = Configuration.GetConfig();
-            if (currentIterationStartTimestamp == 0f || allData.Count > config.nbDataBeforeRestart)
+            if (currentIterationStartTimestamp == 0f || allData.Count > this.nbDataBeforeRestart)
             {
                 InitData();
             }
@@ -274,7 +276,8 @@ namespace Visuals.Ril
             while (remainingBatDataVisuals.Count > 0)
             {
                 var visualToDestroy = remainingBatDataVisuals.Dequeue().Visual;
-                Destroy(visualToDestroy);
+                visualToDestroy.gameObject.transform.parent = null;
+                Destroy (visualToDestroy);
             }
 
             usedBatDataVisuals = new List<RilDataVisual>();
@@ -296,7 +299,8 @@ namespace Visuals.Ril
             foreach (var visualToDestroy in visualsToDestroy)
             {
                 visualToDestroy.SetActive(false);
-                Destroy(visualToDestroy.gameObject);
+                visualToDestroy.gameObject.transform.parent = null;
+                Destroy (visualToDestroy);
             }
 
             usedBatDataVisuals = usedBatDataVisuals.GetRange(nbTook, usedBatDataVisuals.Count() - nbTook);
