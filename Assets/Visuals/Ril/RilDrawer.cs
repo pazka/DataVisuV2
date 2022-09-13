@@ -45,8 +45,7 @@ namespace Visuals.Ril
         private DrawingState drawingState = DrawingState.Inactive;
         private DrawingState previousDrawingState = DrawingState.Inactive;
 
-        public GameObject batRessource;
-        public GameObject batFutureRessource;
+        public BatVisualPool batVisualPool;
         public GameObject progressBar;
 
         public struct CityAlign
@@ -79,13 +78,13 @@ namespace Visuals.Ril
         void Start()
         {
             var config = Configuration.GetConfig();
-            
+
             this.timelapseDuration = config.timelapseDuration;
             this.extrapolationRate = config.extrapolationRate;
             this.disappearingRate = config.disappearingRate;
             this.nbDataBeforeRestart = config.nbDataBeforeRestart;
-            
-            transform.position += Vector3.Scale(CityAlign.position,new Vector3(config.scaleX,config.scaleY,1f));
+
+            transform.position += Vector3.Scale(CityAlign.position, new Vector3(config.scaleX, config.scaleY, 1f));
             transform.rotation = CityAlign.rotation;
             transform.localScale = Vector3.Scale(transform.localScale, CityAlign.localScale);
 
@@ -183,11 +182,11 @@ namespace Visuals.Ril
                 GameObject batVisual;
                 if (currentRilData.Raw == "future")
                 {
-                    batVisual = Instantiate(batFutureRessource);
+                    batVisual = batVisualPool.GetOne();
                 }
                 else
                 {
-                    batVisual = Instantiate(batRessource);
+                    batVisual = batVisualPool.GetOne(); // should be another visual but for memory sake we will not care
                 }
 
                 if (!batVisual)
@@ -197,7 +196,8 @@ namespace Visuals.Ril
                 batVisual.SetActive(false);
 
 
-                batVisual.transform.parent = gameObject.transform; // to make the visual affected by the parent gameobject 
+                batVisual.transform.parent =
+                    gameObject.transform; // to make the visual affected by the parent gameobject 
 
                 Vector3 currentPosition = new Vector3(
                     currentRilData.X,
@@ -270,14 +270,14 @@ namespace Visuals.Ril
 
             foreach (var visualToDestroy in visualsToDestroy)
             {
-                Destroy(visualToDestroy);
+                batVisualPool.Return(visualToDestroy);
             }
 
             while (remainingBatDataVisuals.Count > 0)
             {
                 var visualToDestroy = remainingBatDataVisuals.Dequeue().Visual;
                 visualToDestroy.gameObject.transform.parent = null;
-                Destroy (visualToDestroy);
+                batVisualPool.Return(visualToDestroy);
             }
 
             usedBatDataVisuals = new List<RilDataVisual>();
@@ -298,9 +298,7 @@ namespace Visuals.Ril
             int nbTook = visualsToDestroy.Length;
             foreach (var visualToDestroy in visualsToDestroy)
             {
-                visualToDestroy.SetActive(false);
-                visualToDestroy.gameObject.transform.parent = null;
-                Destroy (visualToDestroy);
+                batVisualPool.Return(visualToDestroy);
             }
 
             usedBatDataVisuals = usedBatDataVisuals.GetRange(nbTook, usedBatDataVisuals.Count() - nbTook);
