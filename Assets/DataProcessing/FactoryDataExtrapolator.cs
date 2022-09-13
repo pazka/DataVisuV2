@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DataProcessing.Generic;
 using DataProcessing.Ril;
 
@@ -6,13 +7,13 @@ namespace DataProcessing
 {
     public class FactoryDataExtrapolator
     {
-        
         public enum AvailableDataExtrapolatorTypes
         {
             RIL
-        };
+        }
 
-        private static Dictionary<AvailableDataExtrapolatorTypes, IDataExtrapolator> instances = new Dictionary<AvailableDataExtrapolatorTypes, IDataExtrapolator>();
+        private static readonly Dictionary<AvailableDataExtrapolatorTypes, IDataExtrapolator> instances =
+            new Dictionary<AvailableDataExtrapolatorTypes, IDataExtrapolator>();
 
         public static IDataExtrapolator GetInstance(AvailableDataExtrapolatorTypes dataExtrapolatorType)
         {
@@ -25,7 +26,7 @@ namespace DataProcessing
                     return instances[dataExtrapolatorType];
 
                 default:
-                    throw new System.Exception("DataExtrapolatorType isn't implemented : " + dataExtrapolatorType);
+                    throw new Exception("DataExtrapolatorType isn't implemented : " + dataExtrapolatorType);
             }
         }
     }

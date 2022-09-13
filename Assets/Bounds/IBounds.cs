@@ -1,10 +1,10 @@
 ﻿namespace Bounds
 {
-    interface IBounds
+    internal interface IBounds
     {
-         object GetCurrentBounds();
-         void RegisterNewBounds(object data);
-         void StopRegisteringNewBounds();
-         void StartRegisteringNewBounds();
+        object GetCurrentBounds();
+        void RegisterNewBounds(object data);
+        void StopRegisteringNewBounds();
+        void StartRegisteringNewBounds();
     }
 }

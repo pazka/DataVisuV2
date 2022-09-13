@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using DataProcessing;
 using DataProcessing.Ril;
 using SoundProcessing;
 using Tools;
 using UnityEngine;
-using UnityEngine.UI;
+using Logger = Tools.Logger;
 
 namespace Visuals.Ril
 {
@@ -22,7 +20,7 @@ namespace Visuals.Ril
 
     public class RilDrawer : MonoBehaviour
     {
-        public Tools.Logger logger;
+        public Logger logger;
         public PureDataConnector pureData;
         RilDataConverter rilDataConverter;
         private RilDataExtrapolator rilDataExtrapolator;
@@ -97,8 +95,7 @@ namespace Visuals.Ril
             );
 
             rilDataExtrapolator =
-                (RilDataExtrapolator) FactoryDataExtrapolator.GetInstance(FactoryDataExtrapolator
-                    .AvailableDataExtrapolatorTypes.RIL);
+                (RilDataExtrapolator) FactoryDataExtrapolator.GetInstance(FactoryDataExtrapolator.AvailableDataExtrapolatorTypes.RIL);
         }
 
         void Update()

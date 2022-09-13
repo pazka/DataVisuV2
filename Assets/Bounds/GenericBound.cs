@@ -8,10 +8,12 @@
         {
             CanRegisterNewBounds = false;
         }
+
         public void StartRegisteringNewBounds()
         {
             CanRegisterNewBounds = true;
         }
+
         public abstract object GetCurrentBounds();
         public abstract void RegisterNewBounds(object data);
     }

@@ -4,23 +4,23 @@ namespace Tools
 {
     public class DebugTexture : MonoBehaviour
     {
-        void Start()
+        private void Start()
         {
             return;
-            Texture2D texture = new Texture2D(128, 128);
+            var texture = new Texture2D(128, 128);
             GetComponent<Renderer>().material.mainTexture = texture;
 
-            for (int y = 0; y < texture.height; y++)
+            for (var y = 0; y < texture.height; y++)
+            for (var x = 0; x < texture.width; x++)
             {
-                for (int x = 0; x < texture.width; x++)
-                {
-                    Color color = ((x & y) != 0 ? Color.white : Color.gray);
-                    texture.SetPixel(x, y, color);
-                }
+                var color = (x & y) != 0 ? Color.white : Color.gray;
+                texture.SetPixel(x, y, color);
             }
-            texture.Apply();}
 
-        void Update()
+            texture.Apply();
+        }
+
+        private void Update()
         {
         }
     }

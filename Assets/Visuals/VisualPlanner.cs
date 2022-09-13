@@ -1,7 +1,5 @@
-﻿using Assets.Visuals;
-using Tools;
+﻿using Tools;
 using UnityEngine;
-using Visuals;
 using Visuals.Ril;
 using Logger = Tools.Logger;
 
@@ -17,18 +15,14 @@ namespace Visuals
             Density = 5
         }
 
-        [SerializeField]
-        private Logger logger;
-        
-        // Start is called before the first frame update
-        [SerializeField]
-        bool activateCityDrawer;
-        [SerializeField]
-        bool activateDensityDrawer;
-        [SerializeField]
-        bool activateRilDrawer;
+        [SerializeField] private Logger logger;
 
-        void Start()
+        // Start is called before the first frame update
+        [SerializeField] private bool activateCityDrawer;
+        [SerializeField] private bool activateDensityDrawer;
+        [SerializeField] private bool activateRilDrawer;
+
+        private void Start()
         {
             //logger.Log(KeyBindings.GetBindingStrings());
             var config = Configuration.GetConfig();
@@ -39,45 +33,39 @@ namespace Visuals
                 activateDensityDrawer = config.densityVisual;
                 activateRilDrawer = config.rilVisual;
             }
-            
-            
-            CityDrawer cityDrawer = GameObject.Find("CityDrawer").GetComponent<CityDrawer>();
-            if (activateCityDrawer){
-                cityDrawer.SetActive(true);
-            }  
-            
-            DensityDrawer densityDrawer = GameObject.Find("DensityDrawer").GetComponent<DensityDrawer>();
-            if (activateDensityDrawer){
-                densityDrawer.SetActive(true);
-            }
-            
-            RilDrawer rilDrawer = GameObject.Find("RilDrawer").GetComponent<RilDrawer>();
-            if (activateRilDrawer){
-                rilDrawer.SetActive(true);
-            }
+
+
+            var cityDrawer = GameObject.Find("CityDrawer").GetComponent<CityDrawer>();
+            if (activateCityDrawer) cityDrawer.SetActive(true);
+
+            var densityDrawer = GameObject.Find("DensityDrawer").GetComponent<DensityDrawer>();
+            if (activateDensityDrawer) densityDrawer.SetActive(true);
+
+            var rilDrawer = GameObject.Find("RilDrawer").GetComponent<RilDrawer>();
+            if (activateRilDrawer) rilDrawer.SetActive(true);
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
             if (Input.GetKeyDown(KeyBindings.ToggleCityLine))
             {
                 activateCityDrawer = !activateCityDrawer;
-                CityDrawer cityDrawer = GameObject.Find("CityDrawer").GetComponent<CityDrawer>();
+                var cityDrawer = GameObject.Find("CityDrawer").GetComponent<CityDrawer>();
                 cityDrawer.SetActive(activateCityDrawer);
             }
 
             if (Input.GetKeyDown(KeyBindings.ToggleDensity))
             {
                 activateDensityDrawer = !activateDensityDrawer;
-                DensityDrawer densityDrawer = GameObject.Find("DensityDrawer").GetComponent<DensityDrawer>();
+                var densityDrawer = GameObject.Find("DensityDrawer").GetComponent<DensityDrawer>();
                 densityDrawer.SetActive(activateDensityDrawer);
             }
 
             if (Input.GetKeyDown(KeyBindings.ToggleRilDrawing))
             {
                 activateRilDrawer = !activateRilDrawer;
-                RilDrawer rilDrawer = GameObject.Find("RilDrawer").GetComponent<RilDrawer>();
+                var rilDrawer = GameObject.Find("RilDrawer").GetComponent<RilDrawer>();
                 rilDrawer.SetActive(activateRilDrawer);
             }
         }

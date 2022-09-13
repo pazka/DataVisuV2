@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEditor.IMGUI.Controls;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using Object = System.Object;
 
 namespace Tools
 {
@@ -19,10 +16,7 @@ namespace Tools
 
         public T GetOne()
         {
-            if (availableObjects.Count == 0)
-            {
-                availableObjects.Enqueue(CreateOneObject());
-            }
+            if (availableObjects.Count == 0) availableObjects.Enqueue(CreateOneObject());
 
             return availableObjects.Dequeue();
         }

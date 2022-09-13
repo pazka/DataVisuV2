@@ -1,19 +1,21 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using DataProcessing.City;
 using DataProcessing.Density;
 using DataProcessing.Generic;
 using DataProcessing.Ril;
-using UnityEngine;
 
-public static class FactoryDataConverter 
+public static class FactoryDataConverter
 {
     public enum AvailableDataManagerTypes
     {
-        CITY, RIL,DENSITY
-    };
+        CITY,
+        RIL,
+        DENSITY
+    }
 
-    private static Dictionary<AvailableDataManagerTypes, IDataConverter> instances = new Dictionary<AvailableDataManagerTypes, IDataConverter>();
+    private static readonly Dictionary<AvailableDataManagerTypes, IDataConverter> instances =
+        new Dictionary<AvailableDataManagerTypes, IDataConverter>();
 
     public static IDataConverter GetInstance(AvailableDataManagerTypes dataManagerType)
     {
@@ -38,7 +40,7 @@ public static class FactoryDataConverter
                 return instances[dataManagerType];
 
             default:
-                throw new System.Exception("DataManagerType isn't implemented : " + dataManagerType);
+                throw new Exception("DataManagerType isn't implemented : " + dataManagerType);
         }
     }
 }

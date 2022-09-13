@@ -1,16 +1,16 @@
 ﻿using System;
-using System.IO;
 using Tools;
 using UnityEngine;
+using Logger = Tools.Logger;
 
 namespace SoundProcessing
 {
-    
     public class PureDataConnector : MonoBehaviour
     {
-        public Tools.Logger logger;
-        private OSC osc;
+        public Logger logger;
         private JsonConfiguration config;
+        private OSC osc;
+
         private void Start()
         {
             OpenConnection();
@@ -18,24 +18,23 @@ namespace SoundProcessing
 
         private void Update()
         {
-            
             if (Input.GetKeyDown(KeyBindings.TogglePureData))
             {
-                if(!IsOpen())
+                if (!IsOpen())
                 {
                     logger.Log($"Trying to connect to Pure Data : {config.outIp}:{config.outPort} ");
                     OpenConnection();
                 }
                 else
                 {
-                    logger.Log($"Closing Pure Data connection ");
+                    logger.Log("Closing Pure Data connection ");
                     osc.Close();
                 }
             }
-            
+
             if (!IsOpen())
                 return;
-            
+
             osc.Update();
         }
 
@@ -43,19 +42,19 @@ namespace SoundProcessing
         {
             if (!IsOpen())
                 return;
-            
+
             osc.OnDestroy();
         }
-        
-        void OpenConnection()
+
+        private void OpenConnection()
         {
-            config = Tools.Configuration.GetConfig();
+            config = Configuration.GetConfig();
             try
             {
-                osc = new OSC(config.inPort,config.outIp,config.outPort);
+                osc = new OSC(config.inPort, config.outIp, config.outPort);
                 logger.Log("Connected to Pure Data client !");
-                
-                OscMessage oscMess = new OscMessage();
+
+                var oscMess = new OscMessage();
                 oscMess.address = "/Test";
                 oscMess.values.Add("Hello");
                 oscMess.values.Add(DateTime.Now.Millisecond);
@@ -68,13 +67,15 @@ namespace SoundProcessing
                 throw;
             }
         }
-        public bool IsOpen() {
+
+        public bool IsOpen()
+        {
             return osc != null && osc.IsOpen();
         }
 
         public void Send(OscMessage message)
         {
-            if(!IsOpen())
+            if (!IsOpen())
                 logger.Log("Error when trying to send a message, the connection is not open")
                     ;
             osc.Send(message);
@@ -84,10 +85,12 @@ namespace SoundProcessing
         {
             Send(new OscMessage(address, value));
         }
+
         public void SendOscMessage(string address, float value)
         {
             Send(new OscMessage(address, value));
         }
+
         public void SendOscMessage(string address, string value)
         {
             Send(new OscMessage(address, value));

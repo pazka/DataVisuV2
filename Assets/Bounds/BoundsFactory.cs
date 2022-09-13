@@ -1,15 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Bounds
 {
-    static class BoundsFactory
+    internal static class BoundsFactory
     {
         public enum AvailableBoundsTypes
         {
-            GEOGRAPHIC,BATIMENT, TIME, RIL
-        };
+            GEOGRAPHIC,
+            BATIMENT,
+            TIME,
+            RIL
+        }
 
-        private static Dictionary<AvailableBoundsTypes, IBounds> instances = new Dictionary<AvailableBoundsTypes, IBounds>();
+        private static readonly Dictionary<AvailableBoundsTypes, IBounds> instances =
+            new Dictionary<AvailableBoundsTypes, IBounds>();
 
         public static IBounds GetInstance(AvailableBoundsTypes boundsType)
         {
@@ -40,7 +45,7 @@ namespace Bounds
                     return instances[boundsType];
 
                 default:
-                    throw new System.Exception("BoundsType isn't implemented : " + boundsType);
+                    throw new Exception("BoundsType isn't implemented : " + boundsType);
             }
         }
     }

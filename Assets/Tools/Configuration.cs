@@ -1,30 +1,28 @@
-﻿using System.ComponentModel;
-using System.IO;
-using UnityEditor;
+﻿using System.IO;
 using UnityEngine;
 
 namespace Tools
 {
     public class JsonConfiguration
     {
+        public bool cityVisual;
+        public string comPort;
+        public bool debugVisual;
+        public float[] densityGradiant;
+        public bool densityVisual;
+        public float disappearingRate;
+        public float extrapolationRate;
         public int inPort;
-        public string outIp;
-        public int outPort;
+        public bool isDev;
+        public int nbDataBeforeRestart;
         public int offsetX;
         public int offsetY;
+        public string outIp;
+        public int outPort;
+        public bool rilVisual;
         public float scaleX;
         public float scaleY;
         public float timelapseDuration;
-        public float extrapolationRate;
-        public float disappearingRate;
-        public string comPort;
-        public float[] densityGradiant;
-        public int nbDataBeforeRestart;
-        public bool debugVisual;
-        public bool cityVisual;
-        public bool densityVisual;
-        public bool rilVisual;
-        public bool isDev;
 
         public JsonConfiguration(
             int outPort,
@@ -70,17 +68,13 @@ namespace Tools
 
     public static class Configuration
     {
-        static string ConfigPath = Application.dataPath + "/StreamingAssets/DataVisuConfig.json";
+        private static readonly string ConfigPath = Application.dataPath + "/StreamingAssets/DataVisuConfig.json";
         public static string ConfigContent;
 
         public static JsonConfiguration GetConfig()
         {
-            if (ConfigContent == null)
-            {
-                ConfigContent = File.ReadAllText(ConfigPath);
-            }
+            if (ConfigContent == null) ConfigContent = File.ReadAllText(ConfigPath);
             var config = JsonUtility.FromJson<JsonConfiguration>(ConfigContent);
-            // I would love to have something like this:
 #if DEVELOPMENT_BUILD
             config.isDev = true;
 #endif
