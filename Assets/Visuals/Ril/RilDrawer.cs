@@ -34,8 +34,8 @@ namespace Visuals.Ril
         [SerializeField] private int nbDataBeforeRestart = 90000;
 
         private List<RilData> allData = new List<RilData>();
-        private Queue<RilDataVisual> remainingBatDataVisuals = new Queue<RilDataVisual>();
-        private List<RilDataVisual> usedBatDataVisuals = new List<RilDataVisual>();
+        private Queue<RilDataVisual> remainingBatDataVisualsToDisplay = new Queue<RilDataVisual>();
+        private List<RilDataVisual> displayedBatDataVisuals = new List<RilDataVisual>();
 
         private float currentIterationStartTimestamp = 0f;
         private int nbIteration = 1;
@@ -68,7 +68,7 @@ namespace Visuals.Ril
             {
                 logger.Log("Stopping Ril Draw");
                 ClearVisuals();
-                usedBatDataVisuals = remainingBatDataVisuals.ToList();
+                displayedBatDataVisuals = remainingBatDataVisualsToDisplay.ToList();
                 ClearVisuals();
             }
         }
@@ -135,7 +135,7 @@ namespace Visuals.Ril
             if (controlledUpdateTime)
             {
                 UpdateControlledFrameRate();
-                float progress = Convert.ToSingle(usedBatDataVisuals.Count) / Convert.ToSingle(allData.Count);
+                float progress = Convert.ToSingle(displayedBatDataVisuals.Count) / Convert.ToSingle(allData.Count);
                 progressBar.transform.localScale = new Vector3(progress * 1920, 10);
             }
             else
@@ -145,7 +145,7 @@ namespace Visuals.Ril
                 progressBar.transform.localScale = new Vector3(progress * 1920, 10);
             }
 
-            if (remainingBatDataVisuals.Count == 0)
+            if (remainingBatDataVisualsToDisplay.Count == 0)
             {
                 drawingState = DrawingState.Destroying;
             }
@@ -159,7 +159,7 @@ namespace Visuals.Ril
 
         void DestroyVisuals()
         {
-            if (usedBatDataVisuals.Count == 0)
+            if (displayedBatDataVisuals.Count == 0)
             {
                 ResetVisual();
                 return;
@@ -210,7 +210,7 @@ namespace Visuals.Ril
                     5 + currentRilData.NOMBRE_LOG * 25,
                     5 + currentRilData.NOMBRE_LOG * 25);
 
-                remainingBatDataVisuals.Enqueue(new RilDataVisual(currentRilData, batVisual));
+                remainingBatDataVisualsToDisplay.Enqueue(new RilDataVisual(currentRilData, batVisual));
             }
 
             drawingState = DrawingState.Drawing;
@@ -263,22 +263,22 @@ namespace Visuals.Ril
 
         public void ClearVisuals()
         {
-            GameObject[] visualsToDestroy = usedBatDataVisuals.Select(x => x.Visual).ToArray();
+            GameObject[] visualsToDestroy = displayedBatDataVisuals.Select(x => x.Visual).ToArray();
 
             foreach (var visualToDestroy in visualsToDestroy)
             {
                 batVisualPool.Return(visualToDestroy);
             }
 
-            while (remainingBatDataVisuals.Count > 0)
+            while (remainingBatDataVisualsToDisplay.Count > 0)
             {
-                var visualToDestroy = remainingBatDataVisuals.Dequeue().Visual;
+                var visualToDestroy = remainingBatDataVisualsToDisplay.Dequeue().Visual;
                 visualToDestroy.gameObject.transform.parent = null;
                 batVisualPool.Return(visualToDestroy);
             }
 
-            usedBatDataVisuals = new List<RilDataVisual>();
-            remainingBatDataVisuals = new Queue<RilDataVisual>();
+            displayedBatDataVisuals = new List<RilDataVisual>();
+            remainingBatDataVisualsToDisplay = new Queue<RilDataVisual>();
             currentIterationStartTimestamp = Time.realtimeSinceStartup;
 
             //specific to updateControlled FrameRate
@@ -290,21 +290,21 @@ namespace Visuals.Ril
 
         public void HideSomeVisuals(float disappearingRate)
         {
-            int nbToTake = (int) Math.Max(Math.Round(usedBatDataVisuals.Count * disappearingRate), 50);
-            GameObject[] visualsToDestroy = usedBatDataVisuals.Select(x => x.Visual).Take(nbToTake).ToArray();
+            int nbToTake = (int) Math.Max(Math.Round(displayedBatDataVisuals.Count * disappearingRate), 50);
+            GameObject[] visualsToDestroy = displayedBatDataVisuals.Select(x => x.Visual).Take(nbToTake).ToArray();
             int nbTook = visualsToDestroy.Length;
             foreach (var visualToDestroy in visualsToDestroy)
             {
                 batVisualPool.Return(visualToDestroy);
             }
 
-            usedBatDataVisuals = usedBatDataVisuals.GetRange(nbTook, usedBatDataVisuals.Count() - nbTook);
+            displayedBatDataVisuals = displayedBatDataVisuals.GetRange(nbTook, displayedBatDataVisuals.Count() - nbTook);
         }
 
         void UpdateControlledFrameRate()
         {
             ICollection<RilDataVisual> hatchedData =
-                rilEventHatcher.HatchEvents(remainingBatDataVisuals, currentIterationTime);
+                rilEventHatcher.HatchEvents(remainingBatDataVisualsToDisplay, currentIterationTime);
             currentIterationTime += controlledFramerateStep;
 
             DefinitiveUpdateAction(hatchedData);
@@ -313,7 +313,7 @@ namespace Visuals.Ril
         void UpdateRealtime()
         {
             ICollection<RilDataVisual> hatchedData = rilEventHatcher
-                .HatchEvents(remainingBatDataVisuals,
+                .HatchEvents(remainingBatDataVisualsToDisplay,
                     (Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration);
 
             DefinitiveUpdateAction(hatchedData);
@@ -321,18 +321,18 @@ namespace Visuals.Ril
 
         void DefinitiveUpdateAction(ICollection<RilDataVisual> hatchedData)
         {
-            float progress = Convert.ToSingle(usedBatDataVisuals.Count) / Convert.ToSingle(allData.Count);
+            float progress = Convert.ToSingle(displayedBatDataVisuals.Count) / Convert.ToSingle(allData.Count);
             pureData.SendOscMessage("/data_clock", progress);
             Renderer batVisualRenderer;
 
             foreach (RilDataVisual rilDataVisual in hatchedData)
             {
-                usedBatDataVisuals.Add(rilDataVisual);
+                displayedBatDataVisuals.Add(rilDataVisual);
 
                 pureData.SendOscMessage("/data_bang", 1);
             }
 
-            foreach (RilDataVisual rilDataVisual in usedBatDataVisuals)
+            foreach (RilDataVisual rilDataVisual in displayedBatDataVisuals)
             {
                 rilDataVisual.Visual.TryGetComponent<Renderer>(out batVisualRenderer);
                 batVisualRenderer.material.SetFloat("_Clock", progress);

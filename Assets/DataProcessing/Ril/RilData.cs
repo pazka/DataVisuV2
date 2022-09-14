@@ -141,17 +141,24 @@ namespace DataProcessing.Ril
         {
         }
 
-        public void Randomize(int posRnd = 50, int perlinRnd = 500, float maxBatSize = 1f,float[] bias = null)
+        public void Randomize(int posRnd = 50, int perlinRnd = 500, float maxBatSize = 1f, float[] bias = null)
         {
             if (bias == null)
             {
                 bias = new float[] {0, 0};
             }
+
+            //get random point around a existing point
             float newX = this.X + (_rnd.Next(0, posRnd * 2) - posRnd) + bias[0];
             float newY = this.Y + (_rnd.Next(0, posRnd * 2) - posRnd) + bias[1];
-            float ampl = Mathf.PerlinNoise(_rnd.Next(0, 500) - 250 + newX,
-                _rnd.Next(0, perlinRnd * 2) - perlinRnd + newY);
+
+            //amplification of the bat size
+            float ampl = Mathf.PerlinNoise(
+                _rnd.Next(0, 500) - 250 + newX,
+                _rnd.Next(0, perlinRnd * 2) - perlinRnd + newY
+            );
             ampl = 1 + 10 * ampl * ampl * ampl;
+
 
             this.SetX(newX);
             this.SetY(newY);

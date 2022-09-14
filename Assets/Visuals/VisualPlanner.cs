@@ -12,7 +12,8 @@ namespace Visuals
         {
             City = 3,
             Ril = 4,
-            Density = 5
+            Density = 5,
+            Hidden = -100
         }
 
         [SerializeField] private Logger logger;
