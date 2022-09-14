@@ -32,6 +32,10 @@ namespace Visuals.Ril
         [SerializeField] private float controlledFramerateStep = 0.0005f;
         [SerializeField] private float disappearingRate = .01f;
         [SerializeField] private int nbDataBeforeRestart = 90000;
+        
+        
+        [SerializeField] private int minBatSize = 5;
+        [SerializeField] private int batSizeCoeff = 25;
 
         private List<RilData> allData = new List<RilData>();
         private Queue<RilDataVisual> remainingBatDataVisualsToDisplay = new Queue<RilDataVisual>();
@@ -204,11 +208,11 @@ namespace Visuals.Ril
 
                 //currentPosition = transform.rotation * Vector3.Scale(currentPosition, transform.localScale);
                 batVisual.transform.localPosition = currentPosition;
-                //batVisual.transform.localRotation *= new Quaternion(0,-180,0,0); 
+                batVisual.transform.localRotation = new Quaternion(0,0,currentRilData.T *90,0); 
 
                 batVisual.transform.localScale = new Vector3(
-                    5 + currentRilData.NOMBRE_LOG * 25,
-                    5 + currentRilData.NOMBRE_LOG * 25);
+                    minBatSize + currentRilData.NOMBRE_LOG * batSizeCoeff,
+                    minBatSize + currentRilData.NOMBRE_LOG * batSizeCoeff);
 
                 remainingBatDataVisualsToDisplay.Enqueue(new RilDataVisual(currentRilData, batVisual));
             }

@@ -9,17 +9,17 @@ namespace Visuals.Ril
 
         protected override GameObject CreateOneObject()
         {
-            return Instantiate(batRessource);
+            var obj = Instantiate(batRessource);
+            obj.SetActive(false);
+            
+            return obj;
         }
 
         protected override void DeactivateOneObject(GameObject obj)
         {
             obj.SetActive(false);
 
-            Vector3 currentPosition = new Vector3(-100, -100, (float) VisualPlanner.Layers.Hidden);
-
-            //currentPosition = transform.rotation * Vector3.Scale(currentPosition, transform.localScale);
-            obj.transform.localPosition = currentPosition;
+            obj.transform.localPosition = new Vector3(10, 10, (float) VisualPlanner.Layers.Hidden);
         }
 
         protected override void RemoveOneObject(GameObject obj)

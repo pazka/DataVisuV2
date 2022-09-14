@@ -17,8 +17,6 @@ namespace Tools
             }
 
             state = !isDisplayed;
-            
-            
         }
 
         // Update is called once per frame

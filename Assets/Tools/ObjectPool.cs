@@ -7,7 +7,6 @@ namespace Tools
     {
         private readonly Queue<T> availableObjects = new Queue<T>();
 
-
         public void Return(T obj)
         {
             DeactivateOneObject(obj);
@@ -16,7 +15,10 @@ namespace Tools
 
         public T GetOne()
         {
-            if (availableObjects.Count == 0) availableObjects.Enqueue(CreateOneObject());
+            if (availableObjects.Count == 0)
+            {
+                availableObjects.Enqueue(CreateOneObject());
+            }
 
             return availableObjects.Dequeue();
         }
