@@ -40,6 +40,7 @@ namespace DataProcessing.Ril
             screenBounds = new int[2] {screenBoundX, screenBoundY};
             rilDataReader.Init();
         }
+
         public void Init(int screenBoundX, int screenBoundY, int screenOffsetX, int screenOffsetY)
         {
             screenBounds = new int[2] {screenBoundX, screenBoundY};
@@ -81,7 +82,7 @@ namespace DataProcessing.Ril
         {
             //TODO : IMPORTANT : convert the data from the bad file format to the good one. 
             //The Ril data format is in spherical projection when the other data are already projected
-            
+
             //using the cache
             if (allData != null)
             {
@@ -114,7 +115,7 @@ namespace DataProcessing.Ril
             float[,] _geoBounds = (float[,]) this.geoBounds.GetCurrentBounds();
             float[] _timeBounds = (float[]) this.timeBounds.GetCurrentBounds();
             float[] _dataBounds = (float[]) this.dataBounds.GetCurrentBounds();
-            
+
             //prepare ratio for getting coords in bounds
             float dataBoundsXYRatio = (_geoBounds[0, 1] - _geoBounds[0, 0]) / ((_geoBounds[1, 1] - _geoBounds[1, 0]));
 
@@ -129,21 +130,29 @@ namespace DataProcessing.Ril
                 float heightAsRatioOfOriginalTotalHeight =
                     ((rilData[i].RawX - _geoBounds[0, 0]) / (_geoBounds[0, 1] - _geoBounds[0, 0]));
                 float newMaxYHeight = dataBoundsXYRatio * screenBounds[1];
-                rilData[i].SetY(this.screenOffset[1] + screenBounds[1] - heightAsRatioOfOriginalTotalHeight * screenBounds[1]);
+                rilData[i].SetY(this.screenOffset[1] + screenBounds[1] -
+                                heightAsRatioOfOriginalTotalHeight * screenBounds[1]);
+
+                float[] reFlattenedPosition = FlattenCurve.GetFlattenedTwoDimensionPoint(
+                    new float[] {rilData[i].X, rilData[i].Y},
+                    new float[] {0.5f, 0.5f, -0.2f}
+                );
+
+                rilData[i].SetX(reFlattenedPosition[0]);
+                rilData[i].SetY(reFlattenedPosition[1]);
 
                 //Convert Real time to time [0->1] relative to min and max of it's times 
                 float timeRange = _timeBounds[1] - _timeBounds[0];
-                rilData[i].SetT((rilData[i].T - _timeBounds[0]) / timeRange );
-                
+                rilData[i].SetT((rilData[i].T - _timeBounds[0]) / timeRange);
+
                 //Convert Real NOMBRE_LOG to NOMBRE_LOG [0->1] relative to min and max of it's times 
                 float dataRange = _dataBounds[1] - _dataBounds[0];
-                rilData[i].NOMBRE_LOG = ((rilData[i].NOMBRE_LOG - _dataBounds[0]) / dataRange );
+                rilData[i].NOMBRE_LOG = ((rilData[i].NOMBRE_LOG - _dataBounds[0]) / dataRange);
             }
-            
-            this.allData  = rilData.OrderBy(r => r.T).ToList();
+
+            this.allData = rilData.OrderBy(r => r.T).ToList();
             return allData;
         }
-
 
 
         //return X : max,min; Y: max,min
