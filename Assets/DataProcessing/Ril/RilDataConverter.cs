@@ -82,6 +82,8 @@ namespace DataProcessing.Ril
         {
             //TODO : IMPORTANT : convert the data from the bad file format to the good one. 
             //The Ril data format is in spherical projection when the other data are already projected
+            var sphere = new float[] {0.00f, -0.0f, 0.01f};
+
 
             //using the cache
             if (allData != null)
@@ -124,22 +126,23 @@ namespace DataProcessing.Ril
                 //voluntary inversion
                 float widthAsRatioOfOriginalTotalWidth =
                     ((_geoBounds[1, 0] - rilData[i].RawY) / (_geoBounds[1, 1] - _geoBounds[1, 0]));
-                rilData[i].SetX(this.screenOffset[0] + widthAsRatioOfOriginalTotalWidth * screenBounds[0]);
+                float reflattenedWidth =
+                    FlattenCurve.GetFlattenedOneDimensionPoint(
+                        widthAsRatioOfOriginalTotalWidth,
+                        new float[] {sphere[0], sphere[2]}
+                    );
+                rilData[i].SetX(this.screenOffset[0] + reflattenedWidth * screenBounds[0]);
 
                 // Y is set as the % of total original height * the current width * the old % totalwidth by totalheight 
                 float heightAsRatioOfOriginalTotalHeight =
                     ((rilData[i].RawX - _geoBounds[0, 0]) / (_geoBounds[0, 1] - _geoBounds[0, 0]));
                 float newMaxYHeight = dataBoundsXYRatio * screenBounds[1];
-                rilData[i].SetY(this.screenOffset[1] + screenBounds[1] -
-                                heightAsRatioOfOriginalTotalHeight * screenBounds[1]);
-
-                float[] reFlattenedPosition = FlattenCurve.GetFlattenedTwoDimensionPoint(
-                    new float[] {rilData[i].X, rilData[i].Y},
-                    new float[] {0.5f, 0.5f, -0.2f}
+                float reflattenedHeight = FlattenCurve.GetFlattenedOneDimensionPoint(
+                    heightAsRatioOfOriginalTotalHeight,
+                    new float[] {sphere[1], sphere[2]}
                 );
-
-                rilData[i].SetX(reFlattenedPosition[0]);
-                rilData[i].SetY(reFlattenedPosition[1]);
+                rilData[i].SetY(this.screenOffset[1] + screenBounds[1] -
+                                reflattenedHeight * screenBounds[1]);
 
                 //Convert Real time to time [0->1] relative to min and max of it's times 
                 float timeRange = _timeBounds[1] - _timeBounds[0];
@@ -150,7 +153,16 @@ namespace DataProcessing.Ril
                 rilData[i].NOMBRE_LOG = ((rilData[i].NOMBRE_LOG - _dataBounds[0]) / dataRange);
             }
 
-            this.allData = rilData.OrderBy(r => r.T).ToList();
+            var ok = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            ok.transform.position = new Vector3(
+                this.screenOffset[0] + sphere[0] * screenBounds[0],
+                this.screenOffset[1] + screenBounds[1] -
+                sphere[1] * screenBounds[1],
+                20
+            );
+            ok.transform.localScale = new Vector3(50, 50, 50);
+            
+                this.allData = rilData.OrderBy(r => r.T).ToList();
             return allData;
         }
 

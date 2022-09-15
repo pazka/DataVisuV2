@@ -30,13 +30,14 @@ namespace Tools
      ///
     public static class FlattenCurve
     {
-        private static float getFlattenedOneDimensionPoint(float p2, float[] p0Prime)
+        public static float GetFlattenedOneDimensionPoint(float p2, float[] p0Prime)
         {
+            return p2;
             // step 1 + 2
             float[] p2Prime = new float[2];
             p2Prime[0] = p2;
             // step 3
-            p2Prime[1] = (float) Math.Sqrt(1 / (p2 - p0Prime[0])) + p0Prime[1];
+            p2Prime[1] = (float) Math.Sqrt(1 / Math.Abs(p2 - p0Prime[0])) + p0Prime[1];
             // step 4 + 5
             float res = -p0Prime[1] / ((p2Prime[1] - p0Prime[1]) / (p2Prime[0] - p0Prime[0]));
 
@@ -54,8 +55,8 @@ namespace Tools
         public static float[] GetFlattenedTwoDimensionPoint(float[] p2, float[] p0Prime)
         {
             float[] res = new float[2];
-            res[0] = getFlattenedOneDimensionPoint(p2[0], new[] {p0Prime[0], p0Prime[2]});
-            res[0] = getFlattenedOneDimensionPoint(p2[1], new[] {p0Prime[1], p0Prime[2]});
+            res[0] = GetFlattenedOneDimensionPoint(p2[0], new[] {p0Prime[0], p0Prime[2]});
+            res[0] = GetFlattenedOneDimensionPoint(p2[1], new[] {p0Prime[1], p0Prime[2]});
             return res;
         }
     }

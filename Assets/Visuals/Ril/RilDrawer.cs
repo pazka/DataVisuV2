@@ -36,7 +36,7 @@ namespace Visuals.Ril
         
         [SerializeField] private int minBatSize = 5;
         [SerializeField] private int batSizeCoeff = 25;
-
+        
         private List<RilData> allData = new List<RilData>();
         private Queue<RilDataVisual> remainingBatDataVisualsToDisplay = new Queue<RilDataVisual>();
         private List<RilDataVisual> displayedBatDataVisuals = new List<RilDataVisual>();
@@ -52,8 +52,8 @@ namespace Visuals.Ril
 
         public struct CityAlign
         {
-            public static Vector3 position = new Vector3(1010, -224.9f, -12);
-            public static Quaternion rotation = Quaternion.Euler(0, 0, 20f);
+            public static Vector3 position = new Vector3(988, -279.7f, -12);
+            public static Quaternion rotation = Quaternion.Euler(0, 0, 18f);
             public static Vector3 localScale = new Vector3(0.8f, 0.8f, 1);
         }
 
