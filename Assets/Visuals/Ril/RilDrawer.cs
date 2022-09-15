@@ -52,7 +52,7 @@ namespace Visuals.Ril
 
         public struct CityAlign
         {
-            public static Vector3 position = new Vector3(988, -279.7f, -12);
+            public static Vector3 position = new Vector3(1024, -279.7f, -12);
             public static Quaternion rotation = Quaternion.Euler(0, 0, 18f);
             public static Vector3 localScale = new Vector3(0.8f, 0.8f, 1);
         }

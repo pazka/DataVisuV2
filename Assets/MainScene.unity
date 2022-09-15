@@ -2133,8 +2133,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logger: {fileID: 1579690540}
-  activateCityDrawer: 1
-  activateDensityDrawer: 0
+  activateCityDrawer: 0
+  activateDensityDrawer: 1
   activateRilDrawer: 1
 --- !u!114 &1570511818
 MonoBehaviour:

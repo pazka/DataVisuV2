@@ -82,7 +82,7 @@ namespace DataProcessing.Ril
         {
             //TODO : IMPORTANT : convert the data from the bad file format to the good one. 
             //The Ril data format is in spherical projection when the other data are already projected
-            var sphere = new float[] {0.00f, -0.0f, 0.01f};
+            var sphere = new float[] {-0.0f, -0.0f, 10};
 
 
             //using the cache
@@ -130,7 +130,7 @@ namespace DataProcessing.Ril
                     FlattenCurve.GetFlattenedOneDimensionPoint(
                         widthAsRatioOfOriginalTotalWidth,
                         new float[] {sphere[0], sphere[2]}
-                    );
+                    )[0];
                 rilData[i].SetX(this.screenOffset[0] + reflattenedWidth * screenBounds[0]);
 
                 // Y is set as the % of total original height * the current width * the old % totalwidth by totalheight 
@@ -140,7 +140,7 @@ namespace DataProcessing.Ril
                 float reflattenedHeight = FlattenCurve.GetFlattenedOneDimensionPoint(
                     heightAsRatioOfOriginalTotalHeight,
                     new float[] {sphere[1], sphere[2]}
-                );
+                )[0];
                 rilData[i].SetY(this.screenOffset[1] + screenBounds[1] -
                                 reflattenedHeight * screenBounds[1]);
 
