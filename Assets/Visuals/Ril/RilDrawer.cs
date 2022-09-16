@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DataProcessing;
 using DataProcessing.Ril;
+using DataProcessing.VisualRestrictor;
 using SoundProcessing;
 using Tools;
 using UnityEngine;
@@ -26,6 +27,8 @@ namespace Visuals.Ril
         private RilDataExtrapolator rilDataExtrapolator;
         private RilEventHatcher rilEventHatcher = RilEventHatcher.Instance;
 
+        public VisualRestrictor restrictor;
+
         [SerializeField] private float timelapseDuration = 30;
         [SerializeField] private float extrapolationRate = .1f;
         [SerializeField] private bool controlledUpdateTime = false;
@@ -40,6 +43,7 @@ namespace Visuals.Ril
         [SerializeField] private float centerY = 0f;
         [SerializeField] private float centerZ = 5000f;
 
+        private JsonConfiguration config;
         private List<RilData> allData = new List<RilData>();
         private Queue<RilDataVisual> remainingBatDataVisualsToDisplay = new Queue<RilDataVisual>();
         private List<RilDataVisual> displayedBatDataVisuals = new List<RilDataVisual>();
@@ -83,9 +87,9 @@ namespace Visuals.Ril
 
         void Start()
         {
-            var config = Configuration.GetConfig();
+            config = Configuration.GetConfig();
 
-            if(!config.isDev)
+            if (!config.isDev)
             {
                 this.timelapseDuration = config.timelapseDuration;
                 this.extrapolationRate = config.extrapolationRate;
@@ -208,7 +212,7 @@ namespace Visuals.Ril
 
                 batVisual.tag = "bat:tmp";
                 batVisual.SetActive(false);
-                
+
                 batVisual.transform.parent =
                     gameObject.transform; // to make the visual affected by the parent gameobject 
 
@@ -228,7 +232,14 @@ namespace Visuals.Ril
                     minBatSize + currentRilData.NOMBRE_LOG * batSizeCoeff,
                     minBatSize + currentRilData.NOMBRE_LOG * batSizeCoeff);
 
-                remainingBatDataVisualsToDisplay.Enqueue(new RilDataVisual(currentRilData, batVisual));
+
+                //restriction to line
+                var pointToTest = batVisual.transform.position;
+                
+                if (restrictor.IsPointInPoly(pointToTest, restrictor.restrictionLine))
+                {
+                    remainingBatDataVisualsToDisplay.Enqueue(new RilDataVisual(currentRilData, batVisual));
+                }
             }
 
             drawingState = DrawingState.Drawing;

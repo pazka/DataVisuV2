@@ -27,7 +27,11 @@ namespace DataProcessing.Ril
         private static readonly Random rnd = new Random();
         private List<RilData> extrapolatedData;
         private List<RilData> dataToExtrapolate;
+        public static int GridPrecision = 100;
         private readonly Tools.Logger logger = GameObject.Find("Logger").GetComponent<Tools.Logger>();
+
+        private readonly VisualRestrictor.VisualRestrictor restrictor =
+            GameObject.Find("VisualRestrictor").GetComponent<VisualRestrictor.VisualRestrictor>();
 
         private readonly Tools.DebugLine debugLine = GameObject.Find("DebugLine").GetComponent<Tools.DebugLine>();
         private readonly Tools.DebugLine debugLineRed = GameObject.Find("DebugLineRed").GetComponent<Tools.DebugLine>();
@@ -186,76 +190,148 @@ namespace DataProcessing.Ril
             return new[] {boundX, boundY};
         }
 
-        private static float[,] GetSimpleProbabilityMap(List<RilData> allData, float[][] bounds, int precision = 10)
+        private static float[,] GetSimpleProbabilityMap(List<RilData> allData, float[][] bounds)
         {
-            float[,] probabilityMap = new float[precision, precision];
+            float[,] probabilityMap = new float[GridPrecision, GridPrecision];
             float maxCellsValue = 0f;
 
 
-            float cellWidth = (bounds[0][1] - bounds[0][0]) / precision;
-            float cellHeight = (bounds[1][1] - bounds[1][0]) / precision;
+            float cellWidth = (bounds[0][1] - bounds[0][0]) / GridPrecision;
+            float cellHeight = (bounds[1][1] - bounds[1][0]) / GridPrecision;
 
             foreach (RilData data in allData)
             {
                 int i = 0, j = 0;
-                for (i = 0; (i + 1) * cellWidth < -data.X && i < precision; i++)
+                while ((i + 1) * cellWidth < -data.X && i < GridPrecision - 1)
                 {
+                    i++;
                 }
 
-                for (j = 0; (j + 1) * cellHeight < data.Y && j < precision; j++)
+                //TODO warning bug here
+                while ((j + 1) * cellHeight < data.Y && j < GridPrecision - 1)
                 {
+                    j++;
                 }
 
-                if (maxCellsValue < probabilityMap[i, j])
-                {
-                    maxCellsValue = probabilityMap[i, j];
-                }
+                probabilityMap[i, j] += data.NOMBRE_LOG;
+                maxCellsValue += data.NOMBRE_LOG;
             }
 
-            for (int i = 0; i < precision; i++)
+            for (int i = 0; i < GridPrecision; i++)
             {
-                for (int j = 0; j < precision; j++)
+                for (int j = 0; j < GridPrecision; j++)
                 {
-                    probabilityMap[i, j] = probabilityMap[i, j] / allData.Count;
+                    probabilityMap[i, j] = probabilityMap[i, j] / maxCellsValue;
                 }
             }
 
+            //debug
+
+            var debugProb = 0.0f;
+            
+            for (int i = 0; i < GridPrecision; i++)
+            {
+                for (int j = 0; j < GridPrecision; j++)
+                {
+                    debugProb += probabilityMap[i, j];
+                    if (probabilityMap[i, j] > 0)
+                    {
+                        Console.WriteLine(i + " " + j);
+                        //Debug.DrawLine(new Vector3(i*cellWidth,j*cellHeight),new Vector3((i+1)*cellWidth,(j+1)*cellHeight),Color.green);
+                    }
+                }
+            }
 
             return probabilityMap;
         }
 
-        private static float[,] GetAlteredProbabilityMap(float[,] probabilityMap, float[][] bounds, int precision = 10)
+        private bool IsSquareForbidden(Vector3 position, float width, float height)
+        {
+            bool isABitInPoly = false;
+            Vector3[] pointsToTest = new Vector3[4];
+            pointsToTest[0] = new Vector3(position[0], position[1]);
+            pointsToTest[1] = new Vector3(position[0] + width, position[1]);
+            pointsToTest[2] = new Vector3(position[0], position[1] + height);
+            pointsToTest[3] = new Vector3(position[0] + width, position[1] + height);
+
+            foreach (Vector3 sqrPoint in pointsToTest)
+            {
+                isABitInPoly = isABitInPoly || restrictor.IsPointInPoly(sqrPoint, restrictor.restrictionLine);
+            }
+
+            return !isABitInPoly;
+        }
+
+        private float[,] GetAlteredProbabilityMap(float[,] probabilityMap, float[][] bounds)
         {
             float[,] alteredProbabilityMap = probabilityMap;
+            float cellWidth = (bounds[0][1] - bounds[0][0]) / GridPrecision;
+            float cellHeight = (bounds[1][1] - bounds[1][0]) / GridPrecision;
+            float totalProba = 0f;
 
-            for (int i = 0; i < precision; i++)
+            //invert and restrict
+            for (int i = 0; i < GridPrecision; i++)
             {
-                for (int j = 0; j < precision; j++)
+                for (int j = 0; j < GridPrecision; j++)
                 {
-                    alteredProbabilityMap[i, j] = 1 - alteredProbabilityMap[i, j];
+
+                    //restrict
+                    if (IsSquareForbidden(new Vector3(i * cellWidth, j * cellHeight, 0), cellWidth, cellHeight))
+                    {
+                        alteredProbabilityMap[i, j] = 0;
+                    }
+                    else
+                    {
+                        alteredProbabilityMap[i, j] = 1 - alteredProbabilityMap[i, j];
+                        totalProba += alteredProbabilityMap[i, j];
+                    }
+                }
+            }
+
+            //normalize
+            for (int i = 0; i < GridPrecision; i++)
+            {
+                for (int j = 0; j < GridPrecision; j++)
+                {
+                    alteredProbabilityMap[i, j] = alteredProbabilityMap[i, j] / totalProba;
+                }
+            }
+            
+            //debug
+
+            var debugProb = 0.0f;
+            for (int i = 0; i < GridPrecision; i++)
+            {
+                for (int j = 0; j < GridPrecision; j++)
+                {
+                    debugProb += alteredProbabilityMap[i, j];
                 }
             }
 
             return alteredProbabilityMap;
         }
 
-        private static Vector2 GetNewPosition(float[,] probabilityMap, float[][] bounds, int precision = 10)
+        private static Vector2 GetNewPosition(float[,] probabilityMap, float[][] bounds)
         {
-            float cellWidth = (bounds[0][1] - bounds[0][0]) / precision;
-            float cellHeight = (bounds[1][1] - bounds[1][0]) / precision;
+            float cellWidth = (bounds[0][1] - bounds[0][0]) / GridPrecision;
+            float cellHeight = (bounds[1][1] - bounds[1][0]) / GridPrecision;
 
             Vector2 position = new Vector2(0.0f, 0.0f);
             float currentPotential = 0f;
-            float potentialToMatch = (float) rnd.NextDouble()*precision*precision;
+            float potentialToMatch = (float) rnd.NextDouble();
 
             int i = 0;
             int j = 0;
-            for (i = 0; i < precision && currentPotential < potentialToMatch; i++)
+            while (i < GridPrecision && currentPotential < potentialToMatch)
             {
-                for (j = 0; j < precision && currentPotential < potentialToMatch; j++)
+                while (j < GridPrecision && currentPotential < potentialToMatch)
                 {
                     currentPotential += probabilityMap[i, j];
+                    j++;
                 }
+
+                j = 0;
+                i++;
             }
 
             position[0] = -(cellWidth * i);
@@ -264,11 +340,11 @@ namespace DataProcessing.Ril
             return position;
         }
 
-        private static List<RilData> ExtrapolateData(List<RilData> pastData, float extrapolationRate)
+        private List<RilData> ExtrapolateData(List<RilData> pastData, float extrapolationRate)
         {
             float[][] bounds = GetDataBounds(pastData);
-            float[,] simpleProbabilityMap = GetSimpleProbabilityMap(pastData, bounds, 10);
-            float[,] probabilityMap = GetAlteredProbabilityMap(simpleProbabilityMap, bounds, 10);
+            float[,] simpleProbabilityMap = GetSimpleProbabilityMap(pastData, bounds);
+            float[,] probabilityMap = GetAlteredProbabilityMap(simpleProbabilityMap, bounds);
 
             List<RilData> newData = new List<RilData>();
 
@@ -283,7 +359,7 @@ namespace DataProcessing.Ril
                 {
                     float extrapolatedT = (pastData[i - 1].T + pastRilData.T) / 2;
 
-                    Vector2 newPosition = GetNewPosition(probabilityMap, bounds, 10);
+                    Vector2 newPosition = GetNewPosition(probabilityMap, bounds);
                     FutureRilData extrapolatedData = new FutureRilData(newPosition[0], newPosition[1], extrapolatedT)
                     {
                         NOMBRE_LOG = pastRilData.NOMBRE_LOG
@@ -304,16 +380,16 @@ namespace DataProcessing.Ril
             return newData;
         }
 
-        private static List<RilData> PredictFutureData(List<RilData> pastData,
+        private List<RilData> PredictFutureData(List<RilData> pastData,
             SpawnCoeff spawnCoeffs,
             GrowthCoeff growthCoeffs)
         {
             if (spawnCoeffs.Values.Length != growthCoeffs.Values.Length)
                 throw new Exception("Coefficient arrays are not the same length");
-
-            float[][] bounds = GetDataBounds(pastData);
-            float[,] simpleProbabilityMap = GetSimpleProbabilityMap(pastData, bounds, 10);
-            float[,] probabilityMap = GetAlteredProbabilityMap(simpleProbabilityMap, bounds, 10);
+            //
+            // float[][] bounds = GetDataBounds(pastData);
+            // float[,] simpleProbabilityMap = GetSimpleProbabilityMap(pastData, bounds);
+            // float[,] probabilityMap = GetAlteredProbabilityMap(simpleProbabilityMap, bounds);
 
             List<RilData> newData = new List<RilData>(pastData);
 
@@ -333,9 +409,9 @@ namespace DataProcessing.Ril
 
                     //noise function for Nb log
                     RilData randomPastData = pastData[rnd.Next(0, pastData.Count - 1)];
-                    //float[] futurePos = {randomPastData.X, randomPastData.Y};
+                    float[] newPosition = {randomPastData.X, randomPastData.Y};
 
-                    Vector2 newPosition = GetNewPosition(probabilityMap, bounds, 10);
+                    //Vector2 newPosition = GetNewPosition(probabilityMap, bounds);
 
                     FutureRilData rilData = new FutureRilData(newPosition[0], newPosition[1], futureT)
                     {

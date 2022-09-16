@@ -10,21 +10,24 @@ namespace DataProcessing.VisualRestrictor
 {
     public class VisualRestrictor : MonoBehaviour
     {
-        List<Vector3> restrictionLine;
+        public List<Vector3> restrictionLine;
         public Logger logger;
         public LineRenderer _lineRenderer;
+        private float YOffest = -45f;
         private string preloadedRestrictionFile;
         private bool isRegistering = false;
 
         private void Start()
         {
-            preloadedRestrictionFile = Application.persistentDataPath + "/restrictionLine.dat";
+            preloadedRestrictionFile = Application.dataPath + "/StreamingAssets/restrictionLine.dat";
             restrictionLine = new List<Vector3>();
             if (File.Exists(preloadedRestrictionFile))
             {
                 var tmp = LineLoad(preloadedRestrictionFile);
                 restrictionLine = tmp;
             }
+
+            restrictionLine = restrictionLine.Select(v => new Vector3(v[0], v[1] + YOffest, 0)).ToList();
         }
 
         private void StartRegistering()
@@ -90,7 +93,7 @@ namespace DataProcessing.VisualRestrictor
             return res;
         }
 
-        private bool IsPointInPoly(Vector3 point, List<Vector3> poly)
+        public bool IsPointInPoly(Vector3 point, List<Vector3> poly)
         {
             bool isInsidePoly = false;
 
@@ -98,7 +101,7 @@ namespace DataProcessing.VisualRestrictor
             {
                 Vector3[] curLine = new[] {poly[i], poly[i + 1]};
                 Vector3[] curCornerLine = new[] {point, new Vector3(0, 0)};
-                
+
                 if (VectAreIntersecting(curCornerLine[0][0], curCornerLine[0][1], curCornerLine[1][0],
                     curCornerLine[1][1],
                     curLine[0][0], curLine[0][1], curLine[1][0], curLine[1][1]))

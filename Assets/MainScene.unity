@@ -1392,7 +1392,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1010002782}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1494,8 +1494,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7810649d018c405986fbc219c2ff5a88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  restrictionLine: []
   logger: {fileID: 1579690540}
   _lineRenderer: {fileID: 1010002784}
+  YOffest: -50
 --- !u!1 &1024058045
 GameObject:
   m_ObjectHideFlags: 0
@@ -2323,7 +2325,7 @@ MonoBehaviour:
   logger: {fileID: 1579690540}
   activateCityDrawer: 0
   activateDensityDrawer: 0
-  activateRilDrawer: 0
+  activateRilDrawer: 1
 --- !u!114 &1570511818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2434,6 +2436,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logger: {fileID: 1579690540}
   pureData: {fileID: 1158691146}
+  restrictor: {fileID: 1010002785}
   timelapseDuration: 50
   extrapolationRate: 0.2
   controlledUpdateTime: 0
