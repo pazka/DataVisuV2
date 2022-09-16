@@ -141,7 +141,7 @@ namespace DataProcessing.Ril
         {
         }
 
-        public void Randomize(int posRnd = 50, int perlinRnd = 500, float maxBatSize = 1f, float[] bias = null)
+        public void Randomize(int posRnd = 100, int perlinRnd = 500, float maxBatSize = 1f, float[] bias = null)
         {
             if (bias == null)
             {

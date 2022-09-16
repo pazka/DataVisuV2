@@ -31,8 +31,11 @@ namespace Tools
     ///
     public static class FlattenCurve
     {
-        public static float[] GetFlattenedOneDimensionPoint(float p2, float[] p0Prime)
+        public static float GetFlattenedOneDimensionPoint(float p2, float[] p0Prime)
         {
+            return p2;
+            //TODO make this work
+            
             // step 1 + 2
             float[] p2Prime = new float[2];
             p2Prime[0] = p2;
@@ -45,7 +48,7 @@ namespace Tools
             // step 5
             float res = coeffB / coeffA;
 
-            return new[] {res, p2Prime[1]};
+            return res;
         }
 
         /// <summary>
@@ -59,8 +62,8 @@ namespace Tools
         public static float[] GetFlattenedTwoDimensionPoint(float[] p2, float[] p0Prime)
         {
             float[] res = new float[2];
-            res[0] = GetFlattenedOneDimensionPoint(p2[0], new[] {p0Prime[0], p0Prime[2]})[0];
-            res[0] = GetFlattenedOneDimensionPoint(p2[1], new[] {p0Prime[1], p0Prime[2]})[0];
+            res[0] = GetFlattenedOneDimensionPoint(p2[0], new[] {p0Prime[0], p0Prime[2]});
+            res[1] = GetFlattenedOneDimensionPoint(p2[1], new[] {p0Prime[1], p0Prime[2]});
             return res;
         }
     }

@@ -249,7 +249,7 @@ Transform:
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_Children: []
   m_Father: {fileID: 1597805429}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &65794681
 SpriteRenderer:
@@ -835,7 +835,7 @@ Transform:
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_Children: []
   m_Father: {fileID: 1597805429}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &662345312
 SpriteRenderer:
@@ -855,7 +855,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 479affd352d7ec84385c601971a9783a, type: 2}
+  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1525,8 +1525,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vis: {fileID: 65794679}
-  centerX: 0.5
-  centerY: 0.5
+  centerX: 0
+  centerY: 0
   centerZ: 0.5
 --- !u!4 &1073902289
 Transform:
@@ -1593,6 +1593,50 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lineRenderer: {fileID: 1888892078}
   depth: 10
+--- !u!1 &1121062033
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1121062034}
+  - component: {fileID: 1121062035}
+  m_Layer: 0
+  m_Name: DebugBatVisualPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1121062034
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1121062033}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1597805429}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1121062035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1121062033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 391539adb7084bcfbbc70360e2cd36f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  batRessource: {fileID: 662345310}
 --- !u!1 &1158691144
 GameObject:
   m_ObjectHideFlags: 0
@@ -1747,7 +1791,7 @@ Transform:
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_Children: []
   m_Father: {fileID: 1597805429}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1187849938
 SpriteRenderer:
@@ -1943,7 +1987,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1597805429}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1208443344
 MonoBehaviour:
@@ -1957,7 +2001,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 391539adb7084bcfbbc70360e2cd36f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  batRessource: {fileID: 65794679}
+  batRessource: {fileID: 1187849936}
 --- !u!1 &1251059333
 GameObject:
   m_ObjectHideFlags: 0
@@ -2134,7 +2178,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logger: {fileID: 1579690540}
   activateCityDrawer: 0
-  activateDensityDrawer: 1
+  activateDensityDrawer: 0
   activateRilDrawer: 1
 --- !u!114 &1570511818
 MonoBehaviour:
@@ -2224,6 +2268,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1121062034}
   - {fileID: 1187849937}
   - {fileID: 662345311}
   - {fileID: 1208443343}
@@ -2245,7 +2290,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logger: {fileID: 1579690540}
   pureData: {fileID: 1158691146}
-  timelapseDuration: 300
+  timelapseDuration: 50
   extrapolationRate: 0.1
   controlledUpdateTime: 0
   controlledFramerateStep: 0.0005
@@ -2253,7 +2298,11 @@ MonoBehaviour:
   nbDataBeforeRestart: 90000
   minBatSize: 2
   batSizeCoeff: 25
+  centerX: 600
+  centerY: 800
+  centerZ: 4000
   batVisualPool: {fileID: 1208443344}
+  debugBatVisualPool: {fileID: 1121062035}
   progressBar: {fileID: 1177338392}
 --- !u!1 &1622456916
 GameObject:

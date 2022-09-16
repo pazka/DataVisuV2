@@ -32,11 +32,14 @@ namespace Visuals.Ril
         [SerializeField] private float controlledFramerateStep = 0.0005f;
         [SerializeField] private float disappearingRate = .01f;
         [SerializeField] private int nbDataBeforeRestart = 90000;
-        
-        
+
+
         [SerializeField] private int minBatSize = 5;
         [SerializeField] private int batSizeCoeff = 25;
-        
+        [SerializeField] private float centerX = -50f;
+        [SerializeField] private float centerY = 0f;
+        [SerializeField] private float centerZ = 5000f;
+
         private List<RilData> allData = new List<RilData>();
         private Queue<RilDataVisual> remainingBatDataVisualsToDisplay = new Queue<RilDataVisual>();
         private List<RilDataVisual> displayedBatDataVisuals = new List<RilDataVisual>();
@@ -48,6 +51,7 @@ namespace Visuals.Ril
         private DrawingState previousDrawingState = DrawingState.Inactive;
 
         public BatVisualPool batVisualPool;
+        public BatVisualPool debugBatVisualPool;
         public GameObject progressBar;
 
         public struct CityAlign
@@ -81,10 +85,13 @@ namespace Visuals.Ril
         {
             var config = Configuration.GetConfig();
 
-            this.timelapseDuration = config.timelapseDuration;
-            this.extrapolationRate = config.extrapolationRate;
-            this.disappearingRate = config.disappearingRate;
-            this.nbDataBeforeRestart = config.nbDataBeforeRestart;
+            if(!config.isDev)
+            {
+                this.timelapseDuration = config.timelapseDuration;
+                this.extrapolationRate = config.extrapolationRate;
+                this.disappearingRate = config.disappearingRate;
+                this.nbDataBeforeRestart = config.nbDataBeforeRestart;
+            }
 
             transform.position += Vector3.Scale(CityAlign.position, new Vector3(config.scaleX, config.scaleY, 1f));
             transform.rotation = CityAlign.rotation;
@@ -99,7 +106,8 @@ namespace Visuals.Ril
             );
 
             rilDataExtrapolator =
-                (RilDataExtrapolator) FactoryDataExtrapolator.GetInstance(FactoryDataExtrapolator.AvailableDataExtrapolatorTypes.RIL);
+                (RilDataExtrapolator) FactoryDataExtrapolator.GetInstance(FactoryDataExtrapolator
+                    .AvailableDataExtrapolatorTypes.RIL);
         }
 
         void Update()
@@ -177,13 +185,18 @@ namespace Visuals.Ril
         {
             allData = GetDataToDisplay();
             logger.Log("#" + nbIteration++ + " = " + allData.Count);
-
+            //
+            // var centerVis = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            // centerVis.transform.localPosition = new Vector3(centerX, centerY, -15);
+            // centerVis.transform.localScale = new Vector3(20,20,20);
+            // centerVis.transform.parent = gameObject.transform;
+            //
             foreach (RilData currentRilData in allData)
             {
                 GameObject batVisual;
                 if (currentRilData.Raw == "future")
                 {
-                    batVisual = batVisualPool.GetOne();
+                    batVisual = debugBatVisualPool.GetOne();
                 }
                 else
                 {
@@ -195,20 +208,21 @@ namespace Visuals.Ril
 
                 batVisual.tag = "bat:tmp";
                 batVisual.SetActive(false);
-
-
+                
                 batVisual.transform.parent =
                     gameObject.transform; // to make the visual affected by the parent gameobject 
 
                 Vector3 currentPosition = new Vector3(
-                    currentRilData.X,
-                    currentRilData.Y,
+                    FlattenCurve.GetFlattenedOneDimensionPoint(currentRilData.X, new[] {centerX, centerZ}),
+                    FlattenCurve.GetFlattenedOneDimensionPoint(currentRilData.Y, new[] {centerY, centerZ}),
                     (float) VisualPlanner.Layers.Ril
                 );
 
                 //currentPosition = transform.rotation * Vector3.Scale(currentPosition, transform.localScale);
                 batVisual.transform.localPosition = currentPosition;
-                batVisual.transform.localRotation = new Quaternion(0,0,currentRilData.T *90,0); 
+                batVisual.transform.localRotation = new Quaternion(0, 0, currentRilData.T * 90, 0);
+                //currentRilData.SetX(batVisual.transform.position.x);
+                //currentRilData.SetY(batVisual.transform.position.y);
 
                 batVisual.transform.localScale = new Vector3(
                     minBatSize + currentRilData.NOMBRE_LOG * batSizeCoeff,
@@ -302,7 +316,8 @@ namespace Visuals.Ril
                 batVisualPool.Return(visualToDestroy);
             }
 
-            displayedBatDataVisuals = displayedBatDataVisuals.GetRange(nbTook, displayedBatDataVisuals.Count() - nbTook);
+            displayedBatDataVisuals =
+                displayedBatDataVisuals.GetRange(nbTook, displayedBatDataVisuals.Count() - nbTook);
         }
 
         void UpdateControlledFrameRate()

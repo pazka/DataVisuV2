@@ -75,9 +75,11 @@ namespace Tools
         {
             if (ConfigContent == null) ConfigContent = File.ReadAllText(ConfigPath);
             var config = JsonUtility.FromJson<JsonConfiguration>(ConfigContent);
-#if DEVELOPMENT_BUILD
-            config.isDev = true;
-#endif
+            
+            if(Debug.isDebugBuild)
+            {
+                config.isDev = true;
+            }
 
             return config;
         }
