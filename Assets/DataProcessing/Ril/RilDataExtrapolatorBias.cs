@@ -24,8 +24,8 @@ namespace DataProcessing.Ril
 
         private readonly Tools.DebugLine debugLine = GameObject.Find("DebugLine").GetComponent<Tools.DebugLine>();
         private readonly Tools.DebugLine debugLineRed = GameObject.Find("DebugLineRed").GetComponent<Tools.DebugLine>();
-        
-        
+
+
         public RilDataExtrapolatorBias() : base()
         {
         }
@@ -58,10 +58,10 @@ namespace DataProcessing.Ril
             }
             else
             {
-                this.extrapolatedData = ExtrapolateData(this.dataToExtrapolate,extrapolationRate);
+                this.extrapolatedData = ExtrapolateData(this.dataToExtrapolate, extrapolationRate);
             }
 
-            this.extrapolatedData = this.extrapolatedData.OrderBy(x => x.T ).ToList();
+            this.extrapolatedData = this.extrapolatedData.OrderBy(x => x.T).ToList();
             ReleaseMutex();
 
             logger.Log($"Extrapolation is Ready ! ");
@@ -113,7 +113,7 @@ namespace DataProcessing.Ril
                 else
                 {
                     //end of slice, divide by number of iteration made
-                    spawnCoeffs[sliceIndex] = dataCountInSlot ;
+                    spawnCoeffs[sliceIndex] = dataCountInSlot;
                     ++sliceIndex;
                     dataCountInSlot = 0;
                 }
@@ -167,7 +167,7 @@ namespace DataProcessing.Ril
                 NormalizedTimespanOfSlice = normalizedTimeSlot
             };
         }
-        
+
         private static List<RilData> PredictFutureData(List<RilData> pastData,
             SpawnCoeff spawnCoeffs,
             GrowthCoeff growthCoeffs)
@@ -175,11 +175,11 @@ namespace DataProcessing.Ril
             if (spawnCoeffs.Values.Length != growthCoeffs.Values.Length)
                 throw new Exception("Coefficient arrays are not the same length");
 
-            List<RilData> newData = new List<RilData>(pastData); 
-            
+            List<RilData> newData = new List<RilData>(pastData);
+
             Random rnd = new Random();
             float lastT = 1f; // we start the time at the end of the normalized timeline
-            
+
             for (int i = 0; i < spawnCoeffs.Values.Length; i++)
             {
                 int nbOfDataToCreate = (int) Math.Ceiling(spawnCoeffs.Values[i]);
@@ -195,7 +195,7 @@ namespace DataProcessing.Ril
                     RilData randomPastData = pastData[rnd.Next(0, pastData.Count - 1)];
                     float[] futurePos = {randomPastData.X, randomPastData.Y};
 
-                    
+
                     FutureRilData rilData = new FutureRilData(futurePos[0], futurePos[1], futureT)
                     {
                         NOMBRE_LOG = batSize
@@ -210,61 +210,61 @@ namespace DataProcessing.Ril
             float newMaxT = newData.Max(data => data.T);
             foreach (RilData rilData in newData)
             {
-                rilData.SetT( rilData.T / newMaxT);
+                rilData.SetT(rilData.T / newMaxT);
             }
 
             return newData;
         }
 
-        private static  List<RilData> ExtrapolateData(List<RilData> pastData, float extrapolationRate)
+        private static List<RilData> ExtrapolateData(List<RilData> pastData, float extrapolationRate)
         {
             List<RilData> newData = new List<RilData>();
-            float xMidPoint = (pastData.Max(d =>d.X) + pastData.Min(d =>d.X)) / 2;
-            float xfirstQuartPoint = (pastData.Max(d =>d.X) + pastData.Min(d =>d.X)) / 4;
-            
+            float xMidPoint = (pastData.Max(d => d.X) + pastData.Min(d => d.X)) / 2;
+            float xfirstQuartPoint = (pastData.Max(d => d.X) + pastData.Min(d => d.X)) / 4;
+
             newData.Add(pastData[0]);
-            
+
             for (int i = 1; i < pastData.Count; i++)
             {
-                RilData pastRilData = pastData[i]; 
+                RilData pastRilData = pastData[i];
                 newData.Add(pastRilData);
+
+                if (rnd.NextDouble() > extrapolationRate) continue; // don't create a new future data
                 
-                if (rnd.NextDouble() <= extrapolationRate)
+                // create a new future data
+                float extrapolatedT = (pastData[i - 1].T + pastRilData.T) / 2;
+
+                FutureRilData oneExtrapolatedData = new FutureRilData(pastRilData.X, pastRilData.Y, extrapolatedT)
                 {
-                    float extrapolatedT = (pastData[i - 1].T + pastRilData.T )/2;
+                    NOMBRE_LOG = pastRilData.NOMBRE_LOG
+                };
 
-                    FutureRilData oneExtrapolatedData = new FutureRilData(pastRilData.X, pastRilData.Y, extrapolatedT)
+                if (oneExtrapolatedData.X < xMidPoint)
+                {
+                    if (oneExtrapolatedData.X < xfirstQuartPoint)
                     {
-                        NOMBRE_LOG = pastRilData.NOMBRE_LOG
-                    };
-
-                    if (oneExtrapolatedData.X < xMidPoint)
-                    {
-                        if (oneExtrapolatedData.X < xfirstQuartPoint)
-                        {
-                            oneExtrapolatedData.Randomize(bias:new float[]{-70,0});
-                        }
-                        else
-                        {
-                            oneExtrapolatedData.Randomize(bias:new float[]{-50,50});
-                        }
+                        oneExtrapolatedData.Randomize(bias: new float[] {-100, 50});
                     }
                     else
                     {
-                        oneExtrapolatedData.Randomize(bias:new float[]{50,50});
+                        oneExtrapolatedData.Randomize(bias: new float[] {-50, 100});
                     }
-                    
-                    newData.Add(oneExtrapolatedData);
-                } 
+                }
+                else
+                {
+                    oneExtrapolatedData.Randomize(bias: new float[] {50, 50});
+                }
+
+                newData.Add(oneExtrapolatedData);
             }
 
             //Reassign new T with max being extrapolation
             float newMaxT = newData.Max(data => data.T);
             foreach (RilData rilData in newData)
             {
-                rilData.SetT( rilData.T / newMaxT);
+                rilData.SetT(rilData.T / newMaxT);
             }
-            
+
             return newData;
         }
     }

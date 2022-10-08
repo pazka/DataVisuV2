@@ -18,7 +18,7 @@ namespace Visuals.Ril
         protected override void DeactivateOneObject(GameObject obj)
         {
             obj.SetActive(false);
-
+            obj.transform.parent = null;
             obj.transform.localPosition = new Vector3(10, 10, (float) VisualPlanner.Layers.Hidden);
         }
 

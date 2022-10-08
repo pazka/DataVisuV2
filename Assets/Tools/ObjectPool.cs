@@ -23,6 +23,14 @@ namespace Tools
             return availableObjects.Dequeue();
         }
 
+        public void PreloadNObjects(int number)
+        {
+            for (int i = 0; i < number; i++)
+            {
+                availableObjects.Enqueue(CreateOneObject());
+            }
+        }
+
         protected abstract T CreateOneObject();
         protected abstract void DeactivateOneObject(T obj);
         protected abstract void RemoveOneObject(T obj);

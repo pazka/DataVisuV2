@@ -112,6 +112,9 @@ namespace Visuals.Ril
 
             rilDataExtrapolator = FactoryDataExtrapolator.GetInstance(FactoryDataExtrapolator
                 .AvailableDataExtrapolatorTypes.RIL);
+            
+            debugBatVisualPool.PreloadNObjects(100000);
+            batVisualPool.PreloadNObjects(40000);
         }
 
         void Update()
@@ -185,6 +188,35 @@ namespace Visuals.Ril
             GC.Collect();
         }
 
+        private void ReturnDataVisualToCorrectPool(RilDataVisual dataVisual)
+        {
+            BatVisualPool visualpool = dataVisual.Data.Raw == "future" ? debugBatVisualPool : batVisualPool;
+            visualpool.Return(dataVisual.Visual);
+        }
+
+        private void ApplyDataToTransform(RilData rilData, Transform transform)
+        {
+            Vector3 currentPosition = new Vector3(
+                FlattenCurve.GetFlattenedOneDimensionPoint(rilData.X, new[] {centerX, centerZ}),
+                FlattenCurve.GetFlattenedOneDimensionPoint(rilData.Y, new[] {centerY, centerZ}),
+                (float) VisualPlanner.Layers.Ril
+            );
+
+            transform.parent =
+                gameObject.transform; // to make the visual affected by the parent gameobject 
+
+            //currentPosition = transform.rotation * Vector3.Scale(currentPosition, transform.localScale);
+            transform.localPosition = currentPosition;
+            transform.localRotation = new Quaternion(0, 0, rilData.T * 90, 0);
+            //currentRilData.SetX(batVisual.transform.position.x);
+            //currentRilData.SetY(batVisual.transform.position.y);
+
+            transform.localScale = new Vector3(
+                minBatSize + rilData.NOMBRE_LOG * batSizeCoeff,
+                minBatSize + rilData.NOMBRE_LOG * batSizeCoeff
+            );
+        }
+
         private void InitDrawing()
         {
             allData = GetDataToDisplay();
@@ -197,41 +229,18 @@ namespace Visuals.Ril
             //
             foreach (RilData currentRilData in allData)
             {
-                GameObject batVisual;
                 BatVisualPool visualpool = currentRilData.Raw == "future" ? debugBatVisualPool : batVisualPool;
-
-                batVisual = visualpool.GetOne();
+                GameObject batVisual = visualpool.GetOne();
 
                 if (!batVisual)
-                    break;
+                    continue;
 
                 batVisual.tag = "bat:tmp";
                 batVisual.SetActive(false);
-
-                batVisual.transform.parent =
-                    gameObject.transform; // to make the visual affected by the parent gameobject 
-
-                Vector3 currentPosition = new Vector3(
-                    FlattenCurve.GetFlattenedOneDimensionPoint(currentRilData.X, new[] {centerX, centerZ}),
-                    FlattenCurve.GetFlattenedOneDimensionPoint(currentRilData.Y, new[] {centerY, centerZ}),
-                    (float) VisualPlanner.Layers.Ril
-                );
-
-                //currentPosition = transform.rotation * Vector3.Scale(currentPosition, transform.localScale);
-                batVisual.transform.localPosition = currentPosition;
-                batVisual.transform.localRotation = new Quaternion(0, 0, currentRilData.T * 90, 0);
-                //currentRilData.SetX(batVisual.transform.position.x);
-                //currentRilData.SetY(batVisual.transform.position.y);
-
-                batVisual.transform.localScale = new Vector3(
-                    minBatSize + currentRilData.NOMBRE_LOG * batSizeCoeff,
-                    minBatSize + currentRilData.NOMBRE_LOG * batSizeCoeff);
-
+                ApplyDataToTransform(currentRilData, batVisual.transform);
 
                 //restriction to line
-                var pointToTest = batVisual.transform.position;
-
-                if (restrictor.IsPointInPoly(pointToTest, restrictor.restrictionLine))
+                if (restrictor.IsPointInPoly(batVisual.transform.position, restrictor.restrictionLine))
                 {
                     remainingBatDataVisualsToDisplay.Enqueue(new RilDataVisual(currentRilData, batVisual));
                 }
@@ -293,16 +302,15 @@ namespace Visuals.Ril
         {
             GameObject[] visualsToDestroy = displayedBatDataVisuals.Select(x => x.Visual).ToArray();
 
-            foreach (var visualToDestroy in visualsToDestroy)
+            foreach (RilDataVisual dataVisual in displayedBatDataVisuals)
             {
-                batVisualPool.Return(visualToDestroy);
+                ReturnDataVisualToCorrectPool(dataVisual);
             }
 
             while (remainingBatDataVisualsToDisplay.Count > 0)
             {
-                var visualToDestroy = remainingBatDataVisualsToDisplay.Dequeue().Visual;
-                visualToDestroy.gameObject.transform.parent = null;
-                batVisualPool.Return(visualToDestroy);
+                var dataVisual = remainingBatDataVisualsToDisplay.Dequeue();
+                ReturnDataVisualToCorrectPool(dataVisual);
             }
 
             displayedBatDataVisuals = new List<RilDataVisual>();
@@ -319,11 +327,11 @@ namespace Visuals.Ril
         public void HideSomeVisuals(float disappearingRate)
         {
             int nbToTake = (int) Math.Max(Math.Round(displayedBatDataVisuals.Count * disappearingRate), 50);
-            GameObject[] visualsToDestroy = displayedBatDataVisuals.Select(x => x.Visual).Take(nbToTake).ToArray();
-            int nbTook = visualsToDestroy.Length;
-            foreach (var visualToDestroy in visualsToDestroy)
+            RilDataVisual[] dataVisualsToDestroy = displayedBatDataVisuals.Select(x => x).Take(nbToTake).ToArray();
+            int nbTook = dataVisualsToDestroy.Length;
+            foreach (var dataVisualToDestroy in dataVisualsToDestroy)
             {
-                batVisualPool.Return(visualToDestroy);
+                ReturnDataVisualToCorrectPool(dataVisualToDestroy);
             }
 
             displayedBatDataVisuals =
