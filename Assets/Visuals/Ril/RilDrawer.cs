@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DataProcessing;
+using DataProcessing.Generic;
 using DataProcessing.Ril;
 using DataProcessing.VisualRestrictor;
 using SoundProcessing;
@@ -23,9 +24,9 @@ namespace Visuals.Ril
     {
         public Logger logger;
         public PureDataConnector pureData;
-        RilDataConverter rilDataConverter;
-        private RilDataExtrapolator rilDataExtrapolator;
-        private RilEventHatcher rilEventHatcher = RilEventHatcher.Instance;
+        IDataConverter rilDataConverter;
+        private IDataExtrapolator rilDataExtrapolator;
+        private EventHatcher<RilDataVisual> rilEventHatcher = RilEventHatcher.Instance;
 
         public VisualRestrictor restrictor;
 
@@ -109,9 +110,8 @@ namespace Visuals.Ril
                 (int) (Screen.height)
             );
 
-            rilDataExtrapolator =
-                (RilDataExtrapolator) FactoryDataExtrapolator.GetInstance(FactoryDataExtrapolator
-                    .AvailableDataExtrapolatorTypes.RIL);
+            rilDataExtrapolator = FactoryDataExtrapolator.GetInstance(FactoryDataExtrapolator
+                .AvailableDataExtrapolatorTypes.RIL);
         }
 
         void Update()
@@ -198,14 +198,9 @@ namespace Visuals.Ril
             foreach (RilData currentRilData in allData)
             {
                 GameObject batVisual;
-                if (currentRilData.Raw == "future")
-                {
-                    batVisual = debugBatVisualPool.GetOne();
-                }
-                else
-                {
-                    batVisual = batVisualPool.GetOne(); // should be another visual but for memory sake we will not care
-                }
+                BatVisualPool visualpool = currentRilData.Raw == "future" ? debugBatVisualPool : batVisualPool;
+
+                batVisual = visualpool.GetOne();
 
                 if (!batVisual)
                     break;
@@ -235,10 +230,14 @@ namespace Visuals.Ril
 
                 //restriction to line
                 var pointToTest = batVisual.transform.position;
-                
+
                 if (restrictor.IsPointInPoly(pointToTest, restrictor.restrictionLine))
                 {
                     remainingBatDataVisualsToDisplay.Enqueue(new RilDataVisual(currentRilData, batVisual));
+                }
+                else
+                {
+                    visualpool.Return(batVisual);
                 }
             }
 

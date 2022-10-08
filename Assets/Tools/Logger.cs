@@ -39,7 +39,7 @@ namespace Tools
         {
             if (lastIndex != lineCounter)
             {
-                File.AppendAllText(LogPath, string.Join("\n", logLinesToDump));
+                File.AppendAllText(LogPath, string.Join("\n", logLinesToDump)+"\n");
                 logLinesToDump.Clear();
 
                 var str = "";
