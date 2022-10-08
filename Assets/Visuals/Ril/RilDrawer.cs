@@ -313,7 +313,7 @@ namespace Visuals.Ril
             currentIterationTime = 0;
 
             //logger 
-            logger.Reset();
+            //logger.Reset();
         }
 
         public void HideSomeVisuals(float disappearingRate)

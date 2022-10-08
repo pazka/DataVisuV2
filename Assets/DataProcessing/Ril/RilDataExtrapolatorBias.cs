@@ -21,7 +21,6 @@ namespace DataProcessing.Ril
         private List<RilData> extrapolatedData;
         private List<RilData> dataToExtrapolate;
         private readonly Tools.Logger logger = GameObject.Find("Logger").GetComponent<Tools.Logger>();
-        private GeographicBounds bounds;
 
         private readonly Tools.DebugLine debugLine = GameObject.Find("DebugLine").GetComponent<Tools.DebugLine>();
         private readonly Tools.DebugLine debugLineRed = GameObject.Find("DebugLineRed").GetComponent<Tools.DebugLine>();
@@ -29,7 +28,6 @@ namespace DataProcessing.Ril
         
         public RilDataExtrapolatorBias() : base()
         {
-            bounds = (GeographicBounds) BoundsFactory.GetInstance(BoundsFactory.AvailableBoundsTypes.GEOGRAPHIC);
         }
 
         protected override IEnumerable<IData> GetConcreteExtrapolation()
@@ -218,12 +216,11 @@ namespace DataProcessing.Ril
             return newData;
         }
 
-        private List<RilData> ExtrapolateData(List<RilData> pastData, float extrapolationRate)
+        private static  List<RilData> ExtrapolateData(List<RilData> pastData, float extrapolationRate)
         {
             List<RilData> newData = new List<RilData>();
-            float[,] currentGeoBounds = (float[,])bounds.GetCurrentBounds(); // bad code, shouldn't know the type that way
-            float XMidPoint = (currentGeoBounds[0, 0] - currentGeoBounds[0, 1]) / 2;
-            float YMidPoint = (currentGeoBounds[1, 0] - currentGeoBounds[1, 1]) / 2;
+            float xMidPoint = (pastData.Max(d =>d.X) + pastData.Min(d =>d.X)) / 2;
+            float xfirstQuartPoint = (pastData.Max(d =>d.X) + pastData.Min(d =>d.X)) / 4;
             
             newData.Add(pastData[0]);
             
@@ -241,16 +238,23 @@ namespace DataProcessing.Ril
                         NOMBRE_LOG = pastRilData.NOMBRE_LOG
                     };
 
-                    if (pastRilData.X < XMidPoint)
+                    if (oneExtrapolatedData.X < xMidPoint)
                     {
-                        oneExtrapolatedData.Randomize(bias:new float[]{-50,50});
+                        if (oneExtrapolatedData.X < xfirstQuartPoint)
+                        {
+                            oneExtrapolatedData.Randomize(bias:new float[]{-70,0});
+                        }
+                        else
+                        {
+                            oneExtrapolatedData.Randomize(bias:new float[]{-50,50});
+                        }
                     }
                     else
                     {
                         oneExtrapolatedData.Randomize(bias:new float[]{50,50});
                     }
                     
-                    extrapolatedData.Add(oneExtrapolatedData);
+                    newData.Add(oneExtrapolatedData);
                 } 
             }
 

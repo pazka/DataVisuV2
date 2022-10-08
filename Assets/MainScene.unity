@@ -2436,12 +2436,12 @@ MonoBehaviour:
   logger: {fileID: 1579690540}
   pureData: {fileID: 1158691146}
   restrictor: {fileID: 1010002785}
-  timelapseDuration: 50
-  extrapolationRate: 0.2
+  timelapseDuration: 20
+  extrapolationRate: 0.1
   controlledUpdateTime: 0
   controlledFramerateStep: 0.0005
-  disappearingRate: 0.05
-  nbDataBeforeRestart: 45000
+  disappearingRate: 0.5
+  nbDataBeforeRestart: 90000
   minBatSize: 2
   batSizeCoeff: 25
   centerX: 600
