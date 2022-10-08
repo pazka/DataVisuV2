@@ -6,6 +6,7 @@ using System.Net;
 using System.Runtime.Remoting.Messaging;
 using System.Security.Permissions;
 using System.Threading;
+using Bounds;
 using DataProcessing.Generic;
 using Tools;
 using UnityEngine;
@@ -14,19 +15,21 @@ using Random = System.Random;
 
 namespace DataProcessing.Ril
 {
-    public class RilDataExtrapolatorOld : DataExtrapolator
+    public class RilDataExtrapolatorBias : DataExtrapolator
     {
         private static readonly Random rnd = new Random();
         private List<RilData> extrapolatedData;
         private List<RilData> dataToExtrapolate;
         private readonly Tools.Logger logger = GameObject.Find("Logger").GetComponent<Tools.Logger>();
+        private GeographicBounds bounds;
 
         private readonly Tools.DebugLine debugLine = GameObject.Find("DebugLine").GetComponent<Tools.DebugLine>();
         private readonly Tools.DebugLine debugLineRed = GameObject.Find("DebugLineRed").GetComponent<Tools.DebugLine>();
         
         
-        public RilDataExtrapolatorOld() : base()
+        public RilDataExtrapolatorBias() : base()
         {
+            bounds = (GeographicBounds) BoundsFactory.GetInstance(BoundsFactory.AvailableBoundsTypes.GEOGRAPHIC);
         }
 
         protected override IEnumerable<IData> GetConcreteExtrapolation()
@@ -215,10 +218,13 @@ namespace DataProcessing.Ril
             return newData;
         }
 
-        private static List<RilData> ExtrapolateData(List<RilData> pastData, float extrapolationRate)
+        private List<RilData> ExtrapolateData(List<RilData> pastData, float extrapolationRate)
         {
             List<RilData> newData = new List<RilData>();
-
+            float[,] currentGeoBounds = (float[,])bounds.GetCurrentBounds(); // bad code, shouldn't know the type that way
+            float XMidPoint = (currentGeoBounds[0, 0] - currentGeoBounds[0, 1]) / 2;
+            float YMidPoint = (currentGeoBounds[1, 0] - currentGeoBounds[1, 1]) / 2;
+            
             newData.Add(pastData[0]);
             
             for (int i = 1; i < pastData.Count; i++)
@@ -230,13 +236,21 @@ namespace DataProcessing.Ril
                 {
                     float extrapolatedT = (pastData[i - 1].T + pastRilData.T )/2;
 
-                    FutureRilData extrapolatedData = new FutureRilData(pastRilData.X, pastRilData.Y, extrapolatedT)
+                    FutureRilData oneExtrapolatedData = new FutureRilData(pastRilData.X, pastRilData.Y, extrapolatedT)
                     {
                         NOMBRE_LOG = pastRilData.NOMBRE_LOG
                     };
 
-                    extrapolatedData.Randomize(bias:new float[]{0,50});
-                    newData.Add(extrapolatedData);
+                    if (pastRilData.X < XMidPoint)
+                    {
+                        oneExtrapolatedData.Randomize(bias:new float[]{-50,50});
+                    }
+                    else
+                    {
+                        oneExtrapolatedData.Randomize(bias:new float[]{50,50});
+                    }
+                    
+                    extrapolatedData.Add(oneExtrapolatedData);
                 } 
             }
 

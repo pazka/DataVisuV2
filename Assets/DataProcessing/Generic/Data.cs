@@ -14,9 +14,21 @@ namespace DataProcessing.Generic
     public abstract class Data : IData
     {
         public string Raw;
+        /// <summary>
+        /// X given by the data at the reading of the raw data
+        /// </summary>
         public float RawX { get; private set; }
+        /// <summary>
+        /// Y given by the data at the reading of the raw data
+        /// </summary>
         public float RawY { get; private set; }
+        /// <summary>
+        /// Normalized X
+        /// </summary>
         public float X { get; protected set; }
+        /// <summary>
+        /// Normalized Y
+        /// </summary>
         public float Y { get; protected set; }
 
         public Data(float x, float y)

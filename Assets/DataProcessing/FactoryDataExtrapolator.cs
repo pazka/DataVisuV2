@@ -21,7 +21,7 @@ namespace DataProcessing
             {
                 case AvailableDataExtrapolatorTypes.RIL:
                     if (!instances.ContainsKey(dataExtrapolatorType))
-                        instances.Add(dataExtrapolatorType, new RilDataExtrapolatorOld());
+                        instances.Add(dataExtrapolatorType, new RilDataExtrapolatorBias());
 
                     return instances[dataExtrapolatorType];
 

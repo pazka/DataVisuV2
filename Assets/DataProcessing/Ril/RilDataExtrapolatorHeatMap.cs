@@ -23,7 +23,7 @@ namespace DataProcessing.Ril
         public float extrapolationRate;
     }
 
-    public class RilDataExtrapolator : DataExtrapolator
+    public class RilDataExtrapolatorHeatMap : DataExtrapolator
     {
         private static readonly Random rnd = new Random();
         private List<RilData> extrapolatedData;
@@ -39,7 +39,7 @@ namespace DataProcessing.Ril
         private readonly Tools.DebugLine debugLineRed = GameObject.Find("DebugLineRed").GetComponent<Tools.DebugLine>();
 
 
-        public RilDataExtrapolator() : base()
+        public RilDataExtrapolatorHeatMap() : base()
         {
         }
 
