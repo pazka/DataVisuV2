@@ -2438,10 +2438,10 @@ MonoBehaviour:
   restrictor: {fileID: 1010002785}
   timelapseDuration: 20
   extrapolationRate: 0.1
-  controlledUpdateTime: 0
-  controlledFramerateStep: 0.0005
   disappearingRate: 0.5
   nbDataBeforeRestart: 90000
+  updateRealTime: 0
+  targetFrameRate: 30
   minBatSize: 2
   batSizeCoeff: 25
   centerX: 600

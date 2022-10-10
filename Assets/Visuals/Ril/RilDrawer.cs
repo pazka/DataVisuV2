@@ -32,11 +32,11 @@ namespace Visuals.Ril
 
         [SerializeField] private float timelapseDuration = 30;
         [SerializeField] private float extrapolationRate = .1f;
-        [SerializeField] private bool controlledUpdateTime = false;
-        [SerializeField] private float controlledFramerateStep = 0.0005f;
         [SerializeField] private float disappearingRate = .01f;
         [SerializeField] private int nbDataBeforeRestart = 90000;
-
+        
+        [SerializeField] private bool updateRealTime = true;
+        [SerializeField] private int targetFrameRate = 30;
 
         [SerializeField] private int minBatSize = 5;
         [SerializeField] private int batSizeCoeff = 25;
@@ -52,6 +52,7 @@ namespace Visuals.Ril
         private float currentIterationStartTimestamp = 0f;
         private int nbIteration = 1;
         private float currentIterationTime = 0f;
+        private float controlledFramerateStep = 0.2f;
         private DrawingState drawingState = DrawingState.Inactive;
         private DrawingState previousDrawingState = DrawingState.Inactive;
 
@@ -96,13 +97,14 @@ namespace Visuals.Ril
                 this.extrapolationRate = config.extrapolationRate;
                 this.disappearingRate = config.disappearingRate;
                 this.nbDataBeforeRestart = config.nbDataBeforeRestart;
+                this.targetFrameRate = config.targetFrameRate;
             }
 
             transform.position += Vector3.Scale(CityAlign.position, new Vector3(config.scaleX, config.scaleY, 1f));
             transform.rotation = CityAlign.rotation;
             transform.localScale = Vector3.Scale(transform.localScale, CityAlign.localScale);
 
-            //Prepare entities        
+            //Prepare entities
             rilDataConverter =
                 (RilDataConverter) FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.RIL);
             rilDataConverter.Init(
@@ -115,6 +117,7 @@ namespace Visuals.Ril
             
             debugBatVisualPool.PreloadNObjects(100000);
             batVisualPool.PreloadNObjects(40000);
+            Application.targetFrameRate = this.targetFrameRate;
         }
 
         void Update()
@@ -151,18 +154,19 @@ namespace Visuals.Ril
 
         void DisplayData()
         {
-            if (controlledUpdateTime)
+            if (updateRealTime)
             {
-                UpdateControlledFrameRate();
-                float progress = Convert.ToSingle(displayedBatDataVisuals.Count) / Convert.ToSingle(allData.Count);
-                progressBar.transform.localScale = new Vector3(progress * 1920, 10);
+                currentIterationTime += controlledFramerateStep;
             }
             else
             {
-                UpdateRealtime();
-                float progress = (Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration;
-                progressBar.transform.localScale = new Vector3(progress * 1920, 10);
+                currentIterationTime = (Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration;
             }
+            
+            ICollection<RilDataVisual> hatchedData =
+                rilEventHatcher.HatchEvents(remainingBatDataVisualsToDisplay, currentIterationTime);
+            
+            PropagateUpdatedData(hatchedData);
 
             if (remainingBatDataVisualsToDisplay.Count == 0)
             {
@@ -180,12 +184,12 @@ namespace Visuals.Ril
         {
             if (displayedBatDataVisuals.Count == 0)
             {
+                //all displayed bat visuals have been hidden
                 ResetVisual();
                 return;
             }
 
             HideSomeVisuals(disappearingRate);
-            GC.Collect();
         }
 
         private void ReturnDataVisualToCorrectPool(RilDataVisual dataVisual)
@@ -293,7 +297,7 @@ namespace Visuals.Ril
                 extrapolationRate = extrapolationRate
             });
 
-            controlledFramerateStep = timelapseDuration / tmpAllData.Count;
+            controlledFramerateStep = (timelapseDuration * Application.targetFrameRate) / tmpAllData.Count;
 
             return tmpAllData;
         }
@@ -338,28 +342,10 @@ namespace Visuals.Ril
                 displayedBatDataVisuals.GetRange(nbTook, displayedBatDataVisuals.Count() - nbTook);
         }
 
-        void UpdateControlledFrameRate()
+        void PropagateUpdatedData(ICollection<RilDataVisual> hatchedData)
         {
-            ICollection<RilDataVisual> hatchedData =
-                rilEventHatcher.HatchEvents(remainingBatDataVisualsToDisplay, currentIterationTime);
-            currentIterationTime += controlledFramerateStep;
-
-            DefinitiveUpdateAction(hatchedData);
-        }
-
-        void UpdateRealtime()
-        {
-            ICollection<RilDataVisual> hatchedData = rilEventHatcher
-                .HatchEvents(remainingBatDataVisualsToDisplay,
-                    (Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration);
-
-            DefinitiveUpdateAction(hatchedData);
-        }
-
-        void DefinitiveUpdateAction(ICollection<RilDataVisual> hatchedData)
-        {
-            float progress = Convert.ToSingle(displayedBatDataVisuals.Count) / Convert.ToSingle(allData.Count);
-            pureData.SendOscMessage("/data_clock", progress);
+            progressBar.transform.localScale = new Vector3(currentIterationTime * 1920, 10);
+            pureData.SendOscMessage("/data_clock", currentIterationTime);
             Renderer batVisualRenderer;
 
             foreach (RilDataVisual rilDataVisual in hatchedData)
@@ -367,12 +353,8 @@ namespace Visuals.Ril
                 displayedBatDataVisuals.Add(rilDataVisual);
 
                 pureData.SendOscMessage("/data_bang", 1);
-            }
-
-            foreach (RilDataVisual rilDataVisual in displayedBatDataVisuals)
-            {
                 rilDataVisual.Visual.TryGetComponent<Renderer>(out batVisualRenderer);
-                batVisualRenderer.material.SetFloat("_Clock", progress);
+                batVisualRenderer.material.SetFloat("_Clock", currentIterationTime);
             }
         }
     }

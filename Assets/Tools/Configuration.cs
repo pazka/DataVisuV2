@@ -23,6 +23,7 @@ namespace Tools
         public float scaleX;
         public float scaleY;
         public float timelapseDuration;
+        public int targetFrameRate;
 
         public JsonConfiguration(
             int outPort,
@@ -38,6 +39,7 @@ namespace Tools
             string comPort,
             float[] densityGradiant,
             int nbDataBeforeRestart,
+            int targetFrameRate,
             bool debugVisual,
             bool cityVisual,
             bool densityVisual,
@@ -55,6 +57,7 @@ namespace Tools
             this.timelapseDuration = timelapseDuration;
             this.extrapolationRate = extrapolationRate;
             this.disappearingRate = disappearingRate;
+            this.targetFrameRate = targetFrameRate;
             this.comPort = comPort;
             this.densityGradiant = densityGradiant;
             this.nbDataBeforeRestart = nbDataBeforeRestart;

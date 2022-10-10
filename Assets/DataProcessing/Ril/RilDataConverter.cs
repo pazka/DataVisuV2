@@ -77,6 +77,16 @@ namespace DataProcessing.Ril
 
             return null;
         }
+        private IEnumerable<IData> GetCopyOfAllData()
+        {
+            List<RilData> copiedData = new List<RilData>();
+            foreach (IData data in allData)
+            {
+                copiedData.Add((RilData)data.Clone());
+            }
+
+            return copiedData;
+        }
 
         public override IEnumerable<IData> GetAllData()
         {
@@ -87,7 +97,7 @@ namespace DataProcessing.Ril
             //using the cache
             if (allData != null)
             {
-                return allData;
+                return GetCopyOfAllData();
             }
 
             List<RilData> notConvertedRilData = new List<RilData>();
@@ -145,7 +155,8 @@ namespace DataProcessing.Ril
             }
 
             this.allData = rilData.OrderBy(r => r.T).ToList();
-            return allData;
+            
+            return GetCopyOfAllData();
         }
 
 

@@ -259,13 +259,15 @@ namespace DataProcessing.Ril
             }
 
             //Reassign new T with max being extrapolation
-            float newMaxT = newData.Max(data => data.T);
-            foreach (RilData rilData in newData)
-            {
-                rilData.SetT(rilData.T / newMaxT);
-            }
-
-            return newData;
+            
+            // I don't think we need this in fact
+            // float newMaxT = newData.Max(data => data.T);
+            // foreach (RilData rilData in newData)
+            // {
+            //     rilData.SetT(rilData.T / newMaxT);
+            // }
+            //
+             return newData;
         }
     }
 }

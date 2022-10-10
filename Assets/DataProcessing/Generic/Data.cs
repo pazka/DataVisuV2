@@ -9,6 +9,7 @@ namespace DataProcessing.Generic
         void SetX(float x);
         void SetY(float y);
         float[] GetPosition();
+        IData Clone();
     }
 
     public abstract class Data : IData
@@ -57,5 +58,11 @@ namespace DataProcessing.Generic
         {
             return new float[]{RawX, RawY};
         }
+        
+        public IData Clone()
+        {
+            return (Data)this.MemberwiseClone();
+        }
+        
     }
 }
