@@ -5,6 +5,7 @@
   "scaleX" : 0.85,
   "scaleY" : 0.85,
   "densityGradiant" : [0, 0.02, 0.15, 0.4, 0.7, 0.1],
+  "batSizeCoeff" : 35,
   
   "timelapseDuration" : 300,
   "targetFrameRate" : 30,

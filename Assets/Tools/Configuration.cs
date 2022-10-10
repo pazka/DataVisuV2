@@ -9,6 +9,7 @@ namespace Tools
         public string comPort;
         public bool debugVisual;
         public float[] densityGradiant;
+        public int batSizeCoeff;
         public bool densityVisual;
         public float disappearingRate;
         public float extrapolationRate;
@@ -40,6 +41,7 @@ namespace Tools
             float[] densityGradiant,
             int nbDataBeforeRestart,
             int targetFrameRate,
+            int batSizeCoeff,
             bool debugVisual,
             bool cityVisual,
             bool densityVisual,
@@ -60,6 +62,7 @@ namespace Tools
             this.targetFrameRate = targetFrameRate;
             this.comPort = comPort;
             this.densityGradiant = densityGradiant;
+            this.batSizeCoeff = batSizeCoeff;
             this.nbDataBeforeRestart = nbDataBeforeRestart;
             this.debugVisual = debugVisual;
             this.cityVisual = cityVisual;

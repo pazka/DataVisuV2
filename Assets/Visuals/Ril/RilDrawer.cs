@@ -98,6 +98,7 @@ namespace Visuals.Ril
                 this.disappearingRate = config.disappearingRate;
                 this.nbDataBeforeRestart = config.nbDataBeforeRestart;
                 this.targetFrameRate = config.targetFrameRate;
+                this.batSizeCoeff = config.batSizeCoeff;
             }
 
             transform.position += Vector3.Scale(CityAlign.position, new Vector3(config.scaleX, config.scaleY, 1f));
