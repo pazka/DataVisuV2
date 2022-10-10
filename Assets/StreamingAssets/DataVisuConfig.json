@@ -8,9 +8,9 @@
   
   "timelapseDuration" : 300,
   "targetFrameRate" : 30,
-  "extrapolationRate" : 0.1,
+  "extrapolationRate" : 0.2,
   "disappearingRate" : 0.05,
-  "nbDataBeforeRestart" : 90000,
+  "nbDataBeforeRestart" : 150000,
   
   "debugVisual" : false,
   "cityVisual" : false,

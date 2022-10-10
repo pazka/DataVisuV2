@@ -346,13 +346,17 @@ namespace Visuals.Ril
         {
             progressBar.transform.localScale = new Vector3(currentIterationTime * 1920, 10);
             pureData.SendOscMessage("/data_clock", currentIterationTime);
-            Renderer batVisualRenderer;
 
             foreach (RilDataVisual rilDataVisual in hatchedData)
             {
                 displayedBatDataVisuals.Add(rilDataVisual);
 
                 pureData.SendOscMessage("/data_bang", 1);
+            }
+            
+            Renderer batVisualRenderer;
+            foreach (RilDataVisual rilDataVisual in displayedBatDataVisuals)
+            {
                 rilDataVisual.Visual.TryGetComponent<Renderer>(out batVisualRenderer);
                 batVisualRenderer.material.SetFloat("_Clock", currentIterationTime);
             }
