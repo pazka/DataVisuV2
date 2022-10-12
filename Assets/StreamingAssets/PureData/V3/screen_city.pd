@@ -1,4 +1,4 @@
-#N canvas 605 191 1032 578 10;
+#N canvas 566 145 1189 801 10;
 #X obj 22 75 tgl 15 0 empty empty empty 17 7 0 10 #c4fcc4 #000000 #000000
 0 1;
 #X msg 22 95 \; pd dsp \$1;
@@ -7,7 +7,7 @@
 #000000 0 1;
 #X obj 205 75 metro 10;
 #X floatatom 205 119 5 0 0 0 - - - 0;
-#N canvas 56 134 804 460 wave 1;
+#N canvas 64 329 804 460 wave 1;
 #X obj 66 345 *~;
 #X obj 66 257 *~;
 #X obj 66 368 dac~ 1;
@@ -162,48 +162,47 @@ en f°de la clock / elles changent a chaque round;
 #X obj 705 168 route data_clock data_bang;
 #X obj 705 144 route list;
 #X obj 781 212 sel 1;
-#X obj 781 323 f;
-#X obj 781 367 sel 0;
-#X obj 737 391 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#X obj 829 371 f;
+#X obj 829 449 sel 0;
+#X obj 785 473 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
-#X obj 807 323 + 1;
-#X obj 858 265 timer;
-#X floatatom 858 287 5 0 0 0 - - - 0;
-#X obj 858 223 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 855 371 + 1;
+#X obj 957 297 timer;
+#X floatatom 957 319 5 0 0 0 - - - 0;
+#X obj 957 255 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1;
-#X obj 858 243 sel 0 1;
-#X obj 857 327 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 957 275 sel 0 1;
+#X obj 956 359 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1;
-#X obj 737 303 spigot;
-#X obj 781 303 spigot;
-#X obj 857 347 - 1;
-#X obj 857 369 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 829 351 spigot;
+#X obj 956 379 - 1;
+#X obj 956 401 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1;
-#X obj 737 435 s b_clock;
+#X obj 785 517 s b_clock;
 #X obj 205 139 s fake_clock;
 #X obj 705 233 s clock;
-#X obj 857 306 > 500;
-#X obj 857 411 s open_rand;
-#X obj 857 390 change;
+#X obj 956 338 > 500;
+#X obj 956 443 s open_rand;
+#X obj 956 422 change;
 #X obj 124 75 phasor~ 0.02;
-#X obj 781 388 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#X obj 829 470 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
 #X msg 671 213 0;
-#X obj 781 345 % 100;
-#X text 590 504 quand le tps entre 2 données > 500ms il prend tout
+#X obj 829 427 % 100;
+#X text 642 540 quand le tps entre 2 données > 500ms il prend tout
 les bangs sinon filtre tous les 100 bangs;
-#X obj 819 349 tgl 8 0 empty empty empty 17 7 0 10 #00f8fc #000000
+#X obj 867 431 tgl 8 0 empty empty empty 17 7 0 10 #00f8fc #000000
 #000000 0 1;
-#X obj 895 310 tgl 8 0 empty empty empty 17 7 0 10 #00f8fc #000000
+#X obj 994 342 tgl 8 0 empty empty empty 17 7 0 10 #00f8fc #000000
 #000000 0 1;
 #X text 620 46 commande de unity -> un clock de 0 à 1 + des bangs
 (envoi de données);
 #X text 118 15 fakeclock;
-#X obj 737 413 spigot;
-#X obj 634 335 > 0.06;
-#X obj 633 356 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 785 495 spigot;
+#X obj 728 323 > 0.06;
+#X obj 727 344 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1;
-#X text 462 336 commence pas tout de suite;
+#X text 556 324 commence pas tout de suite;
 #X obj 570 215 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
 #X obj 570 235 s reset;
@@ -218,7 +217,7 @@ les bangs sinon filtre tous les 100 bangs;
 #000000 #000000 0 1;
 #X obj 227 321 / 127;
 #X obj 227 343 s v_field;
-#N canvas 27 25 1028 740 field 0;
+#N canvas 167 146 1028 740 field 1;
 #X obj 264 682 *~;
 #X text 49 37 ofreez 1wav 2bangcatch 3vitesselect 4on/off;
 #X obj 78 382 readsf~ 2;
@@ -271,7 +270,7 @@ les bangs sinon filtre tous les 100 bangs;
 #X obj 315 495 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
 #X obj 264 704 dac~ 1;
-#N canvas 0 22 450 300 glitch 0;
+#N canvas 0 22 450 300 glitch 1;
 #X obj 122 164 ofreez;
 #X obj 144 138 / 100;
 #X obj 219 124 delay 100;
@@ -645,74 +644,104 @@ les bangs sinon filtre tous les 100 bangs;
 #X msg 104 276 15;
 #X msg 292 277 30;
 #X msg 302 379 120;
+#X msg 964 198 1;
+#X floatatom 997 225 29 0 0 0 - - - 0;
+#X obj 964 221 +;
+#X floatatom 996 192 16 0 0 0 - - - 0;
+#X obj 997 163 spigot;
+#X msg 994 136 0;
+#X obj 1012 79 r clock;
+#X obj 1012 105 < 0.02;
+#X obj 785 351 spigot;
+#X obj 649 418 spigot;
+#X obj 744 474 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
+#X obj 671 395 > 0.75;
+#X text 639 574 Mais a partir de 75% du temps il laisse tout passer
+;
 #X connect 0 0 1 0;
 #X connect 2 0 5 0;
 #X connect 3 0 4 0;
 #X connect 4 0 2 0;
-#X connect 5 0 35 0;
+#X connect 5 0 34 0;
 #X connect 7 0 8 0;
 #X connect 8 0 9 0;
 #X connect 9 0 11 0;
 #X connect 10 0 7 0;
-#X connect 10 0 66 0;
+#X connect 10 0 65 0;
 #X connect 13 0 19 0;
 #X connect 14 0 15 0;
 #X connect 15 0 13 0;
-#X connect 16 0 36 0;
-#X connect 16 0 50 0;
-#X connect 16 0 55 0;
+#X connect 16 0 35 0;
+#X connect 16 0 49 0;
+#X connect 16 0 54 0;
+#X connect 16 0 93 0;
 #X connect 17 0 27 0;
 #X connect 17 0 30 0;
-#X connect 17 0 31 0;
+#X connect 17 0 82 0;
+#X connect 17 0 90 0;
+#X connect 17 0 91 0;
 #X connect 18 0 16 0;
 #X connect 18 1 20 0;
 #X connect 19 0 18 0;
 #X connect 20 0 17 0;
 #X connect 21 0 24 0;
-#X connect 21 0 43 0;
-#X connect 22 0 41 0;
-#X connect 23 0 49 0;
+#X connect 21 0 42 0;
+#X connect 22 0 40 0;
+#X connect 23 0 48 0;
 #X connect 24 0 21 1;
 #X connect 25 0 26 0;
-#X connect 26 0 37 0;
+#X connect 26 0 36 0;
 #X connect 27 0 28 0;
 #X connect 28 0 25 0;
 #X connect 28 1 25 1;
-#X connect 29 0 30 1;
-#X connect 29 0 32 0;
-#X connect 30 0 23 0;
-#X connect 31 0 21 0;
-#X connect 32 0 33 0;
-#X connect 33 0 39 0;
-#X connect 37 0 29 0;
-#X connect 39 0 38 0;
-#X connect 39 0 31 1;
-#X connect 40 0 2 0;
-#X connect 41 0 49 0;
-#X connect 42 0 36 0;
-#X connect 43 0 22 0;
-#X connect 49 0 34 0;
-#X connect 50 0 51 0;
-#X connect 51 0 49 1;
-#X connect 53 0 54 0;
+#X connect 29 0 31 0;
+#X connect 29 0 90 1;
+#X connect 30 0 21 0;
+#X connect 31 0 32 0;
+#X connect 32 0 38 0;
+#X connect 36 0 29 0;
+#X connect 38 0 37 0;
+#X connect 38 0 30 1;
+#X connect 39 0 2 0;
+#X connect 40 0 48 0;
+#X connect 41 0 35 0;
+#X connect 42 0 22 0;
+#X connect 48 0 33 0;
+#X connect 49 0 50 0;
+#X connect 50 0 48 1;
+#X connect 52 0 53 0;
+#X connect 54 0 55 0;
 #X connect 55 0 56 0;
-#X connect 56 0 57 0;
-#X connect 56 0 58 0;
-#X connect 57 0 60 0;
-#X connect 60 0 53 0;
-#X connect 61 0 79 0;
+#X connect 55 0 57 0;
+#X connect 56 0 59 0;
+#X connect 59 0 52 0;
+#X connect 60 0 78 0;
+#X connect 61 0 62 0;
+#X connect 61 0 66 0;
 #X connect 62 0 63 0;
-#X connect 62 0 67 0;
-#X connect 63 0 64 0;
+#X connect 67 0 79 0;
 #X connect 68 0 80 0;
-#X connect 69 0 81 0;
-#X connect 70 0 71 0;
-#X connect 71 0 0 0;
-#X connect 72 0 40 0;
-#X connect 73 0 74 0;
+#X connect 69 0 70 0;
+#X connect 70 0 0 0;
+#X connect 71 0 39 0;
+#X connect 72 0 73 0;
+#X connect 72 0 74 0;
 #X connect 73 0 75 0;
-#X connect 74 0 76 0;
-#X connect 77 0 82 0;
-#X connect 80 0 10 0;
-#X connect 81 0 62 0;
-#X connect 82 0 73 0;
+#X connect 76 0 81 0;
+#X connect 79 0 10 0;
+#X connect 80 0 61 0;
+#X connect 81 0 72 0;
+#X connect 82 0 84 0;
+#X connect 83 0 84 1;
+#X connect 84 0 83 0;
+#X connect 85 0 83 0;
+#X connect 86 0 85 0;
+#X connect 87 0 86 0;
+#X connect 88 0 89 0;
+#X connect 89 0 87 0;
+#X connect 89 0 86 1;
+#X connect 90 0 23 0;
+#X connect 91 0 92 0;
+#X connect 92 0 33 0;
+#X connect 93 0 91 1;
