@@ -16,6 +16,7 @@ namespace Tools
         public int inPort;
         public bool isDev;
         public int nbDataBeforeRestart;
+        public int debugStart;
         public int offsetX;
         public int offsetY;
         public string outIp;
@@ -40,6 +41,7 @@ namespace Tools
             string comPort,
             float[] densityGradiant,
             int nbDataBeforeRestart,
+            int debugStart,
             int targetFrameRate,
             int batSizeCoeff,
             bool debugVisual,
@@ -64,6 +66,7 @@ namespace Tools
             this.densityGradiant = densityGradiant;
             this.batSizeCoeff = batSizeCoeff;
             this.nbDataBeforeRestart = nbDataBeforeRestart;
+            this.debugStart = debugStart;
             this.debugVisual = debugVisual;
             this.cityVisual = cityVisual;
             this.densityVisual = densityVisual;
@@ -81,8 +84,8 @@ namespace Tools
         {
             if (ConfigContent == null) ConfigContent = File.ReadAllText(ConfigPath);
             var config = JsonUtility.FromJson<JsonConfiguration>(ConfigContent);
-            
-            if(Debug.isDebugBuild)
+
+            if (Debug.isDebugBuild)
             {
                 config.isDev = true;
             }

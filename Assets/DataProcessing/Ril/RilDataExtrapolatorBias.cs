@@ -229,7 +229,9 @@ namespace DataProcessing.Ril
                 RilData pastRilData = pastData[i];
                 newData.Add(pastRilData);
 
-                if (rnd.NextDouble() > extrapolationRate) continue; // don't create a new future data
+                float alteredExtrapolationRate = pastRilData.T < 0.75 ? extrapolationRate : .66f;
+
+                if (rnd.NextDouble() > alteredExtrapolationRate ) continue; // don't create a new future data
                 
                 // create a new future data
                 float extrapolatedT = (pastData[i - 1].T + pastRilData.T) / 2;

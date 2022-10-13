@@ -12,6 +12,7 @@
   "extrapolationRate" : 0.2,
   "disappearingRate" : 0.05,
   "nbDataBeforeRestart" : 150000,
+  "debugStart" : 0,
   
   "debugVisual" : false,
   "cityVisual" : false,

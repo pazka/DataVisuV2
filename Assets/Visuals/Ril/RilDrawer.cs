@@ -37,6 +37,7 @@ namespace Visuals.Ril
         
         [SerializeField] private bool updateRealTime = true;
         [SerializeField] private int targetFrameRate = 30;
+        [SerializeField] private int debugStart = 0;
 
         [SerializeField] private int minBatSize = 5;
         [SerializeField] private int batSizeCoeff = 25;
@@ -99,6 +100,7 @@ namespace Visuals.Ril
                 this.nbDataBeforeRestart = config.nbDataBeforeRestart;
                 this.targetFrameRate = config.targetFrameRate;
                 this.batSizeCoeff = config.batSizeCoeff;
+                this.debugStart = config.debugStart;
             }
 
             transform.position += Vector3.Scale(CityAlign.position, new Vector3(config.scaleX, config.scaleY, 1f));
@@ -285,6 +287,7 @@ namespace Visuals.Ril
         private List<RilData> GetDataToDisplay()
         {
             var config = Configuration.GetConfig();
+            
             if (currentIterationStartTimestamp == 0f || allData.Count > this.nbDataBeforeRestart)
             {
                 InitData();
@@ -297,6 +300,22 @@ namespace Visuals.Ril
                 isOnlyFutureExtrapolating = false,
                 extrapolationRate = extrapolationRate
             });
+
+            if (debugStart > 0 && debugStart < nbDataBeforeRestart)
+            {
+                //Option to extrapolate until the desired data step
+                
+                while (tmpAllData.Count < debugStart)
+                {
+                    tmpAllData = (List<RilData>) rilDataExtrapolator.RetrieveExtrapolation();
+
+                    rilDataExtrapolator.InitExtrapolation(tmpAllData, new RilExtrapolationParameters()
+                    {
+                        isOnlyFutureExtrapolating = false,
+                        extrapolationRate = extrapolationRate
+                    });
+                }
+            }
 
             controlledFramerateStep = (timelapseDuration * Application.targetFrameRate) / tmpAllData.Count;
 
