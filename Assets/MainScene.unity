@@ -1536,8 +1536,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1024058045}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -960, y: -540, z: -3}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -741.24, y: -595.2, z: -3}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
   m_Children: []
   m_Father: {fileID: 1570511816}
   m_RootOrder: 1
@@ -2322,9 +2322,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logger: {fileID: 1579690540}
-  activateCityDrawer: 0
-  activateDensityDrawer: 0
-  activateRilDrawer: 1
+  activateCityDrawer: 1
+  activateDensityDrawer: 1
+  activateRilDrawer: 0
 --- !u!114 &1570511818
 MonoBehaviour:
   m_ObjectHideFlags: 0

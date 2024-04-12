@@ -63,45 +63,15 @@ namespace DataProcessing.Density
 
             this.geoBounds.RegisterNewBounds(new float[] { densityData.RawX, densityData.RawY });
 
-            if (densityData.M25ans < this.dataBounds[0].M25ans)
-                this.dataBounds[0].M25ans = densityData.M25ans;
-            if (densityData.M25ans > this.dataBounds[1].M25ans)
-                this.dataBounds[1].M25ans = densityData.M25ans;
+            if (densityData.Individuals < this.dataBounds[0].Individuals)
+                this.dataBounds[0].Individuals = densityData.Individuals;
+            if (densityData.Individuals > this.dataBounds[1].Individuals)
+                this.dataBounds[1].Individuals = densityData.Individuals;
 
-            if (densityData.Pop < this.dataBounds[0].Pop)
-                this.dataBounds[0].Pop = densityData.Pop;
-            if (densityData.Pop > this.dataBounds[1].Pop)
-                this.dataBounds[1].Pop = densityData.Pop;
-
-            if (densityData.Rev < this.dataBounds[0].Rev)
-                this.dataBounds[0].Rev = densityData.Rev;
-            if (densityData.Rev > this.dataBounds[1].Rev)
-                this.dataBounds[1].Rev = densityData.Rev;
-
-            if (densityData.P65ans < this.dataBounds[0].P65ans)
-                this.dataBounds[0].P65ans = densityData.P65ans;
-            if (densityData.P65ans > this.dataBounds[1].P65ans)
-                this.dataBounds[1].P65ans = densityData.P65ans;
-
-            if (densityData.Men_basr < this.dataBounds[0].Men_basr)
-                this.dataBounds[0].Men_basr = densityData.Men_basr;
-            if (densityData.Men_basr > this.dataBounds[1].Men_basr)
-                this.dataBounds[1].Men_basr = densityData.Men_basr;
-
-            if (densityData.Men > this.dataBounds[1].Men)
-                this.dataBounds[1].Men = densityData.Men;
-            if (densityData.Men < this.dataBounds[0].Men)
-                this.dataBounds[0].Men = densityData.Men;
-
-            if (densityData.Men_coll < this.dataBounds[0].Men_coll)
-                this.dataBounds[0].Men_coll = densityData.Men_coll;
-            if (densityData.Men_coll > this.dataBounds[1].Men_coll)
-                this.dataBounds[1].Men_coll = densityData.Men_coll;
-
-            if (densityData.Men_prop < this.dataBounds[0].Men_prop)
-                this.dataBounds[0].Men_prop = densityData.Men_prop;
-            if (densityData.Men_prop > this.dataBounds[1].Men_prop)
-                this.dataBounds[1].Men_prop = densityData.Men_prop;
+            if (densityData.Households > this.dataBounds[1].Households)
+                this.dataBounds[1].Households = densityData.Households;
+            if (densityData.Households < this.dataBounds[0].Households)
+                this.dataBounds[0].Households = densityData.Households;
 
             return densityData;
         }

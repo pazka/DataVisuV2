@@ -7,7 +7,7 @@ namespace DataProcessing.City
 {
     public class CityDataReader : IDataReader
     {
-        readonly string filePath = Application.dataPath + "/StreamingAssets/Strasbourg/Shape/limits.dat";
+        readonly string filePath = Application.dataPath + "/StreamingAssets/SeineSaintDenis/Shape/limits.dat";
 
         protected char[] buffer;
         protected int bufferReadIndex;

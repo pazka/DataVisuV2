@@ -20,7 +20,7 @@ namespace Visuals
         
         //visual vars
         int scaleGradientDetail = 5;
-        private float[] scaleGradientSteps = new[] {0f, 0.2f, 0.4f, 0.6f, 0.8f, 1f};
+        private float[] scaleGradientSteps = new[] {0f, 0.1f, 0.2f, 0.25f, 0.5f, 1f};
         GUIStyle[] colorScales = new GUIStyle[5];
         public Color[] gradientColors = {Color.red, Color.green, Color.blue, Color.yellow, Color.white};
 
@@ -34,9 +34,9 @@ namespace Visuals
 
         struct CityAlign
         {
-            public static Vector3 position = new Vector3(-968.5f, -525.04f, 10);
+            public static Vector3 position = new Vector3(-741.24f, -595.2f, 10);
             public static Quaternion rotation = Quaternion.Euler(0, 0, 0.73f);
-            public static Vector3 localScale = new Vector3(1f, 1f, 1f);
+            public static Vector3 localScale = new Vector3(0.7f, 0.7f, 1f);
         }
 
         void Start()
@@ -110,8 +110,8 @@ namespace Visuals
             {
                 DensityData densityData = _densityData[i];
 
-                float tmpPop = densityData.Pop - _dataBounds[0].Pop;
-                float uvPop = tmpPop / (((_dataBounds[1].Pop + 1f) - _dataBounds[0].Pop));
+                float tmpPop = densityData.Individuals - _dataBounds[0].Individuals;
+                float uvPop = tmpPop / (((_dataBounds[1].Individuals + 1f) - _dataBounds[0].Individuals));
                 int indexSlice = 0;
                 while ((indexSlice + 1) < gradientColors.Length && uvPop > scaleGradientSteps[indexSlice + 1])
                 {
@@ -119,8 +119,8 @@ namespace Visuals
                 }
 
                 Vector3 rectPosition = new Vector3(
-                    (_densityData[i].X1 + _densityData[i].X3) / 2,
-                    (_densityData[i].Y1 + _densityData[i].Y2) / 2,
+                    transform.localScale.x * (_densityData[i].X1 + _densityData[i].X3) / 2,
+                    transform.localScale.y * (_densityData[i].Y1 + _densityData[i].Y2) / 2,
                     (float) VisualPlanner.Layers.Density
                 );
 
@@ -194,9 +194,17 @@ namespace Visuals
                 InitDrawing();
                 transform.hasChanged = false;
             }
+            
+            // Draw instance of meshes in batches of 1023 from the matric of density length
+            for (int i = 0; i < matricesOfDensity.Length; i += 1023)
+            {
+                int count = Mathf.Min(1023, matricesOfDensity.Length - i);
+                Matrix4x4[] matrices = new Matrix4x4[count];
+                Array.Copy(matricesOfDensity, i, matrices, 0, count);
 
-            Graphics.DrawMeshInstanced(meshInstance, 0, globalmaterialForMesh, matricesOfDensity, _densityData.Count,
-                colorBlockShader);
+                Graphics.DrawMeshInstanced(meshInstance, 0, globalmaterialForMesh, matrices, count, colorBlockShader);
+            }
+
         }
 
         private void OnGUI()

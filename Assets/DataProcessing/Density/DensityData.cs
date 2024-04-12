@@ -23,30 +23,16 @@ namespace DataProcessing.Density
         public float Y4 { get; set; }
         public float W { get; set; }
         public float H { get; set; }
-        public float Area { get; set; }
-        public float Pop { get; set; }
-        public float Rev { get; set; }
-        public float M25ans { get; set; }
-        public float P65ans { get; set; }
-        public float Men_basr { get; set; }
-        public float Men { get; set; }
-        public float Men_coll { get; set; }
-        public float Men_prop { get; set; }
+        public float Individuals { get; set; }
+        public float Households { get; set; }
         public string Raw { get; set; }
 
         //X == 0 left side
         //Y == 0 is top
         public DensityData(
             float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4,
-            float area      ,
-            float pop       ,
-            float rev       ,
-            float m25ans    ,
-            float p65ans    ,
-            float men_basr  ,
-            float men       ,
-            float men_coll  ,
-            float men_prop  ,
+            float individuals       ,
+            float households       ,
             string raw      
         ) : base(x1, y1)
         {
@@ -66,15 +52,8 @@ namespace DataProcessing.Density
             RawY3       = Y3;
             RawX4       = X4;
             RawY4       = Y4;
-            Area        = area;
-            Pop         = pop;
-            Rev         = rev;
-            M25ans      = m25ans;
-            P65ans      = p65ans;
-            Men_basr    = men_basr;
-            Men         = men;
-            Men_coll    = men_coll;
-            Men_prop    = men_prop;
+            Individuals         = individuals;
+            Households         = households;
             Raw         = raw;
         }
 
@@ -87,15 +66,8 @@ namespace DataProcessing.Density
             densityData.Y3,
             densityData.X4,
             densityData.Y4,
-            densityData.Area    ,
-            densityData.Pop     ,
-            densityData.Rev     ,
-            densityData.M25ans  ,
-            densityData.P65ans  ,
-            densityData.Men_basr,
-            densityData.Men     ,
-            densityData.Men_coll,
-            densityData.Men_prop,
+            densityData.Individuals     ,
+            densityData.Households     ,
             densityData.Raw
         )
         {

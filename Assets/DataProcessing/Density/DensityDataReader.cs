@@ -8,7 +8,7 @@ namespace DataProcessing.Density
 {
     public class DensityDataReader : IDataReader
     {
-        readonly string FilePath = Application.dataPath + "/StreamingAssets/Strasbourg/Density/res_density.json";
+        readonly string FilePath = Application.dataPath + "/StreamingAssets/SeineSaintDenis/Density/carreaux_200m_SSD_wgs84.json";
         int Cursor;
         List<RootJsonObject> AllDataRead;
         public bool EndOfStream;
@@ -24,15 +24,8 @@ namespace DataProcessing.Density
         private class RootJsonObject
         {
             public float x1, y1, x2, y2, x3, y3, x4, y4;
-            public float area;
-            public float pop;
-            public float rev;
-            public float m25ans;
-            public float p65ans;
-            public float men_basr;
-            public float men;
-            public float men_coll;
-            public float men_prop;
+            public float individuals;
+            public float households;
             public string raw;
         }
 
@@ -72,15 +65,8 @@ namespace DataProcessing.Density
                 json.y3,
                 json.x4,
                 json.y4,
-                json.area,
-                json.pop,
-                json.rev,
-                json.m25ans,
-                json.p65ans,
-                json.men_basr,
-                json.men,
-                json.men_coll,
-                json.men_prop,
+                json.individuals,
+                json.households,
                 json.raw);
         }
 
