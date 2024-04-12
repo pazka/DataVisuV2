@@ -664,7 +664,7 @@ les bangs sinon filtre tous les 100 bangs;
 ;
 #X obj 1105 247 s total_data;
 #X msg 104 276 10;
-#X obj 671 395 > 0.8;
+#X obj 646 357 > 0.8;
 #X connect 0 0 1 0;
 #X connect 2 0 5 0;
 #X connect 3 0 4 0;

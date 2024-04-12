@@ -134,7 +134,7 @@ namespace DataProcessing.VisualRestrictor
         {
             if (!System.IO.File.Exists(path))
             {
-                throw new Exception("meshFile.dat file does not exist.");
+                throw new Exception(path+" file does not exist.");
             }
 
             System.Runtime.Serialization.Formatters.Binary.BinaryFormatter bf =
