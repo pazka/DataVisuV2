@@ -94,19 +94,21 @@ namespace DataProcessing.VisualRestrictor
             List<Vector3> res = line.Select(str =>
             {
                 string[] tmp = str.Split(',');
-                return new Vector3(int.Parse(tmp[0]), int.Parse(tmp[1]), 0);
+                return new Vector3(float.Parse(tmp[0]), float.Parse(tmp[1]), 0);
             }).ToList();
 
             return res;
         }
 
-        public bool IsPointInPoly(Vector3 point, List<Vector3> poly)
+        public bool IsPointInPoly(Vector3 point)
         {
+            if (restrictionLine.Count < 3) throw new Exception("Not enough points in restriction line");
+            
             bool isInsidePoly = false;
 
-            for (int i = 0; i < poly.Count - 1; i++)
+            for (int i = 0; i < restrictionLine.Count - 1; i++)
             {
-                Vector3[] curLine = new[] {poly[i], poly[i + 1]};
+                Vector3[] curLine = new[] {restrictionLine[i], restrictionLine[i + 1]};
                 Vector3[] curCornerLine = new[] {point, new Vector3(0, 0)};
 
                 if (VectAreIntersecting(curCornerLine[0][0], curCornerLine[0][1], curCornerLine[1][0],

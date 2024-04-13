@@ -251,7 +251,7 @@ namespace Visuals.Sirene
                 ApplyDataToTransform(currentSireneData, batVisual.transform);
 
                 //restriction to line ignored for the moment
-                if (restrictor.IsPointInPoly(batVisual.transform.position, restrictor.restrictionLine))
+                if (restrictor.IsPointInPoly(batVisual.transform.position))
                 {
                     remainingBatDataVisualsToDisplay.Enqueue(new SireneDataVisual(currentSireneData, batVisual));
                 }

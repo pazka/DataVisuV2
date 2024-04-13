@@ -206,7 +206,7 @@ namespace DataProcessing.Ril
 
             foreach (Vector3 sqrPoint in pointsToTest)
             {
-                isABitInPoly = isABitInPoly || restrictor.IsPointInPoly(sqrPoint, restrictor.restrictionLine);
+                isABitInPoly = isABitInPoly || restrictor.IsPointInPoly(sqrPoint);
             }
 
             return !isABitInPoly;
