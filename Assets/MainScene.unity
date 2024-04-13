@@ -291,7 +291,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 7888abae543974743a9af74a0a76751a, type: 3}
-  m_Color: {r: 1, g: 0, b: 1, a: 1}
+  m_Color: {r: 0, g: 0.07410216, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -877,7 +877,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 7888abae543974743a9af74a0a76751a, type: 3}
-  m_Color: {r: 0, g: 0.046190023, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0.711823, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1863,7 +1863,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edeeda10d6f5448797ae54b20e1b9a9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  batRessource: {fileID: 65794679}
+  batRessource: {fileID: 662345310}
 --- !u!1 &1158691144
 GameObject:
   m_ObjectHideFlags: 0
@@ -2228,7 +2228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edeeda10d6f5448797ae54b20e1b9a9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  batRessource: {fileID: 1187849936}
+  batRessource: {fileID: 65794679}
 --- !u!1 &1251059333
 GameObject:
   m_ObjectHideFlags: 0
@@ -2406,8 +2406,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logger: {fileID: 1579690540}
   activateCityDrawer: 1
-  activateDensityDrawer: 1
-  activateSireneDrawer: 0
+  activateDensityDrawer: 0
+  activateSireneDrawer: 1
 --- !u!114 &1570511818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2522,11 +2522,11 @@ MonoBehaviour:
   timelapseDuration: 300
   extrapolationRate: 0.2
   disappearingRate: 0.05
-  nbDataBeforeRestart: 100000
+  nbDataBeforeRestart: 500000
   updateRealTime: 0
   targetFrameRate: 30
-  debugStart: 0
-  minBatSize: 10
+  debugStart: 200000
+  minBatSize: 20
   batSizeCoeff: 25
   centerX: 600
   centerY: 800
