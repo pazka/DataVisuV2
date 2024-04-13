@@ -9,7 +9,7 @@ namespace DataProcessing.Sirene
     public class SireneDataReader : IDataReader
     {
         readonly string FilePath = Application.dataPath +
-                                   "/StreamingAssets/SeineSaintDenis/Sirene/etablissements_geoloc_cleaned_with_count.csv";
+                                   "/StreamingAssets/SeineSaintDenis/Sirene/etablissements_geoloc_cleaned_with_count_in_ssd.csv";
 
         int Cursor;
         List<SireneData> AllDataRead;
