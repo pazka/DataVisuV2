@@ -117,10 +117,6 @@ namespace DataProcessing.Sirene
 
         public override IEnumerable<IData> GetAllData()
         {
-            //TODO : IMPORTANT : convert the data from the bad file format to the good one. 
-            //The Sirene data format is in spherical projection when the other data are already projected
-
-
             //using the cache
             if (allData != null)
             {

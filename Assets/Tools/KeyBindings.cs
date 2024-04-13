@@ -17,9 +17,12 @@ namespace Tools
         public static string GetBindingStrings()
         {
             var res = "";
-            var props = typeof(KeyBindings).GetProperties();
-            foreach (var prop in props) res += prop.Name + " = " + prop.GetValue(null, null) + "\n";
-
+            // Convert this class properties to a string
+            foreach (var property in typeof(KeyBindings).GetFields())
+            {
+                res += property.Name + " : " + property.GetValue(null) + "\n";
+            }
+            
             return res;
         }
     }
