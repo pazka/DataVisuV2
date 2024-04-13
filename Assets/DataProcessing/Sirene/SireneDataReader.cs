@@ -43,8 +43,8 @@ namespace DataProcessing.Sirene
                     if (data.Length < 5)
                         continue;
 
-                    var x = float.Parse(data[4]);
-                    var y = float.Parse(data[5]);
+                    var y = float.Parse(data[4]);
+                    var x = float.Parse(data[5]);
                     //parse YYYY-MM-DD to DateTime
                     var dateCreation = DateTime.Parse(data[1]);
 

@@ -34,7 +34,7 @@ namespace Visuals.Sirene
         [SerializeField] private float extrapolationRate = .1f;
         [SerializeField] private float disappearingRate = .01f;
         [SerializeField] private int nbDataBeforeRestart = 90000;
-        
+
         [SerializeField] private bool updateRealTime = true;
         [SerializeField] private int targetFrameRate = 30;
         [SerializeField] private int debugStart = 0;
@@ -67,12 +67,12 @@ namespace Visuals.Sirene
             public static Quaternion rotation = Quaternion.Euler(0, 0, 18f);
             public static Vector3 localScale = new Vector3(0.8f, 0.8f, 1);
         }
-        
+
         struct CityAlign
         {
-            public static Vector3 position = new Vector3(-741.24f, -595.2f, 10);
-            public static Quaternion rotation = Quaternion.Euler(0, 0, 0.73f);
-            public static Vector3 localScale = new Vector3(0.7f, 0.7f, 1f);
+            public static Vector3 position = new Vector3(0, 0, 0);
+            public static Quaternion rotation = Quaternion.Euler(0, 0, 0);
+            public static Vector3 localScale = new Vector3(1, 1, 1);
         }
 
         public void SetActive(bool state)
@@ -116,17 +116,18 @@ namespace Visuals.Sirene
 
             //Prepare entities
             sireneDataConverter =
-                (SireneDataConverter) FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.SIRENE);
+                (SireneDataConverter)FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes
+                    .SIRENE);
             sireneDataConverter.Init(
-                (int) (Screen.width),
-                (int) (Screen.height)
+                (int)(Screen.width),
+                (int)(Screen.height)
             );
 
             sireneDataExtrapolator = FactoryDataExtrapolator.GetInstance(FactoryDataExtrapolator
                 .AvailableDataExtrapolatorTypes.SIRENE);
-            
-            debugBatVisualPool.PreloadNObjects(200000);
-            batVisualPool.PreloadNObjects(300000);
+
+            debugBatVisualPool.PreloadNObjects(100000);
+            batVisualPool.PreloadNObjects(50000);
             Application.targetFrameRate = this.targetFrameRate;
         }
 
@@ -172,10 +173,10 @@ namespace Visuals.Sirene
             {
                 currentIterationTime = (Time.realtimeSinceStartup - currentIterationStartTimestamp) / timelapseDuration;
             }
-            
+
             ICollection<SireneDataVisual> hatchedData =
                 sireneEventHatcher.HatchEvents(remainingBatDataVisualsToDisplay, currentIterationTime);
-            
+
             PropagateUpdatedData(hatchedData);
 
             if (remainingBatDataVisualsToDisplay.Count == 0)
@@ -210,11 +211,7 @@ namespace Visuals.Sirene
 
         private void ApplyDataToTransform(SireneData sireneData, Transform transform)
         {
-            Vector3 currentPosition = new Vector3(
-                FlattenCurve.GetFlattenedOneDimensionPoint(sireneData.X, new[] {centerX, centerZ}),
-                FlattenCurve.GetFlattenedOneDimensionPoint(sireneData.Y, new[] {centerY, centerZ}),
-                (float) VisualPlanner.Layers.Sirene
-            );
+            Vector3 currentPosition = new Vector3(sireneData.X, sireneData.Y, (float)VisualPlanner.Layers.Sirene);
 
             transform.parent =
                 gameObject.transform; // to make the visual affected by the parent gameobject 
@@ -282,7 +279,7 @@ namespace Visuals.Sirene
             //starting point, we extrapolate the future of the original dataset once
             //the next extrapolation will only be on the current timeline
 
-            initialDataToExtrapolate = (List<SireneData>) sireneDataConverter.GetAllData();
+            initialDataToExtrapolate = (List<SireneData>)sireneDataConverter.GetAllData();
 
             sireneDataExtrapolator.InitExtrapolation(initialDataToExtrapolate, new SireneExtrapolationParameters()
             {
@@ -294,13 +291,13 @@ namespace Visuals.Sirene
         private List<SireneData> GetDataToDisplay()
         {
             var config = Configuration.GetConfig();
-            
+
             if (currentIterationStartTimestamp == 0f || allData.Count > this.nbDataBeforeRestart)
             {
                 InitData();
             }
 
-            List<SireneData> tmpAllData = (List<SireneData>) sireneDataExtrapolator.RetrieveExtrapolation();
+            List<SireneData> tmpAllData = (List<SireneData>)sireneDataExtrapolator.RetrieveExtrapolation();
 
             sireneDataExtrapolator.InitExtrapolation(tmpAllData, new SireneExtrapolationParameters()
             {
@@ -311,10 +308,10 @@ namespace Visuals.Sirene
             if (debugStart > 0 && debugStart < nbDataBeforeRestart)
             {
                 //Option to extrapolate until the desired data step
-                
+
                 while (tmpAllData.Count < debugStart)
                 {
-                    tmpAllData = (List<SireneData>) sireneDataExtrapolator.RetrieveExtrapolation();
+                    tmpAllData = (List<SireneData>)sireneDataExtrapolator.RetrieveExtrapolation();
 
                     sireneDataExtrapolator.InitExtrapolation(tmpAllData, new SireneExtrapolationParameters()
                     {
@@ -357,7 +354,7 @@ namespace Visuals.Sirene
 
         public void HideSomeVisuals(float disappearingRate)
         {
-            int nbToTake = (int) Math.Max(Math.Round(displayedBatDataVisuals.Count * disappearingRate), 50);
+            int nbToTake = (int)Math.Max(Math.Round(displayedBatDataVisuals.Count * disappearingRate), 50);
             SireneDataVisual[] dataVisualsToDestroy = displayedBatDataVisuals.Select(x => x).Take(nbToTake).ToArray();
             int nbTook = dataVisualsToDestroy.Length;
             foreach (var dataVisualToDestroy in dataVisualsToDestroy)
@@ -380,7 +377,7 @@ namespace Visuals.Sirene
 
                 pureData.SendOscMessage("/data_bang", 1);
             }
-            
+
             Renderer batVisualRenderer;
             foreach (SireneDataVisual sireneDataVisual in displayedBatDataVisuals)
             {
