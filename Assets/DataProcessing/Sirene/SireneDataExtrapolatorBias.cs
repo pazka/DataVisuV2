@@ -15,6 +15,12 @@ using Random = System.Random;
 
 namespace DataProcessing.Sirene
 {
+    struct SireneExtrapolationParameters
+    {
+        public bool isOnlyFutureExtrapolating;
+        public float extrapolationRate;
+    }
+    
     public class SireneDataExtrapolatorBias : DataExtrapolator
     {
         private static readonly Random rnd = new Random();
@@ -95,18 +101,19 @@ namespace DataProcessing.Sirene
         private static SpawnCoeff CalculateSpawnCoefficient(List<SireneData> pastData, float percentageToSample,
             int nbSlices)
         {
+            List<SireneData> selectedDataToExtrapolate = pastData.Where(data => data.IsOnePerson).ToList();
             float[] spawnCoeffs = new float[nbSlices];
 
             int sliceIndex = 0, i = 0;
-            int indexOfFirstData = pastData.Count - (int) Math.Round((float) pastData.Count * percentageToSample);
-            float timeOfFirstData = pastData[indexOfFirstData].T;
+            int indexOfFirstData = selectedDataToExtrapolate.Count - (int) Math.Round((float) selectedDataToExtrapolate.Count * percentageToSample);
+            float timeOfFirstData = selectedDataToExtrapolate[indexOfFirstData].T;
 
             float normalizedTimeSlot = ((1f - timeOfFirstData) / nbSlices);
             int dataCountInSlot = 0;
 
-            while (indexOfFirstData + i < pastData.Count && sliceIndex < nbSlices - 1)
+            while (indexOfFirstData + i < selectedDataToExtrapolate.Count && sliceIndex < nbSlices - 1)
             {
-                if (pastData[indexOfFirstData + i].T <= timeOfFirstData + (normalizedTimeSlot * (sliceIndex + 1)))
+                if (selectedDataToExtrapolate[indexOfFirstData + i].T <= timeOfFirstData + (normalizedTimeSlot * (sliceIndex + 1)))
                 {
                     dataCountInSlot += 1;
                 }
@@ -136,18 +143,20 @@ namespace DataProcessing.Sirene
         {
             float countBetweenSlices = 0;
             float[] growthCoeffs = new float[nbSlices];
-            int indexOfFirstData = pastData.Count - (int) Math.Round((float) pastData.Count * percentageToSample);
-            float timeOfFirstData = pastData[indexOfFirstData].T;
+            List<SireneData> selectedDataToExtrapolate = pastData.Where(data => data.IsOnePerson).ToList();
+            
+            int indexOfFirstData = selectedDataToExtrapolate.Count - (int) Math.Round((float) selectedDataToExtrapolate.Count * percentageToSample);
+            float timeOfFirstData = selectedDataToExtrapolate[indexOfFirstData].T;
             float normalizedTimeSlot = ((1f - timeOfFirstData) / nbSlices);
 
             int i = 0;
             int sliceIndex = 0;
 
-            while (indexOfFirstData + i < pastData.Count && sliceIndex < nbSlices)
+            while (indexOfFirstData + i < selectedDataToExtrapolate.Count && sliceIndex < nbSlices)
             {
-                if (pastData[indexOfFirstData + i].T <= timeOfFirstData + (normalizedTimeSlot * (sliceIndex + 1)))
+                if (selectedDataToExtrapolate[indexOfFirstData + i].T <= timeOfFirstData + (normalizedTimeSlot * (sliceIndex + 1)))
                 {
-                    growthCoeffs[sliceIndex] += pastData[indexOfFirstData + i].EntityCount;
+                    growthCoeffs[sliceIndex] += selectedDataToExtrapolate[indexOfFirstData + i].EntityCount;
                     countBetweenSlices++;
                 }
                 else
@@ -172,6 +181,8 @@ namespace DataProcessing.Sirene
             SpawnCoeff spawnCoeffs,
             GrowthCoeff growthCoeffs)
         {
+            List<SireneData> selectedDataToExtrapolate = pastData.Where(data => data.IsOnePerson).ToList();
+            
             if (spawnCoeffs.Values.Length != growthCoeffs.Values.Length)
                 throw new Exception("Coefficient arrays are not the same length");
 
@@ -219,14 +230,16 @@ namespace DataProcessing.Sirene
         private static List<SireneData> ExtrapolateData(List<SireneData> pastData, float extrapolationRate)
         {
             List<SireneData> newData = new List<SireneData>();
-            float xMidPoint = (pastData.Max(d => d.X) + pastData.Min(d => d.X)) / 2;
-            float xfirstQuartPoint = (pastData.Max(d => d.X) + pastData.Min(d => d.X)) / 4;
+            List<SireneData> selectedDataToExtrapolate = pastData.Where(data => data.IsOnePerson).ToList();
+            
+            float xMidPoint = (selectedDataToExtrapolate.Max(d => d.X) + selectedDataToExtrapolate.Min(d => d.X)) / 2;
+            float xfirstQuartPoint = (selectedDataToExtrapolate.Max(d => d.X) + selectedDataToExtrapolate.Min(d => d.X)) / 4;
 
-            newData.Add(pastData[0]);
+            newData.Add(selectedDataToExtrapolate[0]);
 
-            for (int i = 1; i < pastData.Count; i++)
+            for (int i = 1; i < selectedDataToExtrapolate.Count; i++)
             {
-                SireneData pastSireneData = pastData[i];
+                SireneData pastSireneData = selectedDataToExtrapolate[i];
                 newData.Add(pastSireneData);
 
                 float alteredExtrapolationRate = pastSireneData.T < 0.75 ? extrapolationRate : .66f;
@@ -234,7 +247,7 @@ namespace DataProcessing.Sirene
                 if (rnd.NextDouble() > alteredExtrapolationRate ) continue; // don't create a new future data
                 
                 // create a new future data
-                float extrapolatedT = (pastData[i - 1].T + pastSireneData.T) / 2;
+                float extrapolatedT = (selectedDataToExtrapolate[i - 1].T + pastSireneData.T) / 2;
 
                 FutureSireneData oneExtrapolatedData = new FutureSireneData(pastSireneData.X, pastSireneData.Y, extrapolatedT)
                 {
