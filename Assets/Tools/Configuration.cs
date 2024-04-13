@@ -21,7 +21,7 @@ namespace Tools
         public int offsetY;
         public string outIp;
         public int outPort;
-        public bool rilVisual;
+        public bool sireneVisual;
         public float scaleX;
         public float scaleY;
         public float timelapseDuration;
@@ -47,7 +47,7 @@ namespace Tools
             bool debugVisual,
             bool cityVisual,
             bool densityVisual,
-            bool rilVisual,
+            bool sireneVisual,
             bool isDev
         )
         {
@@ -70,7 +70,7 @@ namespace Tools
             this.debugVisual = debugVisual;
             this.cityVisual = cityVisual;
             this.densityVisual = densityVisual;
-            this.rilVisual = rilVisual;
+            this.sireneVisual = sireneVisual;
             this.isDev = isDev;
         }
     }

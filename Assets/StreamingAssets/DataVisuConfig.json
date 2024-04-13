@@ -17,7 +17,7 @@
   "debugVisual" : false,
   "cityVisual" : false,
   "densityVisual" :  false,
-  "rilVisual" :  true,
+  "sireneVisual" :  true,
   
   "comPort" : "COM3",
   "inPort": 10301,

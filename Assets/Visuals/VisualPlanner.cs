@@ -32,9 +32,8 @@ namespace Visuals
             {
                 activateCityDrawer = config.cityVisual;
                 activateDensityDrawer = config.densityVisual;
-                activateSireneDrawer = config.rilVisual;
+                activateSireneDrawer = config.sireneVisual;
             }
-
 
             var cityDrawer = GameObject.Find("CityDrawer").GetComponent<CityDrawer>();
             if (activateCityDrawer) cityDrawer.SetActive(true);
@@ -42,8 +41,8 @@ namespace Visuals
             var densityDrawer = GameObject.Find("DensityDrawer").GetComponent<DensityDrawer>();
             if (activateDensityDrawer) densityDrawer.SetActive(true);
 
-            var rilDrawer = GameObject.Find("SireneDrawer").GetComponent<SireneDrawer>();
-            if (activateSireneDrawer) rilDrawer.SetActive(true);
+            var SireneDrawer = GameObject.Find("SireneDrawer").GetComponent<SireneDrawer>();
+            if (activateSireneDrawer) SireneDrawer.SetActive(true);
         }
 
         // Update is called once per frame
@@ -62,12 +61,20 @@ namespace Visuals
                 var densityDrawer = GameObject.Find("DensityDrawer").GetComponent<DensityDrawer>();
                 densityDrawer.SetActive(activateDensityDrawer);
             }
+            
 
             if (Input.GetKeyDown(KeyBindings.PauseSireneDrawing))
             {
                 activateSireneDrawer = !activateSireneDrawer;
-                var rilDrawer = GameObject.Find("SireneDrawer").GetComponent<SireneDrawer>();
-                rilDrawer.SetActive(activateSireneDrawer);
+                var SireneDrawer = GameObject.Find("SireneDrawer").GetComponent<SireneDrawer>();
+                SireneDrawer.SetActive(activateSireneDrawer);
+            }
+
+            if (Input.GetKeyDown(KeyBindings.PauseSireneDrawing))
+            {
+                activateSireneDrawer = !activateSireneDrawer;
+                var SireneDrawer = GameObject.Find("SireneDrawer").GetComponent<SireneDrawer>();
+                SireneDrawer.SetActive(activateSireneDrawer);
             }
         }
     }

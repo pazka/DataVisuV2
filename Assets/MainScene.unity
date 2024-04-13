@@ -2526,7 +2526,7 @@ MonoBehaviour:
   updateRealTime: 0
   targetFrameRate: 30
   debugStart: 0
-  minBatSize: 2
+  minBatSize: 10
   batSizeCoeff: 25
   centerX: 600
   centerY: 800
