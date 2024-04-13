@@ -4,7 +4,6 @@ using DataProcessing.City;
 using DataProcessing.Density;
 using Tools;
 using UnityEngine;
-using Visuals.Ril;
 
 namespace Visuals
 {

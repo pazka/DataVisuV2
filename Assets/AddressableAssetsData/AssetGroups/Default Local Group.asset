@@ -16,11 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: ad9a3d9f37f480f439566caaab7d04c1
-  m_SerializeEntries:
-  - m_GUID: 479affd352d7ec84385c601971a9783a
-    m_Address: Assets/Visuals/Ril/StarMaterial.mat
-    m_ReadOnly: 0
-    m_SerializedLabels: []
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 487a4e6dc62eee144b4d7f69aa2088a3, type: 2}
   m_SchemaSet:

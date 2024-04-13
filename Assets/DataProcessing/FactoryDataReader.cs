@@ -4,6 +4,7 @@ using DataProcessing.City;
 using DataProcessing.Density;
 using DataProcessing.Generic;
 using DataProcessing.Ril;
+using DataProcessing.Sirene;
 
 public static class FactoryDataReader
 {
@@ -11,7 +12,8 @@ public static class FactoryDataReader
     {
         CITY,
         RIL,
-        DENSITY
+        DENSITY,
+        SIRENE
     }
 
     private static readonly Dictionary<AvailableDataReaderTypes, IDataReader> instances =
@@ -24,23 +26,27 @@ public static class FactoryDataReader
             case AvailableDataReaderTypes.CITY:
                 if (!instances.ContainsKey(dataReaderType))
                     instances.Add(dataReaderType, new CityDataReader());
-
-                return instances[dataReaderType];
+                break;
 
             case AvailableDataReaderTypes.DENSITY:
                 if (!instances.ContainsKey(dataReaderType))
                     instances.Add(dataReaderType, new DensityDataReader());
-
-                return instances[dataReaderType];
+                break;
 
             case AvailableDataReaderTypes.RIL:
                 if (!instances.ContainsKey(dataReaderType))
                     instances.Add(dataReaderType, new RilDataReader());
+                break;
 
-                return instances[dataReaderType];
+            case AvailableDataReaderTypes.SIRENE:
+                if (!instances.ContainsKey(dataReaderType))
+                    instances.Add(dataReaderType, new SireneDataReader());
+                break;
 
             default:
                 throw new Exception("DataReaderType isn't implemented : " + dataReaderType);
         }
+
+        return instances[dataReaderType];
     }
 }

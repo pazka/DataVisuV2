@@ -1,6 +1,6 @@
 ﻿using Tools;
 using UnityEngine;
-using Visuals.Ril;
+using Visuals.Sirene;
 using Logger = Tools.Logger;
 
 namespace Visuals
@@ -11,7 +11,7 @@ namespace Visuals
         public enum Layers
         {
             City = 3,
-            Ril = 4,
+            Sirene = 4,
             Density = 5,
             Hidden = -100
         }
@@ -42,7 +42,7 @@ namespace Visuals
             var densityDrawer = GameObject.Find("DensityDrawer").GetComponent<DensityDrawer>();
             if (activateDensityDrawer) densityDrawer.SetActive(true);
 
-            var rilDrawer = GameObject.Find("RilDrawer").GetComponent<RilDrawer>();
+            var rilDrawer = GameObject.Find("SireneDrawer").GetComponent<SireneDrawer>();
             if (activateRilDrawer) rilDrawer.SetActive(true);
         }
 
@@ -63,10 +63,10 @@ namespace Visuals
                 densityDrawer.SetActive(activateDensityDrawer);
             }
 
-            if (Input.GetKeyDown(KeyBindings.ToggleRilDrawing))
+            if (Input.GetKeyDown(KeyBindings.PauseSireneDrawing))
             {
                 activateRilDrawer = !activateRilDrawer;
-                var rilDrawer = GameObject.Find("RilDrawer").GetComponent<RilDrawer>();
+                var rilDrawer = GameObject.Find("SireneDrawer").GetComponent<SireneDrawer>();
                 rilDrawer.SetActive(activateRilDrawer);
             }
         }

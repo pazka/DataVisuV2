@@ -4,6 +4,7 @@ using DataProcessing.City;
 using DataProcessing.Density;
 using DataProcessing.Generic;
 using DataProcessing.Ril;
+using DataProcessing.Sirene;
 
 public static class FactoryDataConverter
 {
@@ -11,7 +12,8 @@ public static class FactoryDataConverter
     {
         CITY,
         RIL,
-        DENSITY
+        DENSITY,
+        SIRENE
     }
 
     private static readonly Dictionary<AvailableDataManagerTypes, IDataConverter> instances =
@@ -24,23 +26,27 @@ public static class FactoryDataConverter
             case AvailableDataManagerTypes.CITY:
                 if (!instances.ContainsKey(dataManagerType))
                     instances.Add(dataManagerType, new CityDataConverter());
-
-                return instances[dataManagerType];
+                break;
 
             case AvailableDataManagerTypes.DENSITY:
                 if (!instances.ContainsKey(dataManagerType))
                     instances.Add(dataManagerType, new DensityDataConverter());
-
-                return instances[dataManagerType];
+                break;
 
             case AvailableDataManagerTypes.RIL:
                 if (!instances.ContainsKey(dataManagerType))
                     instances.Add(dataManagerType, new RilDataConverter());
-
-                return instances[dataManagerType];
+                break;
+            
+            case AvailableDataManagerTypes.SIRENE:
+                if (!instances.ContainsKey(dataManagerType))
+                    instances.Add(dataManagerType, new SireneDataConverter());
+                break;
 
             default:
                 throw new Exception("DataManagerType isn't implemented : " + dataManagerType);
         }
+
+        return instances[dataManagerType];
     }
 }

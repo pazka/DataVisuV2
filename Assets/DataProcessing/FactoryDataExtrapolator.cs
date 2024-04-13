@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using DataProcessing.Generic;
 using DataProcessing.Ril;
+using DataProcessing.Sirene;
 
 namespace DataProcessing
 {
@@ -9,7 +10,8 @@ namespace DataProcessing
     {
         public enum AvailableDataExtrapolatorTypes
         {
-            RIL
+            RIL,
+            SIRENE
         }
 
         private static readonly Dictionary<AvailableDataExtrapolatorTypes, IDataExtrapolator> instances =
@@ -22,12 +24,18 @@ namespace DataProcessing
                 case AvailableDataExtrapolatorTypes.RIL:
                     if (!instances.ContainsKey(dataExtrapolatorType))
                         instances.Add(dataExtrapolatorType, new RilDataExtrapolatorBias());
+                    break;
 
-                    return instances[dataExtrapolatorType];
+                case AvailableDataExtrapolatorTypes.SIRENE:
+                    if (!instances.ContainsKey(dataExtrapolatorType))
+                        instances.Add(dataExtrapolatorType, new SireneDataExtrapolatorBias());
+                    break;
 
                 default:
                     throw new Exception("DataExtrapolatorType isn't implemented : " + dataExtrapolatorType);
             }
+
+            return instances[dataExtrapolatorType];
         }
     }
 }

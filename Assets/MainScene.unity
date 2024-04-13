@@ -290,8 +290,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: b0df4e32948234f4a89d58a8c2c5c893, type: 3}
-  m_Color: {r: 0, g: 0.06273818, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 3cf1e6a48e07d324ea8cc986222cfbd8, type: 3}
+  m_Color: {r: 1, g: 0, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -855,7 +855,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: e954411e4a77e014c85f3fb446e8b87e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -876,7 +876,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: b0df4e32948234f4a89d58a8c2c5c893, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3cf1e6a48e07d324ea8cc986222cfbd8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1392,7 +1392,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1010002782}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1777,7 +1777,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1121062033}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 391539adb7084bcfbbc70360e2cd36f1, type: 3}
+  m_Script: {fileID: 11500000, guid: edeeda10d6f5448797ae54b20e1b9a9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   batRessource: {fileID: 1187849936}
@@ -1955,7 +1955,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 479affd352d7ec84385c601971a9783a, type: 2}
+  - {fileID: 2100000, guid: e954411e4a77e014c85f3fb446e8b87e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1976,7 +1976,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: b0df4e32948234f4a89d58a8c2c5c893, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3cf1e6a48e07d324ea8cc986222cfbd8, type: 3}
   m_Color: {r: 0.759434, g: 0.7745729, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -2142,7 +2142,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1208443342}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 391539adb7084bcfbbc70360e2cd36f1, type: 3}
+  m_Script: {fileID: 11500000, guid: edeeda10d6f5448797ae54b20e1b9a9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   batRessource: {fileID: 1187849936}
@@ -2396,7 +2396,7 @@ GameObject:
   - component: {fileID: 1597805429}
   - component: {fileID: 1597805430}
   m_Layer: 0
-  m_Name: RilDrawer
+  m_Name: SireneDrawer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2430,7 +2430,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1597805428}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71cb7a30decd03346ac0af240c54f6c1, type: 3}
+  m_Script: {fileID: 11500000, guid: b43b24576a0c4f778fd151cf264865ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   logger: {fileID: 1579690540}
@@ -2439,7 +2439,7 @@ MonoBehaviour:
   timelapseDuration: 300
   extrapolationRate: 0.2
   disappearingRate: 0.05
-  nbDataBeforeRestart: 150000
+  nbDataBeforeRestart: 500000
   updateRealTime: 0
   targetFrameRate: 30
   debugStart: 90000
