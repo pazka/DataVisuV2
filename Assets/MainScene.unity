@@ -511,7 +511,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1570511816}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &589042129
 MonoBehaviour:
@@ -1384,7 +1384,7 @@ Transform:
   m_Children:
   - {fileID: 1105172559}
   m_Father: {fileID: 1570511816}
-  m_RootOrder: 0
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!120 &1010002784
 LineRenderer:
@@ -1542,7 +1542,7 @@ Transform:
   m_LocalScale: {x: 0.7, y: 0.7, z: 1}
   m_Children: []
   m_Father: {fileID: 1570511816}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!120 &1024058048
 LineRenderer:
@@ -2385,10 +2385,10 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1010002783}
   - {fileID: 1597805429}
   - {fileID: 1024058047}
   - {fileID: 589042128}
+  - {fileID: 1010002783}
   m_Father: {fileID: 984069342}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2502,7 +2502,7 @@ Transform:
   - {fileID: 1208443343}
   - {fileID: 65794680}
   m_Father: {fileID: 1570511816}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1597805430
 MonoBehaviour:
@@ -2520,14 +2520,14 @@ MonoBehaviour:
   pureData: {fileID: 1158691146}
   restrictor: {fileID: 1010002785}
   timelapseDuration: 300
-  extrapolationRate: 0.2
-  disappearingRate: 0.05
+  extrapolationRate: 0.1
+  disappearingRate: 0.1
   nbDataBeforeRestart: 500000
   updateRealTime: 0
   targetFrameRate: 30
-  debugStart: 200000
+  debugStart: 0
   minBatSize: 30
-  batSizeCoeff: 25
+  batSizeCoeff: 40
   centerX: 600
   centerY: 800
   centerZ: 4000

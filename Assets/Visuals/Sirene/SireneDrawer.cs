@@ -126,8 +126,9 @@ namespace Visuals.Sirene
             sireneDataExtrapolator = FactoryDataExtrapolator.GetInstance(FactoryDataExtrapolator
                 .AvailableDataExtrapolatorTypes.SIRENE);
 
-            debugBatVisualPool.PreloadNObjects(100000);
-            batVisualPool.PreloadNObjects(50000);
+            logger.Log("Preloading objects");
+            debugBatVisualPool.PreloadNObjects(300000);
+            batVisualPool.PreloadNObjects(350000);
             Application.targetFrameRate = this.targetFrameRate;
         }
 
