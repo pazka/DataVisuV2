@@ -8,8 +8,11 @@ namespace DataProcessing.Sirene
 {
     public class SireneDataReader : IDataReader
     {
+        readonly string BigFilePath = Application.dataPath +
+                                      "/StreamingAssets/SeineSaintDenis/Sirene/etablissements_geoloc_cleaned_with_count_in_ssd.csv";
+
         readonly string FilePath = Application.dataPath +
-                                   "/StreamingAssets/SeineSaintDenis/Sirene/etablissements_geoloc_cleaned_with_count_in_ssd.csv";
+                                   "/StreamingAssets/SeineSaintDenis/Sirene/small_etablissements_geoloc_cleaned_with_count_in_ssd.csv";
 
         int Cursor;
         List<SireneData> AllDataRead;
@@ -44,10 +47,11 @@ namespace DataProcessing.Sirene
                     var y = float.Parse(data[5]);
                     //parse YYYY-MM-DD to DateTime
                     var dateCreation = DateTime.Parse(data[1]);
-                    
+
                     var entityCount = int.Parse(data[6]);
 
-                    var sireneData = new SireneData(line, x, y, data[0], dateCreation, data[2], data[3] == "True",entityCount);
+                    var sireneData = new SireneData(line, x, y, data[0], dateCreation, data[2], data[3] == "True",
+                        entityCount);
 
                     AllDataRead.Add(sireneData);
                 }
