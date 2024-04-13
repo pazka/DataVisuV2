@@ -2491,10 +2491,10 @@ MonoBehaviour:
   timelapseDuration: 300
   extrapolationRate: 0.2
   disappearingRate: 0.05
-  nbDataBeforeRestart: 500000
+  nbDataBeforeRestart: 100000
   updateRealTime: 0
   targetFrameRate: 30
-  debugStart: 90000
+  debugStart: 0
   minBatSize: 2
   batSizeCoeff: 25
   centerX: 600

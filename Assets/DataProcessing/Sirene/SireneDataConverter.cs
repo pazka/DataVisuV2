@@ -15,7 +15,7 @@ namespace DataProcessing.Sirene
 
         int[] screenBounds = new int[2];
         int[] screenOffset = new int[2];
-        GeographicBatBounds geoBounds;
+        GeographicBounds geoBounds; // From City Data , so that city and geo bound are aligned
         TimeBounds timeBounds;
         private SireneBounds dataBounds;
 
@@ -27,8 +27,8 @@ namespace DataProcessing.Sirene
         {
             this.sireneDataReader =
                 (SireneDataReader) FactoryDataReader.GetInstance(FactoryDataReader.AvailableDataReaderTypes.SIRENE);
-            this.geoBounds =
-                (GeographicBatBounds) BoundsFactory.GetInstance(BoundsFactory.AvailableBoundsTypes.BATIMENT);
+            this.geoBounds = (GeographicBounds)
+                BoundsFactory.GetInstance(BoundsFactory.AvailableBoundsTypes.GEOGRAPHIC);
             this.timeBounds =
                 (TimeBounds) BoundsFactory.GetInstance(BoundsFactory.AvailableBoundsTypes.TIME);
             this.dataBounds =
@@ -60,7 +60,7 @@ namespace DataProcessing.Sirene
         // gotten one by one
         private SireneData RegisterData(SireneData sireneData)
         {
-            this.geoBounds.RegisterNewBounds(new float[] {sireneData.RawX, sireneData.RawY});
+            //this.geoBounds.RegisterNewBounds(new float[] {sireneData.RawX, sireneData.RawY}); // We used to do this for data that was not aligned on on the coordiante system than our city line, but now its the case so we reutilise the geographic bounds of the city line
             this.timeBounds.RegisterNewBounds(sireneData.T);
             this.dataBounds.RegisterNewBounds(sireneData.EntityCount);
 
@@ -86,6 +86,33 @@ namespace DataProcessing.Sirene
             }
 
             return copiedData;
+        }
+
+        private float ConvertX(float rawX, float[,] geoBounds)
+        {
+            float delX = geoBounds[0, 1] - geoBounds[0, 0];
+            float delY = geoBounds[1, 1] - geoBounds[1, 0];
+
+            //prepare ratio for getting coords in bounds
+            float dataBoundsXYRatio = delX / delY;
+            float widthAsRatioOfOriginalTotalWidth = ((rawX - geoBounds[1, 0]) / delY);
+
+            return widthAsRatioOfOriginalTotalWidth * screenBounds[0];
+        }
+
+        private float ConvertY(float rawY, float[,] geoBounds)
+        {
+            float delX = geoBounds[0, 1] - geoBounds[0, 0];
+            float delY = geoBounds[1, 1] - geoBounds[1, 0];
+
+            //prepare ratio for getting coords in bounds
+            float dataBoundsXYRatio = delX / delY;
+
+            // Y is set as the % of total orginal height * the current width * the old % totalwith by totalheight 
+            float heightAsRatioOfOriginalTotalHeight = ((rawY - geoBounds[0, 0]) / delX);
+            float newMaxYHeight = dataBoundsXYRatio * screenBounds[1];
+
+            return heightAsRatioOfOriginalTotalHeight * newMaxYHeight;
         }
 
         public override IEnumerable<IData> GetAllData()
@@ -128,22 +155,11 @@ namespace DataProcessing.Sirene
             float[] _dataBounds = (float[]) this.dataBounds.GetCurrentBounds();
 
             //prepare ratio for getting coords in bounds
-            float dataBoundsXYRatio = (_geoBounds[0, 1] - _geoBounds[0, 0]) / ((_geoBounds[1, 1] - _geoBounds[1, 0]));
 
             for (int i = 0; i < sireneData.Count; i++)
             {
-                //voluntary inversion
-                float widthAsRatioOfOriginalTotalWidth =
-                    ((_geoBounds[1, 0] - sireneData[i].RawY) / (_geoBounds[1, 1] - _geoBounds[1, 0]));
-
-                sireneData[i].SetX(this.screenOffset[0] + widthAsRatioOfOriginalTotalWidth * screenBounds[0]);
-
-                // Y is set as the % of total original height * the current width * the old % totalwidth by totalheight 
-                float heightAsRatioOfOriginalTotalHeight =
-                    ((sireneData[i].RawX - _geoBounds[0, 0]) / (_geoBounds[0, 1] - _geoBounds[0, 0]));
-                float newMaxYHeight = dataBoundsXYRatio * screenBounds[1];
-                sireneData[i].SetY(this.screenOffset[1] + screenBounds[1] -
-                                heightAsRatioOfOriginalTotalHeight * screenBounds[1]);
+                sireneData[i].SetX(ConvertX(sireneData[i].RawY, _geoBounds));
+                sireneData[i].SetY(ConvertY(sireneData[i].RawX, _geoBounds));
 
                 //Convert Real time to time [0->1] relative to min and max of it's times 
                 float timeRange = _timeBounds[1] - _timeBounds[0];

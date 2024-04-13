@@ -12,7 +12,7 @@ namespace Tools
         private void Start()
         {
             var config = Configuration.GetConfig();
-            var textMesh = GetComponent("MiscInfos").GetComponent<TextMeshPro>();
+            var textMesh = GameObject.Find("MiscInfos")?.GetComponent<TextMeshPro>();
             if (textMesh != null) textMesh.text = KeyBindings.GetBindingStrings();
             
             if (!config.isDev)

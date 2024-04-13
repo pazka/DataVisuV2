@@ -61,18 +61,18 @@ namespace Visuals.Sirene
         public BatVisualPool debugBatVisualPool;
         public GameObject progressBar;
 
-        public struct OldCityAlign
+        struct OldCityAlign
         {
-            public static Vector3 position = new Vector3(1024, -279.7f, -12);
-            public static Quaternion rotation = Quaternion.Euler(0, 0, 18f);
-            public static Vector3 localScale = new Vector3(0.8f, 0.8f, 1);
+            public static Vector3 position = new Vector3(-657.24f, -595.2f, 10);
+            public static Quaternion rotation = Quaternion.Euler(0, 0, 0.73f);
+            public static Vector3 localScale = new Vector3(0.6f, 0.62f, 1f);
         }
-
+        
         struct CityAlign
         {
-            public static Vector3 position = new Vector3(0, 0, 0);
-            public static Quaternion rotation = Quaternion.Euler(0, 0, 0);
-            public static Vector3 localScale = new Vector3(1, 1, 1);
+            public static Vector3 position = new Vector3(-741.24f, -595.2f, 10);
+            public static Quaternion rotation = Quaternion.Euler(0, 0, 0.73f);
+            public static Vector3 localScale = new Vector3(0.7f, 0.7f, 1f);
         }
 
         public void SetActive(bool state)
