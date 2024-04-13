@@ -21,7 +21,7 @@ namespace Visuals
         // Start is called before the first frame update
         [SerializeField] private bool activateCityDrawer;
         [SerializeField] private bool activateDensityDrawer;
-        [SerializeField] private bool activateRilDrawer;
+        [SerializeField] private bool activateSireneDrawer;
 
         private void Start()
         {
@@ -32,7 +32,7 @@ namespace Visuals
             {
                 activateCityDrawer = config.cityVisual;
                 activateDensityDrawer = config.densityVisual;
-                activateRilDrawer = config.rilVisual;
+                activateSireneDrawer = config.rilVisual;
             }
 
 
@@ -43,7 +43,7 @@ namespace Visuals
             if (activateDensityDrawer) densityDrawer.SetActive(true);
 
             var rilDrawer = GameObject.Find("SireneDrawer").GetComponent<SireneDrawer>();
-            if (activateRilDrawer) rilDrawer.SetActive(true);
+            if (activateSireneDrawer) rilDrawer.SetActive(true);
         }
 
         // Update is called once per frame
@@ -65,9 +65,9 @@ namespace Visuals
 
             if (Input.GetKeyDown(KeyBindings.PauseSireneDrawing))
             {
-                activateRilDrawer = !activateRilDrawer;
+                activateSireneDrawer = !activateSireneDrawer;
                 var rilDrawer = GameObject.Find("SireneDrawer").GetComponent<SireneDrawer>();
-                rilDrawer.SetActive(activateRilDrawer);
+                rilDrawer.SetActive(activateSireneDrawer);
             }
         }
     }

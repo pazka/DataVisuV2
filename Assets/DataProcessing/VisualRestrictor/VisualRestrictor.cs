@@ -13,9 +13,11 @@ namespace DataProcessing.VisualRestrictor
         public List<Vector3> restrictionLine;
         public Logger logger;
         public LineRenderer _lineRenderer;
-        private float YOffest = -45f;
+        public SpriteRenderer _spriteRenderer;
+        private float YOffest = -0f;
         private string preloadedRestrictionFile;
         private bool isRegistering = false;
+        
 
         private void Start()
         {
@@ -52,6 +54,11 @@ namespace DataProcessing.VisualRestrictor
 
         private void Update()
         {
+            if (isRegistering)
+            {
+                _spriteRenderer.transform.position = Input.mousePosition;
+            }
+            
             if (Input.GetKeyDown(KeyBindings.ToggleRegisteringRestriction))
             {
                 isRegistering = !isRegistering;

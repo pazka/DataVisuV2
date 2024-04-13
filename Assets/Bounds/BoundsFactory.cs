@@ -10,7 +10,8 @@ namespace Bounds
             GEOGRAPHIC,
             BATIMENT,
             TIME,
-            RIL
+            RIL,
+            SIRENE
         }
 
         private static readonly Dictionary<AvailableBoundsTypes, IBounds> instances =
@@ -23,30 +24,33 @@ namespace Bounds
                 case AvailableBoundsTypes.GEOGRAPHIC:
                     if (!instances.ContainsKey(boundsType))
                         instances.Add(boundsType, new GeographicBounds());
-
-                    return instances[boundsType];
+                    break;
 
                 case AvailableBoundsTypes.TIME:
                     if (!instances.ContainsKey(boundsType))
                         instances.Add(boundsType, new TimeBounds());
-
-                    return instances[boundsType];
+                    break;
 
                 case AvailableBoundsTypes.BATIMENT:
                     if (!instances.ContainsKey(boundsType))
                         instances.Add(boundsType, new GeographicBatBounds());
-
-                    return instances[boundsType];
+                    break;
 
                 case AvailableBoundsTypes.RIL:
                     if (!instances.ContainsKey(boundsType))
                         instances.Add(boundsType, new RilBounds());
+                    break;
 
-                    return instances[boundsType];
+                case AvailableBoundsTypes.SIRENE:
+                    if (!instances.ContainsKey(boundsType))
+                        instances.Add(boundsType, new SireneBounds());
+                    break;
 
                 default:
                     throw new Exception("BoundsType isn't implemented : " + boundsType);
             }
+            
+            return instances[boundsType];
         }
     }
 }

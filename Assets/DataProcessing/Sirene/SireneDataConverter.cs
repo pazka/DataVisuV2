@@ -26,13 +26,13 @@ namespace DataProcessing.Sirene
         public SireneDataConverter()
         {
             this.sireneDataReader =
-                (SireneDataReader) FactoryDataReader.GetInstance(FactoryDataReader.AvailableDataReaderTypes.RIL);
+                (SireneDataReader) FactoryDataReader.GetInstance(FactoryDataReader.AvailableDataReaderTypes.SIRENE);
             this.geoBounds =
                 (GeographicBatBounds) BoundsFactory.GetInstance(BoundsFactory.AvailableBoundsTypes.BATIMENT);
             this.timeBounds =
                 (TimeBounds) BoundsFactory.GetInstance(BoundsFactory.AvailableBoundsTypes.TIME);
             this.dataBounds =
-                (SireneBounds) BoundsFactory.GetInstance(BoundsFactory.AvailableBoundsTypes.RIL);
+                (SireneBounds) BoundsFactory.GetInstance(BoundsFactory.AvailableBoundsTypes.SIRENE);
         }
 
         public override void Init(int screenBoundX, int screenBoundY)

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 
 namespace Tools
 {
@@ -11,6 +12,9 @@ namespace Tools
         private void Start()
         {
             var config = Configuration.GetConfig();
+            var textMesh = GetComponent("MiscInfos").GetComponent<TextMeshPro>();
+            if (textMesh != null) textMesh.text = KeyBindings.GetBindingStrings();
+            
             if (!config.isDev)
             {
                 isDisplayed = config.debugVisual;

@@ -109,17 +109,17 @@ namespace Visuals.Sirene
 
             //Prepare entities
             sireneDataConverter =
-                (SireneDataConverter) FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.RIL);
+                (SireneDataConverter) FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.SIRENE);
             sireneDataConverter.Init(
                 (int) (Screen.width),
                 (int) (Screen.height)
             );
 
             sireneDataExtrapolator = FactoryDataExtrapolator.GetInstance(FactoryDataExtrapolator
-                .AvailableDataExtrapolatorTypes.RIL);
+                .AvailableDataExtrapolatorTypes.SIRENE);
             
-            debugBatVisualPool.PreloadNObjects(100000);
-            batVisualPool.PreloadNObjects(40000);
+            debugBatVisualPool.PreloadNObjects(200000);
+            batVisualPool.PreloadNObjects(300000);
             Application.targetFrameRate = this.targetFrameRate;
         }
 
@@ -246,8 +246,8 @@ namespace Visuals.Sirene
                 batVisual.SetActive(false);
                 ApplyDataToTransform(currentSireneData, batVisual.transform);
 
-                //restriction to line
-                if (restrictor.IsPointInPoly(batVisual.transform.position, restrictor.restrictionLine))
+                //restriction to line ignored for the moment
+                if (true || restrictor.IsPointInPoly(batVisual.transform.position, restrictor.restrictionLine))
                 {
                     remainingBatDataVisualsToDisplay.Enqueue(new SireneDataVisual(currentSireneData, batVisual));
                 }
