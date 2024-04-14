@@ -63,14 +63,7 @@ namespace Visuals
             }
             
 
-            if (Input.GetKeyDown(KeyBindings.PauseSireneDrawing))
-            {
-                activateSireneDrawer = !activateSireneDrawer;
-                var SireneDrawer = GameObject.Find("SireneDrawer").GetComponent<SireneDrawer>();
-                SireneDrawer.SetActive(activateSireneDrawer);
-            }
-
-            if (Input.GetKeyDown(KeyBindings.PauseSireneDrawing))
+            if (Input.GetKeyDown(KeyBindings.ToggleSireneDrawing))
             {
                 activateSireneDrawer = !activateSireneDrawer;
                 var SireneDrawer = GameObject.Find("SireneDrawer").GetComponent<SireneDrawer>();
