@@ -1,17 +1,17 @@
 {
   "isDev" : false,
   "offsetX" : 0,
-  "offsetY" : 30,
-  "scaleX" : 0.85,
-  "scaleY" : 0.85,
+  "offsetY" : 0,
+  "scaleX" : 1,
+  "scaleY" : 1,
   "densityGradiant" : [0, 0.02, 0.15, 0.4, 0.7, 0.1],
   "batSizeCoeff" : 35,
   
   "timelapseDuration" : 300,
   "targetFrameRate" : 30,
   "extrapolationRate" : 0.1,
-  "disappearingRate" : 0.15,
-  "nbDataBeforeRestart" : 500000,
+  "disappearingRate" : 0.2,
+  "nbDataBeforeRestart" : 400000,
   "debugStart" : 0,
   
   "debugVisual" : false,
