@@ -4,32 +4,37 @@ using DataProcessing.City;
 using DataProcessing.Density;
 using Tools;
 using UnityEngine;
+using Logger = Tools.Logger;
 
 namespace Visuals
 {
     public class DensityDrawer : MonoBehaviour
     {
+        public Logger logger;
+
         // Creates a line renderer that follows a Sin() function
         // and animates it.
         CityDataConverter cityDataConverter;
         DensityDataConverter densityDataConverter;
         List<DensityData> _densityData = new List<DensityData>();
         DensityData[] _dataBounds;
-        private bool isActive = false;
         
+
+        private bool isActive = false;
+
         //visual vars
         int scaleGradientDetail = 5;
-        private float[] scaleGradientSteps = new[] {0f, 0.1f, 0.2f, 0.3f, 0.4f, 0.1f};
+        private float[] scaleGradientSteps = new[] {0f, 0.05f, 0.2f, 0.3f, 0.4f, 0.1f};
         GUIStyle[] colorScales = new GUIStyle[5];
-        public Color[] gradientColors = {Color.red, Color.green, Color.blue, Color.yellow, Color.white};
+        public Color[] gradientColors = { Color.red, Color.green, Color.blue, Color.yellow, Color.white };
 
 
         Material globalmaterialForMesh;
         Mesh meshInstance;
         Matrix4x4[] matricesOfDensity;
 
-        Vector4[] colors;
-        MaterialPropertyBlock colorBlockShader;
+        Vector4[][] colorsBatches;
+        MaterialPropertyBlock[] colorBlockShadersBatches;
 
         struct CityAlign
         {
@@ -48,14 +53,13 @@ namespace Visuals
 
             // Prepare entities
             densityDataConverter =
-                (DensityDataConverter) FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes
+                (DensityDataConverter)FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes
                     .DENSITY);
 
             densityDataConverter.Init(
-                (int) (Screen.width),
-                (int) (Screen.height));
+                (int)(Screen.width),
+                (int)(Screen.height));
 
-            colorBlockShader = new MaterialPropertyBlock();
             globalmaterialForMesh = new Material(Shader.Find("Customs/InstancedColor"));
 
 
@@ -84,10 +88,10 @@ namespace Visuals
             var config = Configuration.GetConfig();
             var parentTransform = transform;
             //Getting our Data
-            _densityData = (List<DensityData>) densityDataConverter.GetAllData();
-            _dataBounds = (DensityData[]) densityDataConverter.GetDataBounds();
+            _densityData = (List<DensityData>)densityDataConverter.GetAllData();
+            _dataBounds = (DensityData[])densityDataConverter.GetDataBounds();
 
-            if( !config.isDev)
+            if (!config.isDev)
             {
                 scaleGradientSteps = config.densityGradiant;
             }
@@ -105,37 +109,57 @@ namespace Visuals
             );
 
 
+            int[] usedColorCount = new int[gradientColors.Length];
             this.matricesOfDensity = new Matrix4x4[_densityData.Count];
-            colors = new Vector4[_densityData.Count];
+            int nbBatches = Mathf.CeilToInt(_densityData.Count / 1023f);
+            this.colorsBatches = new Vector4[nbBatches][];
+            for (int i = 0; i < nbBatches; i++)
+            {
+                this.colorsBatches[i] = new Vector4[1023];
+            }
+
+            this.colorBlockShadersBatches = new MaterialPropertyBlock[nbBatches];
 
             for (int i = 0; i < _densityData.Count; i++)
             {
+                int currentBatchIndex = i / 1023;
+                int indexInBatch = i % 1023;
+
                 DensityData densityData = _densityData[i];
 
                 float tmpPop = densityData.Individuals - _dataBounds[0].Individuals;
                 float uvPop = tmpPop / (((_dataBounds[1].Individuals + 1f) - _dataBounds[0].Individuals));
-                int indexSlice = 0;
-                while ((indexSlice + 1) < gradientColors.Length && uvPop > scaleGradientSteps[indexSlice + 1])
+                int gradientSliceIndex = 0;
+                while ((gradientSliceIndex + 1) < gradientColors.Length &&
+                       uvPop > scaleGradientSteps[gradientSliceIndex + 1])
                 {
-                    indexSlice++;
+                    gradientSliceIndex++;
                 }
 
                 Vector3 rectPosition = new Vector3(
                     transform.localScale.x * (_densityData[i].X1 + _densityData[i].X3) / 2,
                     transform.localScale.y * (_densityData[i].Y1 + _densityData[i].Y2) / 2,
-                    (float) VisualPlanner.Layers.Density
+                    (float)VisualPlanner.Layers.Density
                 );
 
                 Vector3 position = transform.position +
                                    Vector3.Scale(rectPosition, new Vector3(config.scaleX, config.scaleY, 1f));
 
                 matricesOfDensity[i] = Matrix4x4.TRS(position, transform.rotation, transform.localScale);
-                colors[i] = this.gradientColors[indexSlice];
+                colorsBatches[currentBatchIndex][indexInBatch] = this.gradientColors[gradientSliceIndex];
+                usedColorCount[gradientSliceIndex]++;
             }
 
             //creation of custom shader
-            colorBlockShader.SetVectorArray("_Colors", colors);
+            for (int i = 0; i < nbBatches; i++)
+            {
+                colorBlockShadersBatches[i] = new MaterialPropertyBlock();
+                colorBlockShadersBatches[i].SetVectorArray("_Colors", colorsBatches[i]);
+            }
+
             globalmaterialForMesh.enableInstancing = true;
+            logger.Log(
+                $"Color count : 1:{usedColorCount[0]} 2:{usedColorCount[1]} 3:{usedColorCount[2]} 4:{usedColorCount[3]} 5:{usedColorCount[4]}");
         }
 
         private Mesh CreateQuad(
@@ -196,17 +220,18 @@ namespace Visuals
                 InitDrawing();
                 transform.hasChanged = false;
             }
-            
-            // Draw instance of meshes in batches of 1023 from the matric of density length
+
+            // Draw instance of meshes in batches of 1023 from the matric of density 
+            int batchCount = 0;
             for (int i = 0; i < matricesOfDensity.Length; i += 1023)
             {
                 int count = Mathf.Min(1023, matricesOfDensity.Length - i);
                 Matrix4x4[] matrices = new Matrix4x4[count];
                 Array.Copy(matricesOfDensity, i, matrices, 0, count);
 
-                Graphics.DrawMeshInstanced(meshInstance, 0, globalmaterialForMesh, matrices, count, colorBlockShader);
+                Graphics.DrawMeshInstanced(meshInstance, 0, globalmaterialForMesh, matrices, count, colorBlockShadersBatches[0]);
+                batchCount++;
             }
-
         }
 
         private void OnGUI()

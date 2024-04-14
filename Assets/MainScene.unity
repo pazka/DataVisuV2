@@ -492,7 +492,7 @@ GameObject:
   m_Component:
   - component: {fileID: 589042128}
   - component: {fileID: 589042129}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: DensityDrawer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -525,6 +525,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b165eb7433ee450419668674137e1c21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  logger: {fileID: 1579690540}
   gradientColors:
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 0, g: 1, b: 0, a: 1}
@@ -2406,8 +2407,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logger: {fileID: 1579690540}
   activateCityDrawer: 1
-  activateDensityDrawer: 0
-  activateSireneDrawer: 1
+  activateDensityDrawer: 1
+  activateSireneDrawer: 0
 --- !u!114 &1570511818
 MonoBehaviour:
   m_ObjectHideFlags: 0
