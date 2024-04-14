@@ -8,15 +8,15 @@ namespace DataProcessing.Sirene
 {
     public class SireneDataReader : IDataReader
     {
-        // readonly string FilePath = Application.dataPath +
-        //                               "/StreamingAssets/SeineSaintDenis/Sirene/etablissements_geoloc_cleaned_with_count_in_ssd.csv";
+        private readonly string ffilePath = Application.dataPath +
+                                              "/StreamingAssets/SeineSaintDenis/Sirene/etablissements_geoloc_cleaned_with_count_in_ssd.csv";
 
-        readonly string FilePath = Application.dataPath +
-                                   "/StreamingAssets/SeineSaintDenis/Sirene/small_etablissements_geoloc_cleaned_with_count_in_ssd.csv";
+        private readonly string filePath = Application.dataPath +
+                                                "/StreamingAssets/SeineSaintDenis/Sirene/small_etablissements_geoloc_cleaned_with_count_in_ssd.csv";
 
-        int Cursor;
-        List<SireneData> AllDataRead;
-        public bool streamEnd;
+        private int cursor;
+        private List<SireneData> allDataRead;
+        public bool StreamEnd;
 
 
         public SireneDataReader()
@@ -26,14 +26,14 @@ namespace DataProcessing.Sirene
 
         public void Init()
         {
-            Cursor = 0;
-            streamEnd = false;
+            cursor = 0;
+            StreamEnd = false;
 
-            using (StreamReader r = new StreamReader(this.FilePath))
+            using (StreamReader r = new StreamReader(this.filePath))
             {
                 //HEADER : siren,dateCreationEtablissement,denominationUniteLegale,isOnePerson,X,Y
                 string line;
-                AllDataRead = new List<SireneData>();
+                allDataRead = new List<SireneData>();
                 r.ReadLine(); // Skip the first line
 
                 while ((line = r.ReadLine()) != null && line != "")
@@ -53,34 +53,34 @@ namespace DataProcessing.Sirene
                     var sireneData = new SireneData(line, x, y, data[0], dateCreation, data[2], data[3] == "True",
                         entityCount);
 
-                    AllDataRead.Add(sireneData);
+                    allDataRead.Add(sireneData);
                 }
             }
         }
 
         public void Clean()
         {
-            AllDataRead = new List<SireneData>();
-            streamEnd = false;
+            allDataRead = new List<SireneData>();
+            StreamEnd = false;
         }
 
         public IData GetData()
         {
-            SireneData data = AllDataRead[Cursor];
+            SireneData data = allDataRead[cursor];
 
             return data.Clone();
         }
 
         public void GoToNextData()
         {
-            if (streamEnd)
+            if (StreamEnd)
                 return;
 
-            Cursor++;
+            cursor++;
 
-            if (Cursor == AllDataRead.Count)
+            if (cursor == allDataRead.Count)
             {
-                streamEnd = true;
+                StreamEnd = true;
             }
         }
     }

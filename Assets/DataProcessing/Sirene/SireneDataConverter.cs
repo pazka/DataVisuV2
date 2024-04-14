@@ -70,7 +70,7 @@ namespace DataProcessing.Sirene
         public override IData GetNextData()
         {
             sireneDataReader.GoToNextData();
-            if (!sireneDataReader.streamEnd)
+            if (!sireneDataReader.StreamEnd)
             {
                 return RegisterData((SireneData) sireneDataReader.GetData());
             }
@@ -127,10 +127,10 @@ namespace DataProcessing.Sirene
             SireneData tmpData;
 
             //get raw data first
-            while (!sireneDataReader.streamEnd)
+            while (!sireneDataReader.StreamEnd)
             {
                 tmpData = (SireneData) GetNextData();
-                if (!sireneDataReader.streamEnd)
+                if (!sireneDataReader.StreamEnd)
                 {
                     notConvertedSireneData.Add(tmpData);
                 }

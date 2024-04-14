@@ -19,7 +19,7 @@ namespace Visuals
         
         //visual vars
         int scaleGradientDetail = 5;
-        private float[] scaleGradientSteps = new[] {0f, 0.1f, 0.2f, 0.25f, 0.5f, 1f};
+        private float[] scaleGradientSteps = new[] {0f, 0.1f, 0.2f, 0.3f, 0.4f, 0.1f};
         GUIStyle[] colorScales = new GUIStyle[5];
         public Color[] gradientColors = {Color.red, Color.green, Color.blue, Color.yellow, Color.white};
 
@@ -87,7 +87,10 @@ namespace Visuals
             _densityData = (List<DensityData>) densityDataConverter.GetAllData();
             _dataBounds = (DensityData[]) densityDataConverter.GetDataBounds();
 
-            scaleGradientSteps = config.densityGradiant;
+            if( !config.isDev)
+            {
+                scaleGradientSteps = config.densityGradiant;
+            }
 
             //Getting our visuals
             DensityData firstDensityData = _densityData[0];
