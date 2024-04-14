@@ -355,7 +355,7 @@ namespace Visuals.Sirene
 
         public void HideSomeVisuals(float disappearingRate)
         {
-            int nbToTake = (int)Math.Max(Math.Round(displayedBatDataVisuals.Count * disappearingRate), 50);
+            int nbToTake = (int)Math.Max(Math.Round(displayedBatDataVisuals.Count * disappearingRate), 10000);
             SireneDataVisual[] dataVisualsToDestroy = displayedBatDataVisuals.Select(x => x).Take(nbToTake).ToArray();
             int nbTook = dataVisualsToDestroy.Length;
             foreach (var dataVisualToDestroy in dataVisualsToDestroy)
