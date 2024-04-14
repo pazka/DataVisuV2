@@ -31,9 +31,9 @@ namespace DataProcessing.Density
 
         public override void Init(int screenBoundX, int screenBoundY)
         {
-            var cityLineConverter = (CityDataConverter) FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.CITY);
-            cityLineConverter.Init(screenBoundX, screenBoundY);
-            cityLineConverter.RegisterAllData(); // Do so so that geoBounds is set with correct bounds to convert our sirene data
+            // var cityLineConverter = (CityDataConverter) FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.CITY);
+            // cityLineConverter.Init(screenBoundX, screenBoundY);
+            // cityLineConverter.RegisterAllData(); // Do so so that geoBounds is set with correct bounds to convert our sirene data
 
             screenBounds = new int[2] { screenBoundX, screenBoundY };
             densityDataReader.Init();
