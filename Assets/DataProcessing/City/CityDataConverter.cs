@@ -44,7 +44,16 @@ namespace DataProcessing.City
 
             return cityData;
         }
-
+        
+        public override void RegisterAllData()
+        {
+            var data = GetNextData();
+            while (data != null)
+            {
+                data = GetNextData();
+            }
+        }
+        
         public override IData GetNextData()
         {
             cityDataReader.GoToNextData();

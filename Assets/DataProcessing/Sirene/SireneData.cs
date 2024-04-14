@@ -25,6 +25,8 @@ namespace DataProcessing.Sirene
         public SireneData(string raw, float rawX, float rawY, string sirene, DateTime dateCreation, string name,
             bool isOnePerson,int entityCount) : base(raw, rawX, rawY)
         {
+            this.X = rawX;
+            this.Y = rawY;
             this.T = (float)(dateCreation - new DateTime(1900, 1, 1, 0, 0, 0)).TotalDays;
             this.Sirene = sirene;
             this.DateCreation = dateCreation;

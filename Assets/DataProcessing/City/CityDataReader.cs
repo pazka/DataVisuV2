@@ -18,14 +18,20 @@ namespace DataProcessing.City
         protected int maxConvertionSizeOfData;
 
         protected bool endOfStream;
-        public bool EndOfStream { get { return endOfStream; } }
+
+        public bool EndOfStream
+        {
+            get { return endOfStream; }
+        }
 
         protected StreamReader streamReader;
         protected bool firstRead;
 
         bool isAtData = false;
 
-        public CityDataReader() : this(50, 100) { }
+        public CityDataReader() : this(50, 100)
+        {
+        }
 
 
         public CityDataReader(int _bufferSize, int _maxConvertionSizeOfData)
@@ -41,7 +47,7 @@ namespace DataProcessing.City
             convertionBufferReadIndex = 0;
         }
 
-        protected bool isInited()
+        protected bool IsInited()
         {
             if (streamReader == null || firstRead)
             {
@@ -54,6 +60,7 @@ namespace DataProcessing.City
         public void Init()
         {
             streamReader = new StreamReader(filePath);
+            firstRead = true;
 
             //first read filling up buffer
             if (bufferReadIndex == bufferSize)
@@ -62,6 +69,7 @@ namespace DataProcessing.City
                 bufferReadIndex = 0;
             }
         }
+
         public void Clean()
         {
             streamReader.Close();
@@ -75,11 +83,12 @@ namespace DataProcessing.City
 
         public IData GetData()
         {
-            isInited();
+            IsInited();
 
             if (!isAtData)
             {
-                throw new System.FormatException("CityDataReader tried to getData() when not being place in front of Data");
+                throw new System.FormatException(
+                    "CityDataReader tried to getData() when not being place in front of Data");
             }
 
             if (EndOfStream)
@@ -90,15 +99,16 @@ namespace DataProcessing.City
             float tmpX, tmpY;
 
             int read = ReadUntilDelimiterChar(ref convertionBuffer, ',');
-            Array.Clear(convertionBuffer, read, maxConvertionSizeOfData-read);
+            Array.Clear(convertionBuffer, read, maxConvertionSizeOfData - read);
 
             try
             {
-                tmpX = float.Parse(new string(convertionBuffer),System.Globalization.NumberStyles.Any,System.Globalization.CultureInfo.InvariantCulture);
+                tmpX = float.Parse(new string(convertionBuffer), System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture);
             }
             catch (Exception)
             {
-                throw new FormatException("Couldn't parse : \"" + new string(convertionBuffer) +"\"");
+                throw new FormatException("Couldn't parse : \"" + new string(convertionBuffer) + "\"");
             }
 
             read = ReadUntilDelimiterChar(ref convertionBuffer, ']');
@@ -106,7 +116,8 @@ namespace DataProcessing.City
 
             try
             {
-                tmpY = float.Parse(new string(convertionBuffer),System.Globalization.NumberStyles.Any,System.Globalization.CultureInfo.InvariantCulture);
+                tmpY = float.Parse(new string(convertionBuffer), System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture);
             }
             catch (Exception)
             {
@@ -135,14 +146,14 @@ namespace DataProcessing.City
 
 
         /*
-     * @out readBytes
-     * @in buff buffer that will be read into
-     * @in delimiter dellimiter to stop reading
-     */
+         * @out readBytes
+         * @in buff buffer that will be read into
+         * @in delimiter dellimiter to stop reading
+         */
         protected int ReadUntilDelimiterChar(ref char[] buff, char delimiter, bool includeDelimiter = false)
         {
             int totalRead = 0;
-        
+
             while (!endOfStream && buffer[bufferReadIndex] != delimiter)
             {
                 if (streamReader.EndOfStream)
@@ -158,7 +169,8 @@ namespace DataProcessing.City
                 }
                 catch (System.Exception)
                 {
-                    throw new System.IndexOutOfRangeException("The buffer is to small for the read data.\nFirst bytes of data : " + new string(buff));
+                    throw new System.IndexOutOfRangeException(
+                        "The buffer is to small for the read data.\nFirst bytes of data : " + new string(buff));
                 }
 
                 bufferReadIndex++;
@@ -186,6 +198,5 @@ namespace DataProcessing.City
 
             return totalRead;
         }
-
     }
 }

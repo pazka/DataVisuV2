@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Bounds;
+using DataProcessing.City;
 using DataProcessing.Generic;
 
 namespace DataProcessing.Density
@@ -30,6 +31,10 @@ namespace DataProcessing.Density
 
         public override void Init(int screenBoundX, int screenBoundY)
         {
+            var cityLineConverter = (CityDataConverter) FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.CITY);
+            cityLineConverter.Init(screenBoundX, screenBoundY);
+            cityLineConverter.RegisterAllData(); // Do so so that geoBounds is set with correct bounds to convert our sirene data
+
             screenBounds = new int[2] { screenBoundX, screenBoundY };
             densityDataReader.Init();
         }
@@ -61,8 +66,6 @@ namespace DataProcessing.Density
                 this.dataBounds[1] = new DensityData(densityData);
             }
 
-            this.geoBounds.RegisterNewBounds(new float[] { densityData.RawX, densityData.RawY });
-
             if (densityData.Individuals < this.dataBounds[0].Individuals)
                 this.dataBounds[0].Individuals = densityData.Individuals;
             if (densityData.Individuals > this.dataBounds[1].Individuals)
@@ -74,6 +77,15 @@ namespace DataProcessing.Density
                 this.dataBounds[0].Households = densityData.Households;
 
             return densityData;
+        }
+        
+        public override void RegisterAllData()
+        {
+            var data = GetNextData();
+            while (data != null)
+            {
+                data = GetNextData();
+            }
         }
 
         public override IData GetNextData()

@@ -17,7 +17,7 @@ namespace DataProcessing.Sirene
 
         private int cursor;
         private List<SireneData> allDataRead;
-        public bool StreamEnd;
+        public bool EndOfStream;
 
 
         public SireneDataReader()
@@ -28,7 +28,7 @@ namespace DataProcessing.Sirene
         public void Init()
         {
             cursor = 0;
-            StreamEnd = false;
+            EndOfStream = false;
 
             using (StreamReader r = new StreamReader(this.filePath))
             {
@@ -62,26 +62,26 @@ namespace DataProcessing.Sirene
         public void Clean()
         {
             allDataRead = new List<SireneData>();
-            StreamEnd = false;
+            EndOfStream = false;
         }
 
         public IData GetData()
         {
             SireneData data = allDataRead[cursor];
 
-            return data.Clone();
+            return data;
         }
 
         public void GoToNextData()
         {
-            if (StreamEnd)
+            if (EndOfStream)
                 return;
 
             cursor++;
 
             if (cursor == allDataRead.Count)
             {
-                StreamEnd = true;
+                EndOfStream = true;
             }
         }
     }

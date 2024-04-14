@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Bounds;
+using DataProcessing.City;
 using DataProcessing.Generic;
 using UnityEngine;
 using Tools;
@@ -35,8 +36,13 @@ namespace DataProcessing.Sirene
                 (SireneBounds) BoundsFactory.GetInstance(BoundsFactory.AvailableBoundsTypes.SIRENE);
         }
 
+
         public override void Init(int screenBoundX, int screenBoundY)
         {
+            var cityLineConverter = (CityDataConverter) FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.CITY);
+            cityLineConverter.Init(screenBoundX, screenBoundY);
+            cityLineConverter.RegisterAllData(); // Do so so that geoBounds is set with correct bounds to convert our sirene data
+
             screenBounds = new int[2] {screenBoundX, screenBoundY};
             sireneDataReader.Init();
         }
@@ -67,10 +73,19 @@ namespace DataProcessing.Sirene
             return sireneData;
         }
 
+        public override void RegisterAllData()
+        {
+            var data = GetNextData();
+            while (data != null)
+            {
+                data = GetNextData();
+            }
+        }
+
         public override IData GetNextData()
         {
             sireneDataReader.GoToNextData();
-            if (!sireneDataReader.StreamEnd)
+            if (!sireneDataReader.EndOfStream)
             {
                 return RegisterData((SireneData) sireneDataReader.GetData());
             }
@@ -127,10 +142,10 @@ namespace DataProcessing.Sirene
             SireneData tmpData;
 
             //get raw data first
-            while (!sireneDataReader.StreamEnd)
+            while (!sireneDataReader.EndOfStream)
             {
                 tmpData = (SireneData) GetNextData();
-                if (!sireneDataReader.StreamEnd)
+                if (!sireneDataReader.EndOfStream)
                 {
                     notConvertedSireneData.Add(tmpData);
                 }

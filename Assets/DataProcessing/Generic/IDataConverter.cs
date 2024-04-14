@@ -21,6 +21,7 @@ namespace DataProcessing.Generic
         void Clean();
         IData GetNextData();
         IEnumerable<IData> GetAllData();
+        void RegisterAllData();
         IData[] GetDataBounds();
         IDataReader GetDataReader();
     }

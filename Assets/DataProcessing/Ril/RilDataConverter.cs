@@ -70,7 +70,7 @@ namespace DataProcessing.Ril
         public override IData GetNextData()
         {
             rilDataReader.GoToNextData();
-            if (!rilDataReader.streamEnd)
+            if (!rilDataReader.EndOfStream)
             {
                 return RegisterData((RilData) rilDataReader.GetData());
             }
@@ -104,10 +104,10 @@ namespace DataProcessing.Ril
             RilData tmpData;
 
             //get raw data first
-            while (!rilDataReader.streamEnd)
+            while (!rilDataReader.EndOfStream)
             {
                 tmpData = (RilData) GetNextData();
-                if (!rilDataReader.streamEnd)
+                if (!rilDataReader.EndOfStream)
                 {
                     notConvertedRilData.Add(tmpData);
                 }
@@ -159,6 +159,14 @@ namespace DataProcessing.Ril
             return GetCopyOfAllData();
         }
 
+        public override void RegisterAllData()
+        {
+            var data = GetNextData();
+            while (data != null)
+            {
+                data = GetNextData();
+            }
+        }
 
         //return X : max,min; Y: max,min
         public override IDataReader GetDataReader()
