@@ -28,7 +28,7 @@ namespace DataProcessing
 
                 case AvailableDataExtrapolatorTypes.SIRENE:
                     if (!instances.ContainsKey(dataExtrapolatorType))
-                        instances.Add(dataExtrapolatorType, new SireneDataExtrapolatorBias());
+                        instances.Add(dataExtrapolatorType, new SireneDataExtrapolatorBiasOnePerson());
                     break;
 
                 default:

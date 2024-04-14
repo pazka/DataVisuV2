@@ -2228,7 +2228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edeeda10d6f5448797ae54b20e1b9a9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  batRessource: {fileID: 1187849936}
+  batRessource: {fileID: 65794679}
 --- !u!1 &1251059333
 GameObject:
   m_ObjectHideFlags: 0
@@ -2526,8 +2526,8 @@ MonoBehaviour:
   updateRealTime: 0
   targetFrameRate: 30
   debugStart: 0
-  minBatSize: 30
-  batSizeCoeff: 40
+  minBatSize: 70
+  batSizeCoeff: 100
   centerX: 600
   centerY: 800
   centerZ: 4000
