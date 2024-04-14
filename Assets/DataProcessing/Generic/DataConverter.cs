@@ -8,7 +8,6 @@ namespace DataProcessing.Generic
         public abstract void Clean();
         public abstract IData GetNextData();
         public abstract IEnumerable<IData> GetAllData();
-        public abstract void RegisterAllData();
         public abstract IData[] GetDataBounds();
         public abstract IDataReader GetDataReader();
     }

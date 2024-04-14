@@ -159,15 +159,6 @@ namespace DataProcessing.Ril
             return GetCopyOfAllData();
         }
 
-        public override void RegisterAllData()
-        {
-            var data = GetNextData();
-            while (data != null)
-            {
-                data = GetNextData();
-            }
-        }
-
         //return X : max,min; Y: max,min
         public override IDataReader GetDataReader()
         {

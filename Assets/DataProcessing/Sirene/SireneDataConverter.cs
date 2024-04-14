@@ -39,9 +39,9 @@ namespace DataProcessing.Sirene
 
         public override void Init(int screenBoundX, int screenBoundY)
         {
-            // var cityLineConverter = (CityDataConverter) FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.CITY);
-            // cityLineConverter.Init(screenBoundX, screenBoundY);
-            // cityLineConverter.RegisterAllData(); // Do so so that geoBounds is set with correct bounds to convert our sirene data
+            var cityLineConverter = (CityDataConverter) FactoryDataConverter.GetInstance(FactoryDataConverter.AvailableDataManagerTypes.CITY);
+            cityLineConverter.Init(screenBoundX, screenBoundY);
+            cityLineConverter.GetAllData(); // Do so so that geoBounds is set with correct bounds to convert our sirene data
 
             screenBounds = new int[2] {screenBoundX, screenBoundY};
             sireneDataReader.Init();
@@ -71,15 +71,6 @@ namespace DataProcessing.Sirene
             this.dataBounds.RegisterNewBounds(sireneData.EntityCount);
 
             return sireneData;
-        }
-
-        public override void RegisterAllData()
-        {
-            var data = GetNextData();
-            while (data != null)
-            {
-                data = GetNextData();
-            }
         }
 
         public override IData GetNextData()
