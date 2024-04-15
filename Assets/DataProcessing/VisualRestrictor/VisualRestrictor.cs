@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Tools;
@@ -94,7 +95,7 @@ namespace DataProcessing.VisualRestrictor
             List<Vector3> res = line.Select(str =>
             {
                 string[] tmp = str.Split(',');
-                return new Vector3(float.Parse(tmp[0]), float.Parse(tmp[1]), 0);
+                return new Vector3(float.Parse(tmp[0], CultureInfo.InvariantCulture), float.Parse(tmp[1], CultureInfo.InvariantCulture), 0);
             }).ToList();
 
             return res;

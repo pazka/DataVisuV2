@@ -38,6 +38,13 @@ namespace Visuals
 
         struct CityAlign
         {
+            public static Vector3 position = new Vector3(-638.24f, -470.73f, 10);
+            public static Quaternion rotation = Quaternion.Euler(0, 0, 0.73f);
+            public static Vector3 localScale = new Vector3(0.6f, 0.59f, 1f);
+        }
+
+        struct OldCityAlign
+        {
             public static Vector3 position = new Vector3(-741.24f, -595.2f, 10);
             public static Quaternion rotation = Quaternion.Euler(0, 0, 0.73f);
             public static Vector3 localScale = new Vector3(0.7f, 0.7f, 1f);

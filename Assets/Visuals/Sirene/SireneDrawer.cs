@@ -39,8 +39,8 @@ namespace Visuals.Sirene
         [SerializeField] private int targetFrameRate = 30;
         [SerializeField] private int debugStart = 0;
 
-        [SerializeField] private int minBatSize = 5;
-        [SerializeField] private int batSizeCoeff = 25;
+        [SerializeField] private int minBatSize = 150;
+        [SerializeField] private int batSizeCoeff = 100;
         [SerializeField] private float centerX = -50f;
         [SerializeField] private float centerY = 0f;
         [SerializeField] private float centerZ = 5000f;
@@ -107,6 +107,7 @@ namespace Visuals.Sirene
                 this.nbDataBeforeRestart = config.nbDataBeforeRestart;
                 this.targetFrameRate = config.targetFrameRate;
                 this.batSizeCoeff = config.batSizeCoeff;
+                this.minBatSize = config.minBatSize;
                 this.debugStart = config.debugStart;
             }
 

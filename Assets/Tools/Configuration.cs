@@ -10,6 +10,7 @@ namespace Tools
         public bool debugVisual;
         public float[] densityGradiant;
         public int batSizeCoeff;
+        public int minBatSize;
         public bool densityVisual;
         public float disappearingRate;
         public float extrapolationRate;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Globalization;
 using DataProcessing.Generic;
 
 namespace DataProcessing.Sirene
@@ -44,10 +45,10 @@ namespace DataProcessing.Sirene
                     if (data.Length < 5)
                         continue;
 
-                    var y = float.Parse(data[4]);
-                    var x = float.Parse(data[5]);
+                    var y = float.Parse(data[4], CultureInfo.InvariantCulture);
+                    var x = float.Parse(data[5], CultureInfo.InvariantCulture);
                     //parse YYYY-MM-DD to DateTime
-                    var dateCreation = DateTime.Parse(data[1]);
+                    var dateCreation = DateTime.ParseExact(data[1], "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
                     var entityCount = int.Parse(data[6]);
 
