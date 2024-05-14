@@ -525,7 +525,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b165eb7433ee450419668674137e1c21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logger: {fileID: 1579690540}
   gradientColors:
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 0, g: 1, b: 0, a: 1}
@@ -2406,8 +2405,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logger: {fileID: 1579690540}
-  activateCityDrawer: 0
-  activateDensityDrawer: 1
+  activateCityDrawer: 1
+  activateDensityDrawer: 0
   activateSireneDrawer: 0
 --- !u!114 &1570511818
 MonoBehaviour:
@@ -2533,7 +2532,7 @@ MonoBehaviour:
   centerY: 800
   centerZ: 4000
   batVisualPool: {fileID: 1208443344}
-  debugBatVisualPool: {fileID: 1121062035}
+  futureBatVisualPool: {fileID: 1121062035}
   progressBar: {fileID: 1177338392}
 --- !u!1 &1622456916
 GameObject:

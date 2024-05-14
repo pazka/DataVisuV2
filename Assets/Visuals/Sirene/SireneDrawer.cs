@@ -8,6 +8,7 @@ using DataProcessing.VisualRestrictor;
 using SoundProcessing;
 using Tools;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Logger = Tools.Logger;
 
 namespace Visuals.Sirene
@@ -58,7 +59,7 @@ namespace Visuals.Sirene
         private DrawingState previousDrawingState = DrawingState.Inactive;
 
         public BatVisualPool batVisualPool;
-        public BatVisualPool debugBatVisualPool;
+        [FormerlySerializedAs("debugBatVisualPool")] public BatVisualPool futureBatVisualPool;
         public GameObject progressBar;
 
         struct OldCityAlign
@@ -128,7 +129,7 @@ namespace Visuals.Sirene
                 .AvailableDataExtrapolatorTypes.SIRENE);
 
             logger.Log("Preloading objects");
-            debugBatVisualPool.PreloadNObjects(300000);
+            futureBatVisualPool.PreloadNObjects(200000);
             batVisualPool.PreloadNObjects(350000);
             Application.targetFrameRate = this.targetFrameRate;
         }
@@ -207,7 +208,7 @@ namespace Visuals.Sirene
 
         private void ReturnDataVisualToCorrectPool(SireneDataVisual dataVisual)
         {
-            BatVisualPool visualpool = dataVisual.Data.Raw == "future" ? debugBatVisualPool : batVisualPool;
+            BatVisualPool visualpool = dataVisual.Data.Raw == "future" ? futureBatVisualPool : batVisualPool;
             visualpool.Return(dataVisual.Visual);
         }
 
@@ -242,7 +243,7 @@ namespace Visuals.Sirene
             //
             foreach (SireneData currentSireneData in allData)
             {
-                BatVisualPool visualpool = currentSireneData.Raw == "future" ? debugBatVisualPool : batVisualPool;
+                BatVisualPool visualpool = currentSireneData.Raw == "future" ? futureBatVisualPool : batVisualPool;
                 GameObject batVisual = visualpool.GetOne();
 
                 if (!batVisual)

@@ -30,6 +30,7 @@ namespace Visuals
 
         Vector4[] colors;
         MaterialPropertyBlock colorBlockShader;
+        private bool isOnError = false;
 
         struct CityAlign
         {
@@ -76,7 +77,21 @@ namespace Visuals
         {
             isActive = state;
             if (state)
+                TryInitDrawing();
+        }
+        public void TryInitDrawing()
+        {
+            if (isOnError) return;
+            
+            try
+            {
                 InitDrawing();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error while drawing density data: " + e.Message);
+                isOnError = true;
+            }
         }
 
         public void InitDrawing()
@@ -101,8 +116,7 @@ namespace Visuals
                 config.scaleY * (firstDensityData.Y1 - firstDensityData.Y4)
             );
 
-
-            this.matricesOfDensity = new List<Matrix4x4>();
+            this.matricesOfDensity = new List<Matrix4x4>(_densityData.Count);
             colors = new Vector4[_densityData.Count];
 
             for (int i = 0; i < _densityData.Count; i++)
@@ -126,7 +140,7 @@ namespace Visuals
                 Vector3 position = transform.position +
                                    Vector3.Scale(rectPosition, new Vector3(config.scaleX, config.scaleY, 1f));
 
-                matricesOfDensity[i] = Matrix4x4.TRS(position, transform.rotation, transform.localScale);
+                matricesOfDensity.Add(Matrix4x4.TRS(position, transform.rotation, transform.localScale));
                 colors[i] = this.gradientColors[indexSlice];
             }
 
@@ -190,15 +204,21 @@ namespace Visuals
 
             if (transform.hasChanged)
             {
-                InitDrawing();
+                TryInitDrawing();
                 transform.hasChanged = false;
             }
 
-            var startIndex = 2000;
-            var subMatriceOfDensity = matricesOfDensity.GetRange(startIndex, 1023);
+            for (int i = 0; i < _densityData.Count; i += 1023)
+            {
+                DrawDensityChunk(i);
+            }
+        }
+        
+        private void DrawDensityChunk(int startIndex)
+        {
+            var sizeOfChunk = Math.Min(1023, _densityData.Count - startIndex);
+            List<Matrix4x4> subMatriceOfDensity = matricesOfDensity.GetRange(startIndex, sizeOfChunk);
             
-
-            //extract 1023 element from mesh
             Graphics.DrawMeshInstanced(meshInstance, 0, globalmaterialForMesh, subMatriceOfDensity.ToArray(), 1023,
                 colorBlockShader);
         }

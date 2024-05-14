@@ -1,5 +1,0 @@
-Credit 
-
-Field recording for the files used and PureData code made by Stephan Clor. 
-
-Authorization of diffusion for all ScreenCity iteration.

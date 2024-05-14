@@ -4,16 +4,15 @@ using UnityEngine;
 using System;
 using System.Globalization;
 using DataProcessing.Generic;
+using Tools;
 
 namespace DataProcessing.Sirene
 {
     public class SireneDataReader : IDataReader
     {
-        private readonly string fffilePath = Application.dataPath +
+        private readonly string full_filePath = Application.dataPath +
                                               "/StreamingAssets/SeineSaintDenis/Sirene/etablissements_geoloc_cleaned_with_count_in_ssd.csv";
-        private readonly string ffilePath = Application.dataPath +
-                                                "/StreamingAssets/SeineSaintDenis/Sirene/small_etablissements_geoloc_cleaned_with_count_in_ssd.csv";
-        private readonly string filePath = Application.dataPath +
+        private readonly string small_filePath = Application.dataPath +
                                              "/StreamingAssets/SeineSaintDenis/Sirene/verysmall_etablissements_geoloc_cleaned_with_count_in_ssd.csv";
 
         private int cursor;
@@ -31,7 +30,15 @@ namespace DataProcessing.Sirene
             cursor = 0;
             EndOfStream = false;
 
-            using (StreamReader r = new StreamReader(this.filePath))
+            var fileToRead = full_filePath;
+
+            var config = Configuration.GetConfig();
+            if (config.isDev)
+            {
+                fileToRead = small_filePath;
+            }
+            
+            using (StreamReader r = new StreamReader(fileToRead))
             {
                 //HEADER : siren,dateCreationEtablissement,denominationUniteLegale,isOnePerson,X,Y
                 string line;
