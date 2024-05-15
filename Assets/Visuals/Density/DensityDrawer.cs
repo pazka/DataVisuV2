@@ -219,7 +219,7 @@ namespace Visuals
             var sizeOfChunk = Math.Min(1023, _densityData.Count - startIndex);
             List<Matrix4x4> subMatriceOfDensity = matricesOfDensity.GetRange(startIndex, sizeOfChunk);
             
-            Graphics.DrawMeshInstanced(meshInstance, 0, globalmaterialForMesh, subMatriceOfDensity.ToArray(), 1023,
+            Graphics.DrawMeshInstanced(meshInstance, 0, globalmaterialForMesh, subMatriceOfDensity.ToArray(), sizeOfChunk,
                 colorBlockShader);
         }
 
